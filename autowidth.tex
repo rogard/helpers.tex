@@ -1,0 +1,39 @@
+%--------------------------------------
+% Copyright (C) 2019 by Erwann Rogard
+% Usage:
+% \input{autowidth}
+% \autowidth[l|r]{<text>} 
+%--------------------------------------
+%TEST\documentclass{report}
+\usepackage{xparse}
+%\usepackage{zebra-goodies}
+
+\ExplSyntaxOn
+
+\cs_new_protected:Npn \__autowidth_open:n #1
+{%\todo{Check that #1 in \{l,c,r\}}%
+  \begin{tabular}{@{}#1@{}}%
+}
+
+\cs_new_protected:Npn \__autowidth_rest:n #1
+{#1\end{tabular}}
+
+\NewDocumentCommand{\autowidth}
+ {
+  O{l} % align
+  +m   % text
+}
+{%
+  \__autowidth_open:n{#1}
+  \__autowidth_rest:n{#2}
+}
+
+\ExplSyntaxOff
+
+%TEST\begin{document}
+%TEST
+%TEST\frame{\autowidth{curiosity\\killed\\the cat}}
+%TEST
+%TEST\frame{\autowidth[r]{curiosity\\killed\\the cat}}
+%TEST
+%TEST\end{document}
