@@ -1,0 +1,50 @@
+%\documentclass{report}
+\usepackage{etoolbox}
+\usepackage{expl3}
+\usepackage{xparse}
+
+\ifcsundef{LambdaFunctionFlag}
+{
+
+  \ExplSyntaxOn
+
+  % https://tex.stackexchange.com/a/188053/112708
+
+  % #1: Number of arguments
+  % #2: Transformation
+  \cs_new_protected:Npn \lambda_insert_lambda:nn #1 #2 {
+    \use:x {
+      % Put off expanding the declaration until its argument list has
+      % been expanded
+      \exp_not:n { \DeclareDocumentCommand \__lambda_expression } {
+        % Create the argument list
+        \prg_replicate:nn { #1 } { m }
+      }
+    } {
+      % Insert the definition
+      #2
+    }
+    % Leave the new function in the input stream
+    \__lambda_expression
+  }
+
+  \ProvideDocumentCommand \LambdaFunction { O{1} m } {
+    \lambda_insert_lambda:nn { #1 } { #2 }
+  }
+
+  \def\LambdaFunctionFlag{}
+
+}
+{
+  % do nothing
+}
+
+\ExplSyntaxOff
+
+%\begin{document}
+%
+%\LambdaFunction{#1, world!}{hello}
+%
+%\LambdaFunction[2]{#1, world! What's #2?}{hello}{next}
+%
+%\end{document}
