@@ -3,13 +3,16 @@
 %       https://github.com/rogard/helpers.tex
 % Usage:
 %       \input{autowidth}
-%       \autowidth[l|r]{<text>} 
+%       \AutoWidth[l|r]{<text>} 
 %------------------------------------------------------------
 %TEST\documentclass{report}
+\usepackage{etoolbox}
 \usepackage{xparse}
 %\usepackage{zebra-goodies}
 
 \ExplSyntaxOn
+\ifcsundef{AutoWidthFlag}
+{
 
 \cs_new_protected:Npn \__autowidth_open:n #1
 {%\todo{Check that #1 in \{l,c,r\}}%
@@ -19,7 +22,7 @@
 \cs_new_protected:Npn \__autowidth_rest:n #1
 {#1\end{tabular}}
 
-\NewDocumentCommand{\autowidth}
+\NewDocumentCommand{\AutoWidth}
  {
   O{l} % align
   +m   % text
@@ -29,12 +32,19 @@
   \__autowidth_rest:n{#2}
 }
 
+  \def\AutoWidthFlag{}
+
+}
+{
+  % do nothing
+}
+
 \ExplSyntaxOff
 
 %TEST\begin{document}
 %TEST
-%TEST\frame{\autowidth{curiosity\\killed\\the cat}}
+%TEST\frame{\AutoWidth{curiosity\\killed\\the cat}}
 %TEST
-%TEST\frame{\autowidth[r]{curiosity\\killed\\the cat}}
+%TEST\frame{\AutoWidth[r]{curiosity\\killed\\the cat}}
 %TEST
 %TEST\end{document}
