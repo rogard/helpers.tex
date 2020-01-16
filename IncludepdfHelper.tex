@@ -1,0 +1,77 @@
+%--------------------------------------------------------------------------------
+% Source:
+%       https://github.com/rogard/helpers.tex
+% Usage:
+%       \input{IncludepdfHelper}
+%       \IncludepdfHelperParameters
+%       {<cmd>}
+%       {<options>} 
+%       \IncludepdfHelperNew
+%       {<name>}
+%--------------------------------------------------------------------------------
+\documentclass{report}
+\usepackage{etoolbox}
+\usepackage{mwe}
+\usepackage{pdfpages}
+\usepackage{xparse}
+\ExplSyntaxOn
+
+\ifcsundef{IncludepdfHelperFlag}
+{
+
+% BACKEND
+
+\tl_new:N \__erw_includepdf_cs
+\seq_new:N \__erw_includepdf_op
+\cs_new_protected:Nn \__erw_includepdf:nn
+{
+   \use:x{\__erw_includepdf_cs[#1]{#2}}
+}
+\cs_generate_variant:Nn \__erw_includepdf:nn {e}
+
+%FRONTEND
+
+\NewDocumentCommand{\IncludepdfHelperParameters}
+{mm}
+{
+\tl_set:Nn \__erw_includepdf_cs{\exp_not:N#1}
+\seq_set_split:Nnn \__erw_includepdf_op {,} {#2}
+%TEST\seq_use:Nn \__erw_includepdf_op {,}
+}
+
+\NewDocumentCommand{\IncludepdfHelperNew}
+{om}
+{
+  \seq_set_eq:NN \l_tmpa_seq \__erw_includepdf_op
+  \IfValueT{#1}{
+    \seq_put_right:Nn \l_tmpa_seq {#1}
+  }
+  \__erw_includepdf:en{\seq_use:Nn\l_tmpa_seq{,}}{#2}
+}
+
+  \def\IncludepdfHelperFlag{}
+
+}
+{
+  % do nothing
+}
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+
+\ExplSyntaxOff
+
+\IncludepdfHelperParameters
+{\includepdf}
+{
+  angle=90,
+  scale=0.85
+}
+
+\IncludepdfHelperNew{example-image-a}
+\IncludepdfHelperNew[pages={1}]{example-image-b}
+
+%\todo
+
+\end{document}
