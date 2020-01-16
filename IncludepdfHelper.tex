@@ -9,9 +9,9 @@
 %       \IncludepdfHelperNew
 %       {<name>}
 %--------------------------------------------------------------------------------
-\documentclass{report}
+%TEST\documentclass{report}
 \usepackage{etoolbox}
-\usepackage{mwe}
+%TEST\usepackage{mwe}
 \usepackage{pdfpages}
 \usepackage{xparse}
 \ExplSyntaxOn
@@ -57,21 +57,21 @@
 }
 
 \ExplSyntaxOff
-\begin{document}
-\ExplSyntaxOn
-
-\ExplSyntaxOff
-
-\IncludepdfHelperParameters
-{\includepdf}
-{
-  angle=90,
-  scale=0.85
-}
-
-\IncludepdfHelperNew{example-image-a}
-\IncludepdfHelperNew[pages={1}]{example-image-b}
-
-%\todo
-
-\end{document}
+%TEST\begin{document}
+%TEST\ExplSyntaxOn
+%TEST
+%TEST\ExplSyntaxOff
+%TEST
+%TEST\IncludepdfHelperParameters
+%TEST{\includepdf}
+%TEST{
+%TEST  angle=90,
+%TEST  scale=0.85
+%TEST}
+%TEST
+%TEST\IncludepdfHelperNew{example-image-a}
+%TEST\IncludepdfHelperNew[pages={1}]{example-image-b}
+%TEST
+%TEST%\todo
+%TEST
+%TEST\end{document}
