@@ -1,0 +1,169 @@
+%-------------------------------------------------
+% Source:
+%       https://github.com/rogard/helpers.tex
+% Usage:
+%       \newcounter{encl}
+%       \input{EnclHelper}
+%       \EnclListOf{<entry>}                        
+%       \EnclNewDocLabel{<entry>,<kind>,<title>}     
+%       \EnclAutoRef{<entry>}{<suffix>}
+% Implem:
+%       <file>=lower case of <entry>
+%-------------------------------------------------
+\documentclass{report}
+%\usepackage[french]{babel}
+\usepackage[english]{babel}
+\usepackage{etoolbox}
+\usepackage[T1]{fontenc}
+\usepackage{mwe}
+\usepackage{pdfpages}
+\usepackage{refcount}
+\usepackage[titles]{tocloft}
+\usepackage{xparse}
+\usepackage{hyperref}
+
+%Help from:
+%https://tex.stackexchange.com/questions/523671/bind-a-label-to-newwatermark-refactoring-macros-defined-with-newcommand
+%https://tex.stackexchange.com/questions/524037/converting-an-argument-to-lower-case-in-expl3-context/524048?noredirect=1#comment1325909_524048
+
+  \ExplSyntaxOn
+
+
+\ifcsundef{EnclHelperFlag}
+{
+
+  
+% BACKEND
+
+\cs_new:Nn\__erw_bgetpagerefnumber:n
+{
+  % https://tex.stackexchange.com/a/450783/112708
+  \getpagerefnumber{\detokenize{#1}}
+}
+\cs_new_protected:Nn \__erw_encl_newlistof:nnn
+{
+  \newlistof{#1} % entry
+  {#2} % ext
+  {#3} % listofname
+}
+\cs_generate_variant:Nn \__erw_encl_newlistof:nnn { ne }
+\cs_new_protected:Nn \__erw_encl_listof:n
+{
+  \exp_args:Nf \use:c{\tl_trim_spaces:n{listof#1}}
+}
+\cs_new_protected:Nn \__erw_encl_newlistof:nnnn
+ {
+  \newlistof[#1]{#2}{#3}{#4}
+ }
+\cs_generate_variant:Nn \__erw_encl_newlistof:nnnn { nne }
+\cs_new:Nn\__erw_encl_new_doc_:nnn
+{%
+  \refstepcounter{encl}
+  \addcontentsline
+  {#1} % file
+  {#2} % kind
+  {\theencl.~\detokenize{#3}} % title
+}
+\cs_generate_variant:Nn \__erw_encl_new_doc_:nnn{e}
+\cs_new:Nn\__erw_encl_new_doc:nnn
+{
+  \__erw_encl_new_doc_:enn{\str_lower_case:n{#1}}{#2}{#3}
+}
+\cs_new:Nn\__erw_encl_label_:n
+{
+  \label{#1}
+}
+\cs_generate_variant:Nn \__erw_encl_label_:n{e}
+
+\cs_new:Nn\__erw_encl_label_inp:nn
+{
+  \tl_trim_spaces:n{#1:#2}
+}
+\cs_new:Nn\__erw_encl_label_inp:nnnn
+{
+  \__erw_encl_label_inp:nn{#1}{#4}
+}
+\cs_new:Nn\__erw_encl_label:nnnn
+{
+  \__erw_encl_label_:e{\__erw_encl_label_inp:nnnn{#1}{#2}{#3}{#4}}
+}
+\cs_generate_variant:Nn \__erw_encl_label:nn {e}
+\cs_new:Nn\__erw_encl_autoref_:n
+{
+  \autoref{#1}
+}
+\cs_generate_variant:Nn \__erw_encl_autoref_:n{e}
+\cs_new:Nn\__erw_encl_autoref:nn
+{
+  \__erw_encl_autoref_:e{\__erw_encl_label_inp:nn{#1}{#2}}
+}
+
+ %FRONT END
+
+\NewDocumentCommand{\EnclListOf}{m}
+{
+  \__erw_encl_listof:n{#1}
+}
+\NewDocumentCommand{\EnclNewListOf}{omm}
+{
+  \IfNoValueTF{#1}
+  {
+    \__erw_encl_newlistof:nen { #2 } { \str_lower_case:n { #2 } } { #3 }
+  }
+  {
+    \__erw_encl_newlistof:nnen { #1 } { #2 } { \str_lower_case:n { #2 } } { #3 }
+  }
+}
+\NewDocumentCommand{\EnclNewDocLabel}
+{
+  s
+  >{\SplitArgument{2}{,}}m      % ##2 ##3 ##4
+  m                             % ##5
+}
+{
+  \IfBooleanF{#1}{\clearpage}
+  \__erw_encl_new_doc:nnn#2
+  \__erw_encl_label:nnnn#2{#3}
+}
+\NewDocumentCommand{\EnclAutoRef}
+{mm}
+{\__erw_encl_autoref:nn{#1}{#2}}
+
+  \def\EnclHelperFlag{}
+
+
+}
+{
+  % do nothing
+}
+
+\ExplSyntaxOff
+
+\newcounter{encl}
+\EnclNewListOf{Foo} 
+{Documents} 
+\begin{document}
+\tableofcontents
+
+\iflanguage{french}
+{
+  \part{Texte}
+  Renvoi à la \EnclAutoRef{Foo}{a} et \EnclAutoRef{Foo}{b}
+  \part{Pièces~jointes}
+}{
+  \iflanguage{english}
+  {
+    \part{Text}
+    Refer to \EnclAutoRef{Foo}{a} and \EnclAutoRef{Foo}{b}
+    \part{Encl}
+  }
+  {Language not tested}
+}
+
+\EnclListOf{Foo}
+\clearpage
+\EnclNewDocLabel{Foo,section,Image~A}{a}
+\includepdf{example-image-a}
+\EnclNewDocLabel*{Foo,section,Image~B}{b}
+\includepdf{example-image-b}
+\end{document}
