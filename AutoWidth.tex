@@ -6,9 +6,9 @@
 %       \AutoWidth[r]{<text>}
 %       \AutoWidthAlignRightHelper< <relative width> >[r]{<text>}
 % Note:
-%       Frame added in draft mode
+%       Frame only in draft mode
 % ------------------------------------------------------------
-%\documentclass[draft]{report} % TEST
+%\documentclass[draft]{report}                          % TEST
 \usepackage{ifdraft} 
 \usepackage{etoolbox}
 \usepackage{xparse}
@@ -74,10 +74,10 @@
 
 \ExplSyntaxOff
 
-%\begin{document} % TEST
+%\begin{document}                                       %TEST
 %
-%\AutoWidth{curiosity\\killed\\the cat}  % TEST
+%\AutoWidth{curiosity\\killed\\the cat}                 %TEST
 %
-%\AutoWidth[r]{curiosity\\killed\\the cat}  % TEST
+%\AutoWidth[r]{curiosity\\killed\\the cat}              %TEST
 %
-%\end{document} % TEST
+%\end{document}                                         %TEST
