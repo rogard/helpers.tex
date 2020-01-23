@@ -1,37 +1,40 @@
-%-------------------------------------------------
+%----------------------------------------------------
 % Source:
 %       https://github.com/rogard/helpers.tex
 % Usage:
 %       \newcounter{encl}
 %       \input{EnclHelper}
-%       \EnclListOf{<entry>}                        
-%       \EnclNewDocLabel{<entry>,<kind>,<title>}     
-%       \EnclAutoRef{<entry>}{<suffix>}
-% Implem:
-%       <file>=lower case of <entry>
-%-------------------------------------------------
-\documentclass{report}
-%\usepackage[french]{babel}
-\usepackage[english]{babel}
-\usepackage{etoolbox}
-\usepackage[T1]{fontenc}
-\usepackage{mwe}
+%       \EnclListOf{<entry>}{<listofnames>}                        
+%       \EnclNewItemLabel{<entry>|<kind>|<title>}     
+%       \EnclAutoref{<entry>}{<suffix>}
+%
+%  Implem:
+%       <file>←lower case of <entry>
+%
+% Tested for:
+%       english
+%       french
+%
+% Credits:
+%       https://tex.stackexchange.com/questions/523671/bind-a-label-to-newwatermark-refactoring-macros-defined-with-newcommand
+%       https://tex.stackexchange.com/questions/524037/converting-an-argument-to-lower-case-in-expl3-context/524048?noredirect=1#comment1325909_524048
+%----------------------------------------------------
+%\documentclass{report}                          %TEST
+%\usepackage[english]{babel}                     %TEST
+%\usepackage{etoolbox}
+%\usepackage[T1]{fontenc}                        %TEST
+%\usepackage{mwe}                                %TEST
 \usepackage{pdfpages}
 \usepackage{refcount}
-\usepackage[titles]{tocloft}
+%\usepackage[titles]{tocloft}
+\usepackage{tocloft}
 \usepackage{xparse}
 \usepackage{hyperref}
 
-%Help from:
-%https://tex.stackexchange.com/questions/523671/bind-a-label-to-newwatermark-refactoring-macros-defined-with-newcommand
-%https://tex.stackexchange.com/questions/524037/converting-an-argument-to-lower-case-in-expl3-context/524048?noredirect=1#comment1325909_524048
-
   \ExplSyntaxOn
-
 
 \ifcsundef{EnclHelperFlag}
 {
-
   
 % BACKEND
 
@@ -41,22 +44,20 @@
   \getpagerefnumber{\detokenize{#1}}
 }
 \cs_new_protected:Nn \__erw_encl_newlistof:nnn
-{
+{%
   \newlistof{#1} % entry
   {#2} % ext
   {#3} % listofname
 }
 \cs_generate_variant:Nn \__erw_encl_newlistof:nnn { ne }
-\cs_new_protected:Nn \__erw_encl_listof:n
-{
-  \exp_args:Nf \use:c{\tl_trim_spaces:n{listof#1}}
-}
 \cs_new_protected:Nn \__erw_encl_newlistof:nnnn
- {
+ {%
   \newlistof[#1]{#2}{#3}{#4}
  }
 \cs_generate_variant:Nn \__erw_encl_newlistof:nnnn { nne }
-\cs_new:Nn\__erw_encl_new_doc_:nnn
+\cs_new_protected:Nn \__erw_encl_listof:n
+{\exp_args:Nf \use:c{\tl_trim_spaces:n{listof#1}}}
+\cs_new:Nn\__erw_encl_new_item_:nnn
 {%
   \refstepcounter{encl}
   \addcontentsline
@@ -64,10 +65,10 @@
   {#2} % kind
   {\theencl.~\detokenize{#3}} % title
 }
-\cs_generate_variant:Nn \__erw_encl_new_doc_:nnn{e}
-\cs_new:Nn\__erw_encl_new_doc:nnn
+\cs_generate_variant:Nn \__erw_encl_new_item_:nnn{e}
+\cs_new:Nn\__erw_encl_new_item:nnn
 {
-  \__erw_encl_new_doc_:enn{\str_lower_case:n{#1}}{#2}{#3}
+  \__erw_encl_new_item_:enn{\str_lower_case:n{#1}}{#2}{#3}
 }
 \cs_new:Nn\__erw_encl_label_:n
 {
@@ -100,37 +101,32 @@
 
  %FRONT END
 
-\NewDocumentCommand{\EnclListOf}{m}
+\NewDocumentCommand{\EnclNewListOf}{omm}
+{
+    \__erw_encl_newlistof:nnen { #1 } { #2 } { \str_lower_case:n { #2 } } { #3 }
+}
+\NewDocumentCommand{\EnclListOf}{m}% \todo why must come after begin{document}?
 {
   \__erw_encl_listof:n{#1}
 }
-\NewDocumentCommand{\EnclNewListOf}{omm}
-{
-  \IfNoValueTF{#1}
-  {
-    \__erw_encl_newlistof:nen { #2 } { \str_lower_case:n { #2 } } { #3 }
-  }
-  {
-    \__erw_encl_newlistof:nnen { #1 } { #2 } { \str_lower_case:n { #2 } } { #3 }
-  }
-}
-\NewDocumentCommand{\EnclNewDocLabel}
+\NewDocumentCommand{\EnclNewItemLabel}
 {
   s
-  >{\SplitArgument{2}{,}}m      % ##2 ##3 ##4
-  m                             % ##5
+  O{|}
+%  >{\SplitArgument{2}{#2}}m\todo
+  >{\SplitArgument{2}{|}}m
+  m                             
 }
 {
   \IfBooleanF{#1}{\clearpage}
-  \__erw_encl_new_doc:nnn#2
-  \__erw_encl_label:nnnn#2{#3}
+  \__erw_encl_new_item:nnn#3
+  \__erw_encl_label:nnnn#3{#4}
 }
-\NewDocumentCommand{\EnclAutoRef}
+\NewDocumentCommand{\EnclAutoref}
 {mm}
 {\__erw_encl_autoref:nn{#1}{#2}}
 
   \def\EnclHelperFlag{}
-
 
 }
 {
@@ -139,31 +135,26 @@
 
 \ExplSyntaxOff
 
-\newcounter{encl}
-\EnclNewListOf{Foo} 
-{Documents} 
-\begin{document}
-\tableofcontents
-
-\iflanguage{french}
-{
-  \part{Texte}
-  Renvoi à la \EnclAutoRef{Foo}{a} et \EnclAutoRef{Foo}{b}
-  \part{Pièces~jointes}
-}{
-  \iflanguage{english}
-  {
-    \part{Text}
-    Refer to \EnclAutoRef{Foo}{a} and \EnclAutoRef{Foo}{b}
-    \part{Encl}
-  }
-  {Language not tested}
-}
-
-\EnclListOf{Foo}
-\clearpage
-\EnclNewDocLabel{Foo,section,Image~A}{a}
-\includepdf{example-image-a}
-\EnclNewDocLabel*{Foo,section,Image~B}{b}
-\includepdf{example-image-b}
-\end{document}
+%\newcounter{encl} 				%TEST
+%\EnclNewListOf{Baz}  				%TEST
+%{Baz}                                           %TEST
+%\EnclNewListOf{Foo}  				%TEST
+%{Foo}                                           %TEST
+%\begin{document} 				%TEST
+%\tableofcontents 				%TEST
+%%                                               %TEST
+%\part{Text}                                   %TEST
+%Refer to \EnclAutoref{Baz}{a},                  %TEST
+%\EnclAutoref{Foo}{b}                            %TEST
+%and \EnclAutoref{Foo}{c}                        %TEST
+%\part{Encl}                                   %TEST
+%\EnclListOf{Baz}                                %TEST
+%\EnclListOf{Foo}                                %TEST
+%\clearpage                                      %TEST
+%\EnclNewItemLabel{Baz|section|Image~A}{a}       %TEST
+%\includepdf{example-image-a}                    %TEST
+%\EnclNewItemLabel{Foo|section|Image~B}{b}       %TEST
+%\includepdf{example-image-b}                    %TEST
+%\EnclNewItemLabel*{Foo|section|Image~C}{c}      %TEST
+%\includepdf{example-image-c}                    %TEST
+%\end{document}                                  %TEST
