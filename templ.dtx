@@ -82,6 +82,7 @@ templ.sty, and templ.pdf.
 \documentclass[full]{l3doc}
 \listfiles
 \usepackage[english,french]{babel}
+\AtBeginDocument{\selectlanguage{english}}
 \usepackage{bookmark}
 \usepackage{templ}
 \usepackage{fvextra}% csquotes should be loaded after fvextra
@@ -158,17 +159,20 @@ templ.sty, and templ.pdf.
 %   \date{Released \filedate}
 %   
 %   \maketitle
-%   
+%
+% \begingroup
 %   \selectlanguage{english}
 %   \begin{docabstract}{Abstract}
 %     TODO
 %   \end{docabstract}
+% \endgroup
 %   
+% \begingroup
 %   \selectlanguage{french}
 %   \begin{docabstract}{Résumé}
 %     TODO
 %   \end{docabstract}
-%   \selectlanguage{english}
+% \endgroup
 %   
 %   \tableofcontents 
 %   
