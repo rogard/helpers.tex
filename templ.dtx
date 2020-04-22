@@ -1,0 +1,399 @@
+% \iffalse meta-comment
+% !TEX program  = pdfLaTeX
+%<*internal> 
+\iffalse
+%</internal> 
+%<*readme> 
+----------------------------------------------------------------
+##### templ --- template for dtx
+- Source repository: https://github.com/rogard/templ
+- Released under the LaTeX Project Public License v1.3c or later
+- See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+%</readme> 
+%<*internal> 
+\fi
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX\else
+\expandafter\begingroup
+\fi
+%</internal> 
+%<*install> 
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+----------------------------------------------------------------------------
+templ --- template for dtx
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------------------
+
+\endpreamble
+\postamble
+
+Copyright (C) 2020 by Erwann Rogard
+
+This work may be distributed and/or modified under the
+conditions of the LaTeX Project Public License (LPPL), either
+version 1.3c of this license or (at your option) any later
+version.  The latest version of this license is in the file:
+
+http://www.latex-project.org/lppl.txt
+
+This work is "maintained" (as per LPPL maintenance status) by
+Erwann Rogard.
+
+This work consists of the file templ.dtx and the derived files:
+templ.sty, and templ.pdf.
+
+\endpostamble
+\generate{
+  \file{\jobname.sty}{\from{\jobname.dtx}{package}}
+}
+%</install> 
+%<install> \endbatchfile
+%<*internal> 
+\generate{
+  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
+}
+\nopreamble\nopostamble
+\generate{
+  \file{README.md}{\from{\jobname.dtx}{readme}}
+}
+\ifx\fmtname\nameofplainTeX
+\expandafter\endbatchfile
+\else
+\expandafter\endgroup
+\fi
+%</internal> 
+%<package> \NeedsTeXFormat{LaTeX2e}[2020/02/02]
+%<package> \RequirePackage{etoolbox}[2019/09/21]
+%<package> \RequirePackage{l3keys2e}[2020/03/06]
+%<package> \RequirePackage{xparse}[2020/03/06]
+%<package> \ProvidesExplPackage
+%<package> {templ}                                                                                 % Package name
+%<package> {2020/04/17}                                                                                 % Release date
+%<package> {1.0}                                                                                        % Release version
+%<package> {templ --- template for dtx}                                     % Description
+% 
+%<*driver> 
+\documentclass[full]{l3doc}
+\listfiles
+\usepackage[english,french]{babel}
+\usepackage{bookmark}
+\usepackage{templ}
+\usepackage{fvextra}% csquotes should be loaded after fvextra
+\usepackage[T1]{fontenc}% \char`[
+\usepackage{pdfpages}
+\usepackage{tabto}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings, breakable}
+\makeatletter
+\newcommand*{\docsetnameref}{\def\@currentlabelname}%https://tex.stackexchange.com/questions/537751
+\makeatother
+\ExplSyntaxOn
+\tl_gset:Nn \partname {Part}
+\ExplSyntaxOff
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+% ^^A\AtEndDocument { \PrintChanges \PrintIndex }
+\ExplSyntaxOn
+\providecommand\docarg[1]{\texttt{#1}} % fun[param] (macro) vs fun[arg] (eval)
+\providecommand\docargnoval{\c_novalue_tl}
+\providecommand\docassign[2]{#1~$\leftarrow$~#2}
+\providecommand\docccept[1]{\textit{#1}}
+\providecommand\doccceptargspec{arg~spec}
+\providecommand\doccceptbool{boolean}
+\providecommand\doccceptcode{code}
+\providecommand\doccceptempty{empty}
+\providecommand\doccceptint{integer}
+\providecommand\doccceptgroup{local~group}
+\providecommand\doccceptkvl{keyval~list}
+\providecommand\doccceptopt{option}
+\providecommand\doccceptpath{path}
+\providecommand\doccceptpre{preamble}
+\providecommand\docccepttok{token}
+\providecommand\docconv[1]{convention~\autoref{conv:#1}}
+\providecommand\docenvdoc{\env{document}}
+\providecommand\docdefaultfor{default~for~}
+\providecommand\doceval[1]{\texttt{\char`\{}#1\texttt{\char`\}}}
+\providecommand\docfillblank{\begin{minipage}[t]{\linewidth}\end{minipage}}
+\providecommand\docissuedo{Do: }
+\providecommand\docissuedont{Don't: }
+\providecommand\docissuesymp{Symptom: }
+\providecommand\doclist[1]{Listing~\ref{listing:#1}}
+\providecommand\docopto[1]{\texttt{[}#1\texttt{]}}
+\providecommand\docopte[2]{\texttt{#1}\doceval{#2}}
+\providecommand\docoptd[1]{\texttt{\textless}#1\texttt{\textgreater}}
+\providecommand\docpipe{\textbar}
+\cs_new:Nn \__templ_docu:n{\MakeUppercase #1}
+\providecommand\docstep[1]{step~\ref{step:#1}}
+\providecommand\docsee{See:~}
+\providecommand\docccepttl{token~list}
+\providecommand\doctip{\noindent\textbf{Tip}:~}
+\providecommand\docU[1]{\exp_args:Nx \__templ_docu:n{#1}}
+\providecommand\docvers[2]{v#1.#2}
+\providecommand\docwarn{\noindent\textbf{Warning}:~}
+\newenvironment{docabstract}[1]%https://latex.org/forum/viewtopic.php?t=12156
+{\renewcommand{\abstractname}{#1}\begin{abstract}}
+  {\end{abstract}} 
+\ExplSyntaxOff
+\begin{document}
+\DocInput{\jobname.dtx}
+\end{document}
+%</driver> 
+% \fi
+% 
+% \GetFileInfo{\jobname.sty}
+% \begin{documentation}
+%   \title{The \pkg{templ} package: template for dtx\thanks{^^A
+%   This file describes version \fileversion, last revised \filedate.^^A
+% }^^A
+% }
+%   \author{Erwann Rogard\thanks{firstname dot lastname AusTria gmail dot com}}
+%   
+%   \date{Released \filedate}
+%   
+%   \maketitle
+%   
+%   \selectlanguage{english}
+%   \begin{docabstract}{Abstract}
+%     TODO
+%   \end{docabstract}
+%   
+%   \selectlanguage{french}
+%   \begin{docabstract}{Résumé}
+%     TODO
+%   \end{docabstract}
+%   \selectlanguage{english}
+%   
+%   \tableofcontents 
+%   
+%   \part{Usage}\label{part:usage}
+%   ^^A   \VerbatimFootnotes
+%   
+%   \setcounter{section}{0}
+%   \label{usage:conv}
+%   \addcontentsline{toc}{section}{\protect\numberline{\thesection}Convention}
+%   \section*{Convention}
+%   \begin{enumerate}[label={\emph{\alph*)}}]
+%   \item \label{conv:expl3} Loosely, those of \cite{interface3}, for example as to the meaning of \meta{\docccepttl}.
+%   \item \label{conv:xparse} Those of \cite{xparse}, for example \docopto{arg} is an optional argument. 
+%  \item \docassign{\cs{X}}{\docarg{Y}} means variable (or command) |X| set to value |Y|
+%   \item If unspecified, the environment in which a macro must be declared is \docenvdoc.
+%   \end{enumerate}
+%   
+%   \refstepcounter{section}
+%   \label{usage:load} 
+%   \addcontentsline{toc}{section}{\protect\numberline{\thesection}Loading the package}
+%   
+%   \begin{function}{\usepackage}
+%     \begin{syntax}
+%       \cs{usepackage}\doceval{\pkg{templ}}
+%     \end{syntax}
+%     \begin{description}
+%     \item[Requirement]\docfillblank
+%       \begin{enumerate}
+%       \item \file{templ.sty} is in the path of the \LaTeX~engine. See \autoref{part:other}, \autoref{other:support}.
+%       \item Declare it in the~\docccept{\doccceptpre}
+%       \end{enumerate}
+%     \end{description}  
+%   \end{function}
+%   
+%   \clearpage
+%   \part{Listing}\label{part:listing}
+%   
+%   \newtcblisting[auto counter]
+%   {listing}[2][]{
+%   noparskip,
+%   breakable,
+%   colback=white,
+%   colframe=black,
+%   opacitybacktitle=.8,%
+%   fonttitle=\bfseries,
+%   title={Listing~\thetcbcounter. #1},
+%   arc=0pt,
+%   outer arc=0pt,
+%   boxrule=1pt,
+%   listing and text,
+%   #2}
+%   
+%   \phantomsection\addcontentsline{toc}{section}
+%   {\ref{listing:pre}. Hello, world!}
+%   \iffalse
+%<*guardlisting>   
+%   \fi
+\begin{listing}[Hello, world]
+  {label=listing:pre, listing only}
+  Hello, world!
+\end{listing}
+% \iffalse
+%</guardlisting> 
+% \fi
+% 
+% \clearpage
+% \part{Other}\label{part:other}
+% 
+% \section{Acknowledgment}\label{other:acknowl} 
+% 
+% This work has benefited from Q\&A's from the \LaTeX community\cite{user-erw}
+%
+% \section{Install}\label{other:install}
+% \begin{enumerate}[label=\emph{\arabic*)}]
+% \item Compile \file{templ.dtx} (under Unix, \texttt{\$tex templ.dtx})
+% \item Put the generated \file{templ.sty} in the search path of the \LaTeX engine
+% \end{enumerate}
+% 
+% \section{Support}\label{other:support}
+% 
+% This package is available from \url{https://www.ctan.org/pkg/templ} and \url{https://github.com/rogard/templ}.
+% 
+% \subsection{Platform}
+% \begin{enumerate}[label=\emph{\roman*)}]
+% \item 
+%   ^^A uname -a
+%   \begin{Verbatim}[breaklines=true]
+%     Linux laptop 4.15.0-20-generic #21-Ubuntu SMP Tue Apr 24 06:16:15 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+%   \end{Verbatim}
+%   \label{plat:lin}
+% \end{enumerate}
+% 
+% \subsection{Engine}
+% \begin{enumerate}[label=\emph{\alph*)}]
+% \item 
+%   \begin{Verbatim}[breaklines=true]
+%     pdfTeX 3.14159265-2.6-1.40.20 (TeX Live 2019)
+%   \end{Verbatim}
+%   \label{eng:tlxviiii:pdf}
+% \item 
+%   \begin{Verbatim}[breaklines=true]
+%     pdfTeX 3.14159265-2.6-1.40.21 (TeX Live 2020)
+%   \end{Verbatim}
+%   \label{eng:tlxx:pdf}
+% \item
+%   \begin{Verbatim}[breaklines=true]
+%     LuaHBTeX, Version 1.12.0 (TeX Live 2020)
+%   \end{Verbatim}
+%   \label{eng:tlxx:lua}
+% \item
+%   \begin{Verbatim}[breaklines=true]
+%     XeTeX 3.14159265-2.6-0.999992 (TeX Live 2020)
+%   \end{Verbatim}
+%   \label{eng:tlxx:xe}
+% \end{enumerate}
+% 
+% \subsection{Results}
+% 
+%^^A \begin{enumerate}[label=\emph{\arabic*)}]
+%^^A \item \pkg{templ} \docvers{1}{8} satisfactory on platform \ref{plat:lin} and engine \ref{eng:tlxviiii:pdf}
+%^^A \item \pkg{templ} \docvers{1}{8} satisfactory on platform \ref{plat:lin} and engine \ref{eng:tlxx:pdf}
+%^^A \item \pkg{templ} \docvers{1}{9} satisfactory on platform \ref{plat:lin} and engines \ref{eng:tlxx:pdf} and \ref{eng:tlxx:lua}
+%^^A \item \pkg{templ} \docvers{2}{0} satisfactory on platform \ref{plat:lin} and engines \ref{eng:tlxx:pdf},  \ref{eng:tlxx:lua}, and \ref{eng:tlxx:xe}
+%^^A \item \pkg{templ} \docvers{2}{1} satisfactory on platform \ref{plat:lin} and engines \ref{eng:tlxx:pdf},  \ref{eng:tlxx:lua}, and \ref{eng:tlxx:xe}
+%^^A \end{enumerate}
+% 
+% \leavevmode
+% \refstepcounter{section}
+% \docsetnameref{References}
+% \label{other:bib}
+% \phantomsection\addcontentsline{toc}{section}{References}
+% \begin{thebibliography}{1}
+% \bibitem{interface3} The \LaTeX3 Project Team {\em The \LaTeX3 interfaces}, 2019,
+%   \url{http://ftp.math.purdue.edu/mirrors/ctan.org/macros/latex/contrib/l3kernel/interface3.pdf}
+% \bibitem{xparse} The \LaTeX3 Project Team {\em The \pkg{xparse} package}, 2020,
+%   \url{http://ftp.math.purdue.edu/mirrors/ctan.org/macros/latex/contrib/l3packages/xparse.pdf}
+% \bibitem{user-erw} \url{https://tex.stackexchange.com/users/112708/erwann?tab=questions}
+% \end{thebibliography}
+% 
+% \changes{\docvers{1}{0}}{2020/03/08}{Initial version}
+%   \PrintChanges
+%   \PrintIndex
+%   \clearpage
+%   \StopEventually{
+%   ^^A   \PrintChanges
+%   ^^A   \PrintIndex
+% }
+% \end{documentation}
+% \begin{implementation}
+%   \part{Implementation}\label{part:impl}
+%   
+%   \iffalse
+%<*package>   
+%   \fi
+%   \section{Opening}
+%    \begin{macrocode}
+%<@@=templ>      
+\ExplSyntaxOn
+%    \end{macrocode}
+% \section{\texttt{msg}}
+%    \begin{macrocode}
+\msg_new:nnn {@@}{ generic }{#1}
+\msg_new:nnn {@@}{ iow }{#1~is~closed~can't~write}
+\msg_new:nnn {@@}{ keyonly }{#1~does~not~take~values;~keyval~is~#2}
+\msg_new:nnn {@@}{ keywrong }{#1~does~not~recognize~key~#2}
+\msg_new:nnn {@@}{ notset }{#1~not~set}
+%    \end{macrocode}
+% \section{\texttt{option}}
+% \section{Front-end}\label{impl:frontend}
+% \leavevmode
+% \refstepcounter{subsection}
+% \docsetnameref{\cs{TemplOption}}
+% \label{usage:cs:option}
+% \addcontentsline{toc}{subsection}{\protect\numberline{\thesubsection}\cs{TemplOption}}
+% \begin{function}{\TemplOption}
+%   \begin{syntax}
+%     \cs{TemplOption}\Arg{\doccceptkvl}
+%   \end{syntax}where the keys are:
+%   \nameref{usage:opt:i},
+%   \nameref{usage:opt:ii},
+%   \nameref{usage:opt:iii}
+%   \begin{description}
+%   \item[Semantics] Sets those keys which are defined with the values supplied, if applicable, other with their defaults.
+%   \end{description}
+%    \begin{macrocode}
+\NewDocumentCommand{ \TemplOption }
+{ m }
+{ 
+  \keys_set:nn{ @@ }{#1} 
+}
+%    \end{macrocode}
+% \end{function}
+%    \begin{macrocode}
+\keys_define:nn { @@ }
+{
+%    \end{macrocode}
+% \leavevmode
+% \refstepcounter{subsubsection}
+% \docsetnameref{Key}
+% \label{usage:opt:i}
+% \addcontentsline{toc}{subsubsection}{\protect\numberline{\thesubsubsection}Key}
+% \DescribeOption{Key}
+% \begin{description}
+% \item[Semantics] TODO
+% \item[Syntax] TODO
+% \end{description}
+%    \begin{macrocode}
+Key .multichoices:nn = { A, B, C }
+{
+%^^A TODO
+},
+Key .default:n = { A },
+Key .initial:n = { A }
+%    \end{macrocode}
+%    \begin{macrocode}
+}
+%    \end{macrocode}
+% \section{Closing}
+%    \begin{macrocode}
+\ExplSyntaxOff
+%    \end{macrocode}
+% \end{implementation}
+% 
+% \iffalse
+%</package> 
+% \fi
+% \Finale
+\endinput
