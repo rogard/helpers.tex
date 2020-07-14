@@ -5,45 +5,51 @@
 %       \newcounter{encl}
 %       \input{EnclHelper}
 %       \EnclListOf{<entry>}{<listofnames>}                        
-%       \EnclNewItemLabel{<entry>|<kind>|<title>}     
+%       \EnclAddContentsLine*{<entry>|<kind>|<title>}     
+%       \EnclLabel{<entry>}{<label>}     
 %       \EnclAutoref{<entry>}{<suffix>}
-%
-%  Implem:
-%       <file>←lower case of <entry>
-%
-% Tested for:
-%       english
-%       french
 %
 % Credits:
 %       https://tex.stackexchange.com/questions/523671/bind-a-label-to-newwatermark-refactoring-macros-defined-with-newcommand
 %       https://tex.stackexchange.com/questions/524037/converting-an-argument-to-lower-case-in-expl3-context/524048?noredirect=1#comment1325909_524048
 %----------------------------------------------------
-%\documentclass{report}                          %TEST
-%\usepackage[english]{babel}                     %TEST
-%\usepackage{etoolbox}
-%\usepackage[T1]{fontenc}                        %TEST
-%\usepackage{mwe}                                %TEST
 \usepackage{pdfpages}
 \usepackage{refcount}
-%\usepackage[titles]{tocloft}
 \usepackage{tocloft}
 \usepackage{xparse}
 \usepackage{hyperref}
 
-  \ExplSyntaxOn
+\ExplSyntaxOn
 
 \ifcsundef{EnclHelperFlag}
 {
   
-% BACKEND
+% ERW-L3
+\cs_new_protected:Nn \__erw_addcontentsline:nnn % add to erw-l3
+{
+  \addcontentsline{#1}{#2}{#3}
+}
+\cs_generate_variant:Nn \__erw_addcontentsline:nnn {enn}
 
+\cs_new:Nn\__erw_autoref:n % todo erw-l3
+{
+  \autoref{#1}
+}
+\cs_generate_variant:Nn \__erw_autoref:n{e}
 \cs_new:Nn\__erw_bgetpagerefnumber:n
 {
   % https://tex.stackexchange.com/a/450783/112708
   \getpagerefnumber{\detokenize{#1}}
 }
-\cs_new_protected:Nn \__erw_encl_newlistof:nnn
+
+\cs_new:Nn\__erw_label:n
+{
+  \label{#1}
+}
+\cs_generate_variant:Nn \__erw_label:n{e}
+
+% BACKEND
+\cs_new_protected:Nn \__erw_encl_newlistof:nnn %todo erw-l3
 {%
   \newlistof{#1} % entry
   {#2} % ext
@@ -56,25 +62,20 @@
  }
 \cs_generate_variant:Nn \__erw_encl_newlistof:nnnn { nne }
 \cs_new_protected:Nn \__erw_encl_listof:n
-{\exp_args:Nf \use:c{\tl_trim_spaces:n{listof#1}}}
-\cs_new:Nn\__erw_encl_new_item_:nnn
-{%
+{
+  \exp_args:Nf \use:c{\tl_trim_spaces:n{listof#1}}
+}
+
+\cs_new:Nn\__erw_encl_addcontentsline:nnn
+{
+
   \refstepcounter{encl}
-  \addcontentsline
-  {#1} % file
-  {#2} % kind
-  {\theencl.~\detokenize{#3}} % title
+  \__erw_addcontentsline:enn
+%  {\str_lower_case:n{#1}}  % file
+  {#1}  % file
+  {#2}  % kind
+  {\theencl.~\detokenize{#3}}
 }
-\cs_generate_variant:Nn \__erw_encl_new_item_:nnn{e}
-\cs_new:Nn\__erw_encl_new_item:nnn
-{
-  \__erw_encl_new_item_:enn{\str_lower_case:n{#1}}{#2}{#3}
-}
-\cs_new:Nn\__erw_encl_label_:n
-{
-  \label{#1}
-}
-\cs_generate_variant:Nn \__erw_encl_label_:n{e}
 
 \cs_new:Nn\__erw_encl_label_inp:nn
 {
@@ -86,42 +87,51 @@
 }
 \cs_new:Nn\__erw_encl_label:nnnn
 {
-  \__erw_encl_label_:e{\__erw_encl_label_inp:nnnn{#1}{#2}{#3}{#4}}
+  \__erw_label:e{\__erw_encl_label_inp:nnnn{#1}{#2}{#3}{#4}}
 }
 \cs_generate_variant:Nn \__erw_encl_label:nn {e}
-\cs_new:Nn\__erw_encl_autoref_:n
-{
-  \autoref{#1}
-}
-\cs_generate_variant:Nn \__erw_encl_autoref_:n{e}
 \cs_new:Nn\__erw_encl_autoref:nn
 {
-  \__erw_encl_autoref_:e{\__erw_encl_label_inp:nn{#1}{#2}}
+  \__erw_autoref:e{\tl_trim_spaces:n{#1:#2}}
+%  \__erw_autoref:e{\__erw_encl_label_inp:nn{#1}{#2}}
 }
 
  %FRONT END
 
 \NewDocumentCommand{\EnclNewListOf}{omm}
 {
-    \__erw_encl_newlistof:nnen { #1 } { #2 } { \str_lower_case:n { #2 } } { #3 }
+  \__erw_encl_newlistof:nnen { #1 } { #2 }
+  {
+    % \str_lower_case:n { #2 }
+    #2
+  } { #3 }
 }
-\NewDocumentCommand{\EnclListOf}{m}% \todo why must come after begin{document}?
+\NewDocumentCommand{\EnclListOf}{m}
 {
+  % \todo why must come after begin{document}?
+  % 
   \__erw_encl_listof:n{#1}
 }
-\NewDocumentCommand{\EnclNewItemLabel}
+
+\NewDocumentCommand{\EnclAddContentsLine} 
 {
   s
   O{|}
 %  >{\SplitArgument{2}{#2}}m\todo
   >{\SplitArgument{2}{|}}m
-  m                             
 }
 {
-  \IfBooleanF{#1}{\clearpage}
-  \__erw_encl_new_item:nnn#3
-  \__erw_encl_label:nnnn#3{#4}
+  \IfBooleanT{#1}
+  {\__erw_addcontentsline:nnn#3}
+  {\__erw_encl_addcontentsline:nnn#3}
 }
+
+\NewDocumentCommand{\EnclLabel}
+{mm}
+{
+  \__erw_label:nn{#1}{#2}
+}
+
 \NewDocumentCommand{\EnclAutoref}
 {mm}
 {\__erw_encl_autoref:nn{#1}{#2}}
@@ -134,27 +144,3 @@
 }
 
 \ExplSyntaxOff
-
-%\newcounter{encl} 				%TEST
-%\EnclNewListOf{Baz}  				%TEST
-%{Baz}                                           %TEST
-%\EnclNewListOf{Foo}  				%TEST
-%{Foo}                                           %TEST
-%\begin{document} 				%TEST
-%\tableofcontents 				%TEST
-%%                                               %TEST
-%\part{Text}                                   %TEST
-%Refer to \EnclAutoref{Baz}{a},                  %TEST
-%\EnclAutoref{Foo}{b}                            %TEST
-%and \EnclAutoref{Foo}{c}                        %TEST
-%\part{Encl}                                   %TEST
-%\EnclListOf{Baz}                                %TEST
-%\EnclListOf{Foo}                                %TEST
-%\clearpage                                      %TEST
-%\EnclNewItemLabel{Baz|section|Image~A}{a}       %TEST
-%\includepdf{example-image-a}                    %TEST
-%\EnclNewItemLabel{Foo|section|Image~B}{b}       %TEST
-%\includepdf{example-image-b}                    %TEST
-%\EnclNewItemLabel*{Foo|section|Image~C}{c}      %TEST
-%\includepdf{example-image-c}                    %TEST
-%\end{document}                                  %TEST
