@@ -1,0 +1,38 @@
+%-----------------------------------------------------------------
+% Source:
+%       https://github.com/rogard/helpers.tex
+% Usage:
+%       \PhantomSection*[<file>]{<level>}{<title>}{<label>}
+%
+% Credits:
+%       TODO
+%-----------------------------------------------------------------
+\usepackage{etoolbox}
+\usepackage{xparse}
+
+  \ExplSyntaxOn
+
+\ifcsundef{PhantomSectionFlag}
+{
+  
+  \ProvideDocumentCommand\PhantomSection{sO{toc}mmm}
+  {
+    \leavevmode
+    \IfBooleanTF{#1}
+    {\addcontentsline{#2}{#3}{#4}}
+    {
+      \refstepcounter{#3}
+      \addcontentsline{#2}{#3}{\protect\numberline{\use:c{the#3}}#4}
+    }
+%    \docsetnameref{#4} % TODO
+    \label{#5}
+  }
+  
+}
+{
+
+  % do nothing
+
+}
+
+  \ExplSyntaxOff
