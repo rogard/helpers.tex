@@ -1,0 +1,82 @@
+%--------------------------------------------------------------------------------
+% Source:
+%       https://github.com/rogard/helpers.tex
+% Usage:
+%       \HelperBindOptions
+%       {<\cmd>}
+%       {<options>}
+%       \HelperBindOptions*
+%	[<opt>]
+% 	{<arg>}
+% Side effect:
+%	\cmd[options,opt]{arg}
+%--------------------------------------------------------------------------------
+\documentclass{report}
+\usepackage{etoolbox}
+% \usepackage{mwe} % TEST
+\usepackage{pdfpages}
+\usepackage{xparse}
+\ExplSyntaxOn
+
+\ifcsundef{HelperBindOptionsFlag}
+{
+
+% BACKEND
+
+\tl_new:N \__erw_bind_options_cs
+\seq_new:N \__erw_bind_options_op
+\cs_new_protected:Nn \__erw_bind_options:nn
+{
+   \use:x{\__erw_bind_options_cs[#1]{#2}}
+}
+\cs_generate_variant:Nn \__erw_bind_options:nn {e}
+
+\NewDocumentCommand{\__erw_bind_options_set}
+{mm}
+{
+\tl_set:Nn \__erw_bind_options_cs{\exp_not:N#1}
+\seq_set_split:Nnn \__erw_bind_options_op {,} {#2}
+%TEST\seq_use:Nn \__erw_bind_options_op {,}
+}
+
+\NewDocumentCommand{\__erw_bind_options}
+{om}
+{
+  \seq_set_eq:NN \l_tmpa_seq \__erw_bind_options_op
+  \IfValueT{#1}{
+    \seq_put_right:Nn \l_tmpa_seq {#1}
+  }
+  \__erw_bind_options:en{\seq_use:Nn\l_tmpa_seq{,}}{#2}
+}
+
+%FRONTEND
+
+\NewDocumentCommand\HelperBindOptions{s}
+{
+  \IfBooleanTF{#1}
+  {\exp_not:n\__erw_bind_options_set}
+  {\exp_not:n\__erw_bind_options}
+}
+
+  \def\HelperBindOptionsFlag{}
+
+}
+{
+  % do nothing
+}
+
+\ExplSyntaxOff
+%% TEST (continued) 	>>
+%\begin{document}
+%
+%\HelperBindOptions
+%{\includepdf}
+%{
+%  angle=90,
+%  scale=0.85
+%}
+%
+%\HelperBindOptions*{example-image-a}
+%\HelperBindOptions*[pages={1}]{example-image-b}
+%\end{document}
+%% 			<<
