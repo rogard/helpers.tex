@@ -58,10 +58,10 @@
   
 %FRONTEND
 
-\NewDocumentCommand\BindOptionsSet{D++{Default}mO{}}
+\NewDocumentCommand\HelperBindOptionsSet{D++{Default}mO{}}
 {\__erw_bind_options_set:nNn{#1}#2{#3}}
 
-\NewDocumentCommand\BindOptionsEval{D++{Default}O{}}
+\NewDocumentCommand\HelperBindOptionsEval{D++{Default}O{}}
 {\__erw_bind_options_eval:nn{#1}{#2}}
 
   \def\HelperBindOptionsFlag{}
@@ -75,11 +75,11 @@
 %% TEST (continued) 	>>
 %\begin{document}
 %
-%%\BindOptionsSet{\includepdf}[angle=45, scale=0.85]
-%%\BindOptionsEval[scale=0.25]{example-image-a}
+%%\HelperBindOptionsSet{\includepdf}[angle=45, scale=0.85]
+%%\HelperBindOptionsEval[scale=0.25]{example-image-a}
 %
-%\BindOptionsSet+Pdf+{\includepdf}[angle=45, scale=0.85]
-%\BindOptionsEval+Pdf+[scale=0.25]{example-image-a}
+%\HelperBindOptionsSet+Pdf+{\includepdf}[angle=45, scale=0.85]
+%\HelperBindOptionsEval+Pdf+[scale=0.25]{example-image-a}
 %
 %\end{document}
 %%			<<
