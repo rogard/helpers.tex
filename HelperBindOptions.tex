@@ -16,8 +16,8 @@
 %--------------------------------------------------------------------------------
 \documentclass{report}
 \usepackage{etoolbox}
-\usepackage{mwe} % TEST
-\usepackage{pdfpages} % TEST
+%\usepackage{mwe} % TEST
+%\usepackage{pdfpages} % TEST
 \usepackage{xparse}
 \ExplSyntaxOn
 
@@ -55,15 +55,14 @@
   \__erw_bind_options_concat:nnN{#1}{#2}\l_tmpc_seq
   \__erw_bind_options_eval:cx{__erw_bind_options_#1_cmd}{\seq_use:Nn \l_tmpc_seq{,}}
 }
+  
+%FRONTEND
+
 \NewDocumentCommand\BindOptionsSet{D++{Default}mO{}}
 {\__erw_bind_options_set:nNn{#1}#2{#3}}
 
 \NewDocumentCommand\BindOptionsEval{D++{Default}O{}}
 {\__erw_bind_options_eval:nn{#1}{#2}}
-
-\def\__Foo{angle=90, scale=0.85}
-  
-%FRONTEND
 
   \def\HelperBindOptionsFlag{}
 
@@ -73,14 +72,14 @@
 }
 
 \ExplSyntaxOff
-% TEST (continued) 	>>
-\begin{document}
-
-%\BindOptionsSet{\includepdf}[angle=45, scale=0.85]
-%\BindOptionsEval[scale=0.25]{example-image-a}
-
-\BindOptionsSet+Pdf+{\includepdf}[angle=45, scale=0.85]
-\BindOptionsEval+Pdf+[scale=0.25]{example-image-a}
-
-%			<<
+%% TEST (continued) 	>>
+%\begin{document}
+%
+%%\BindOptionsSet{\includepdf}[angle=45, scale=0.85]
+%%\BindOptionsEval[scale=0.25]{example-image-a}
+%
+%\BindOptionsSet+Pdf+{\includepdf}[angle=45, scale=0.85]
+%\BindOptionsEval+Pdf+[scale=0.25]{example-image-a}
+%
+%%			<<
 \end{document}
