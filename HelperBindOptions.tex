@@ -18,11 +18,11 @@
 % License:
 %	LaTeX Project Public License v1.3c or later
 %--------------------------------------------------------------------------------
-\documentclass{report} % TEST
+%\documentclass{report}% TEST
 \usepackage{erw-l3}
 \usepackage{etoolbox}
-\usepackage{pdfpages} % TEST
-\usepackage{mwe} % TEST
+%\usepackage{pdfpages}% TEST
+%\usepackage{mwe}% TEST
 \usepackage{xparse}
 \ExplSyntaxOn
 
@@ -100,33 +100,33 @@
 }
 
 \ExplSyntaxOff
-% TEST (continued) 	>>
-\begin{document}
-
-\NewDocumentCommand\Test{som}
-{
-  \noindent Invoked Test with\IfBooleanF{#1}{out}~star;
-  options: #2;
-  and mandatory arguments: #3.\par
-}
-\ExplSyntaxOn
-
-\exp_args:NNx
-\prop_gset_from_keyval:Nn \l_tmpa_prop{foo=A, bar=B}
-
-\ExplSyntaxOff
-
-% Example # 1
-\HelperBindOptionsSet+Foo+{\Test}[foo=A, bar=B]
-\HelperBindOptionsEval+Foo+[foo=a,baz=C]{qux}
-\HelperBindOptionsSet+Bar+{\Test*}[foo=A, bar=B]
-\HelperBindOptionsEval+Bar+[foo=a,baz=C]{qux}
-
-% Example # 2
-\HelperBindOptionsSet+Pdf+{\includepdf}[angle=45]
-\HelperBindOptionsEval+Pdf+[scale=0.25]{example-image-a}
-%\includepdf[angle=45]{example-image-a}
-
-\ExplSyntaxOff
-\end{document}
-%			<<
+%% TEST (continued) 	>>
+%\begin{document}
+%
+%\NewDocumentCommand\Test{som}
+%{
+%  \noindent Invoked Test with\IfBooleanF{#1}{out}~star;
+%  options: #2;
+%  and mandatory arguments: #3.\par
+%}
+%\ExplSyntaxOn
+%
+%\exp_args:NNx
+%\prop_gset_from_keyval:Nn \l_tmpa_prop{foo=A, bar=B}
+%
+%\ExplSyntaxOff
+%
+%% Example # 1
+%\HelperBindOptionsSet+Foo+{\Test}[foo=A, bar=B]
+%\HelperBindOptionsEval+Foo+[foo=a,baz=C]{qux}
+%\HelperBindOptionsSet+Bar+{\Test*}[foo=A, bar=B]
+%\HelperBindOptionsEval+Bar+[foo=a,baz=C]{qux}
+%
+%% Example # 2
+%\HelperBindOptionsSet+Pdf+{\includepdf}[angle=45]
+%\HelperBindOptionsEval+Pdf+[scale=0.25]{example-image-a}
+%%\includepdf[angle=45]{example-image-a}
+%
+%\ExplSyntaxOff
+%\end{document}
+%%			<<
