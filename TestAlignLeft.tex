@@ -1,0 +1,31 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[french]{babel}
+\usepackage{datetime2}
+\DTMsetup{datesep=/, style=ddmmyyyy}
+\usepackage[type=upperleftT,unit=cm]{fgruler}
+\usepackage[T1]{fontenc}
+\input{HelperAutoWidth}
+\input{HelperAlignLeft}
+
+\begin{document}
+\pagestyle{empty}
+
+\noindent\frame{\HelperAutoWidth[l]{%
+  Jacques Dupont\\
+  Boulevard de Ménilmontant\\
+  75020 Paris 20è}}\\
+\vspace{\baselineskip}\par
+\HelperAlignLeft{
+  \frame{\HelperAutoWidth[l]{
+      Centre~Des~Impôts
+      \\39~Rue~Godefroy~Cavaignac
+      \\75011~Paris~11è
+    }}
+}\par
+\vspace{\baselineskip}
+\HelperAlignLeft{
+  \frame{À~Paris,~le~\DTMdate{2021-04-01}.}
+}
+\par
+
+\end{document}

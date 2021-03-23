@@ -1,0 +1,29 @@
+%------------------------------------------------------------
+% Source:
+%       https://github.com/rogard/helpers.tex
+% Usage:
+%       \input{HelperAutoWidth}
+%       \HelperAutoWidth[r]{<multi-line-text>}
+% ------------------------------------------------------------
+%\documentclass[draft]{report}                          % TEST
+\usepackage{etoolbox}
+\usepackage{xparse}
+
+\ExplSyntaxOn
+\ifcsundef{HelperAutoWidthFlag}
+{
+
+  \NewExpandableDocumentCommand{\HelperAutoWidth}
+  {
+    O{l}  % align
+    +m    % text
+  }
+  {\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+
+  \def\HelperAutoWidthFlag{}
+}
+{
+  % do nothing
+}
+
+\ExplSyntaxOff

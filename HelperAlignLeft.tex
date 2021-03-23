@@ -1,0 +1,28 @@
+\usepackage{xparse}
+\usepackage{calc}
+
+\ExplSyntaxOn
+
+\ifcsundef{HelperAlignLeftFlag}
+{
+  \NewDocumentCommand{\HelperAlignLeft}
+  {O{0.5\textwidth}+m}
+  {%
+    \group_begin: 
+    \dim_set:Nn\l_tmpa_dim{#1}
+    \tl_set:Nn \l_tmpb_tl{#2}
+    \settowidth\l_tmpb_dim{\widthof{\l_tmpb_tl}}
+    \dim_add:Nn \l_tmpa_dim{\l_tmpb_dim}
+    \noindent
+      \makebox[\l_tmpa_dim]
+      [r]
+      {#2}
+    \group_end:
+  }
+
+  \def\HelperAlignLeftFlag{}
+}
+{
+  % do nothing
+}
+\ExplSyntaxOff

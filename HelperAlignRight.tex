@@ -1,0 +1,25 @@
+% -------------------------------------------------------------------
+% Source:
+% 	https://github.com/rogard/helpers.tex
+% Usage:
+% 	\input{HelperAlignRight}
+% 	\HelperAlignRight[<width>]{<par>}
+% --------------------------------------------------------------------
+\usepackage{etoolbox}
+\usepackage{xparse}
+
+\ExplSyntaxOn
+\ifcsundef{HelperAlignRightFlag}
+{
+
+  \NewDocumentCommand{\HelperAlignRight}{O{0.8\textwidth} +m}
+  {\noindent\makebox[#1][r]{#2}}
+
+  \def\HelperAlignRightFlag{}
+
+}
+{
+  % do nothing
+}
+
+\ExplSyntaxOff
