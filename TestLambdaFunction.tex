@@ -1,0 +1,15 @@
+%-------------------------------------------------------
+% Source:
+%       https://github.com/rogard/helpers.tex
+%-------------------------------------------------------
+\documentclass{report}
+\input{LambdaFunction}
+
+\begin{document}
+
+\LambdaFunction{#1, world!}{hello}
+
+\LambdaFunction[2]
+{#1, world! What's #2?}{hello}{next}
+
+\end{document}
