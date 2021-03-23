@@ -1,0 +1,22 @@
+% -------------------------------------------------------------------
+% Source:
+% 	https://github.com/rogard/helpers.tex
+% --------------------------------------------------------------------
+\documentclass{article}
+\input{prop_ccsafe}
+
+\begin{document}
+
+\ExplSyntaxOn
+\erw_prop_ccsafe_new:N \l_tmpa_eprop
+\seq_set_from_clist:Nn \l_tmpa_seq { key = smth }
+\erw_prop_ccsafe_set_from_keyval:Nn \l_tmpa_eprop { key = smth }
+\erw_prop_ccsafe_to_seq:NN \l_tmpa_eprop \l_tmpb_seq
+
+\tl_set:Nf \l_tmpa_tl { \seq_use:Nn \l_tmpa_seq { } }
+\tl_set:Nf \l_tmpb_tl { \seq_use:Nn \l_tmpb_seq { } }
+
+\tl_if_eq:NNTF \l_tmpa_tl \l_tmpb_tl { TRUE } { FALSE }
+\ExplSyntaxOff
+
+\end{document}
