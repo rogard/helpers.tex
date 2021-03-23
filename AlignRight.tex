@@ -2,20 +2,20 @@
 % Source:
 % 	https://github.com/rogard/helpers.tex
 % Usage:
-% 	\input{HelperAlignRight}
-% 	\HelperAlignRight[<width>]{<par>}
+% 	\input{AlignRight}
+% 	\AlignRight[<width>]{<par>}
 % --------------------------------------------------------------------
 \usepackage{etoolbox}
 \usepackage{xparse}
 
 \ExplSyntaxOn
-\ifcsundef{HelperAlignRightFlag}
+\ifcsundef{AlignRightFlag}
 {
 
-  \NewDocumentCommand{\HelperAlignRight}{O{0.8\textwidth} +m}
+  \NewDocumentCommand{\AlignRight}{O{0.8\textwidth} +m}
   {\noindent\makebox[#1][r]{#2}}
 
-  \def\HelperAlignRightFlag{}
+  \def\AlignRightFlag{}
 
 }
 {

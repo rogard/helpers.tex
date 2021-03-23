@@ -3,9 +3,9 @@
 
 \ExplSyntaxOn
 
-\ifcsundef{HelperAlignLeftFlag}
+\ifcsundef{AlignLeftFlag}
 {
-  \NewDocumentCommand{\HelperAlignLeft}
+  \NewDocumentCommand{\AlignLeft}
   {O{0.5\textwidth}+m}
   {%
     \group_begin: 
@@ -20,7 +20,7 @@
     \group_end:
   }
 
-  \def\HelperAlignLeftFlag{}
+  \def\AlignLeftFlag{}
 }
 {
   % do nothing

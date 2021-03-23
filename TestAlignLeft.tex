@@ -4,26 +4,26 @@
 \DTMsetup{datesep=/, style=ddmmyyyy}
 \usepackage[type=upperleftT,unit=cm]{fgruler}
 \usepackage[T1]{fontenc}
-\input{HelperAutoWidth}
-\input{HelperAlignLeft}
+\input{AutoWidth}
+\input{AlignLeft}
 
 \begin{document}
 \pagestyle{empty}
 
-\noindent\frame{\HelperAutoWidth[l]{%
+\noindent\frame{\AutoWidth[l]{%
   Jacques Dupont\\
   Boulevard de Ménilmontant\\
   75020 Paris 20è}}\\
 \vspace{\baselineskip}\par
-\HelperAlignLeft{
-  \frame{\HelperAutoWidth[l]{
+\AlignLeft{
+  \frame{\AutoWidth[l]{
       Centre~Des~Impôts
       \\39~Rue~Godefroy~Cavaignac
       \\75011~Paris~11è
     }}
 }\par
 \vspace{\baselineskip}
-\HelperAlignLeft{
+\AlignLeft{
   \frame{À~Paris,~le~\DTMdate{2021-04-01}.}
 }
 \par

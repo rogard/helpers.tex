@@ -2,11 +2,11 @@
 % Source:
 %       https://github.com/rogard/helpers.tex
 % Usage:
-% 	\HelperBindOptionsSet
+% 	\BindOptionsSet
 %		+<tag>+
 %       	{<\cmd>}
 %       	[<options>]
-%       \HelperBindOptionsEval
+%       \BindOptionsEval
 %		+<tag>+
 %		[<opt>]
 % Side effect:
@@ -26,7 +26,7 @@
 \usepackage{xparse}
 \ExplSyntaxOn
 
-\ifcsundef{HelperBindOptionsFlag}
+\ifcsundef{BindOptionsFlag}
 {
 
 % BACKEND
@@ -70,12 +70,12 @@
   
 %FRONTEND
 
-\NewDocumentCommand\HelperBindOptionsSet{D++{Default}mO{}}
+\NewDocumentCommand\BindOptionsSet{D++{Default}mO{}}
 {
   \__erw_bind_options_set:nne{#1}{#2}{#3}
 }
 
-\NewDocumentCommand\HelperBindOptionsEval{D++{Default}o}
+\NewDocumentCommand\BindOptionsEval{D++{Default}o}
 {
   \prop_set_eq:Nc \l_tmpa_prop {g__erw_bind_options_#1_opt}
   \IfValueT{#2}
@@ -93,7 +93,7 @@
   {\seq_use:Nn \l_tmpa_seq{,}}  
 }
 
-  \def\HelperBindOptionsFlag{}
+  \def\BindOptionsFlag{}
 }
 {
   % do nothing
@@ -117,14 +117,14 @@
 %\ExplSyntaxOff
 %
 %% Example # 1
-%\HelperBindOptionsSet+Foo+{\Test}[foo=A, bar=B]
-%\HelperBindOptionsEval+Foo+[foo=a,baz=C]{qux}
-%\HelperBindOptionsSet+Bar+{\Test*}[foo=A, bar=B]
-%\HelperBindOptionsEval+Bar+[foo=a,baz=C]{qux}
+%\BindOptionsSet+Foo+{\Test}[foo=A, bar=B]
+%\BindOptionsEval+Foo+[foo=a,baz=C]{qux}
+%\BindOptionsSet+Bar+{\Test*}[foo=A, bar=B]
+%\BindOptionsEval+Bar+[foo=a,baz=C]{qux}
 %
 %% Example # 2
-%\HelperBindOptionsSet+Pdf+{\includepdf}[angle=45]
-%\HelperBindOptionsEval+Pdf+[scale=0.25]{example-image-a}
+%\BindOptionsSet+Pdf+{\includepdf}[angle=45]
+%\BindOptionsEval+Pdf+[scale=0.25]{example-image-a}
 %%\includepdf[angle=45]{example-image-a}
 %
 %\ExplSyntaxOff
