@@ -3,18 +3,17 @@
 %       https://github.com/rogard/helpers.tex
 % Credit:
 %       https://tex.stackexchange.com/a/188053/112708
-% Author:
-%       Look up Credit
+% Also see:
+%	\pkg{ccool}
 %-------------------------------------------------------
-
 \usepackage{etoolbox}
 \usepackage{expl3}
 \usepackage{xparse}
 
-\ifcsundef{LambdaFunctionFlag}
-{
-
   \ExplSyntaxOn
+
+\ifcsundef{HelperLambdaFunctionFlag}
+{
 
 
   % #1: Number of arguments
@@ -39,7 +38,7 @@
     \lambda_insert_lambda:nn { #1 } { #2 }
   }
 
-  \def\LambdaFunctionFlag{}
+  \def\HelperLambdaFunctionFlag{}
 
 }
 {
@@ -47,11 +46,3 @@
 }
 
 \ExplSyntaxOff
-
-%\begin{document}
-%
-%\LambdaFunction{#1, world!}{hello}
-%
-%\LambdaFunction[2]{#1, world! What's #2?}{hello}{next}
-%
-%\end{document}
