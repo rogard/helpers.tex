@@ -4,6 +4,10 @@
 % - Released under the LaTeX Project Public License v1.3c or later
 % - See http://www.latex-project.org/lppl.txt
 % -----------------------------------------------------------------
+% Usage:
+% - \CounterSet{ new = <infix> }
+% - \CounterIncrement{<infix>}
+% - \CounterUse{<infix>}
 \ExplSyntaxOn
 \tl_if_exist:NTF
 \g__erw_counter_flag_tl
@@ -11,7 +15,7 @@
 {%
   \cs_new:Npn \__erw_counter_name:n
   %    type   - semantics
-  #1 % string - id infix
+  #1 % string - <infix>
   {g_#1_int}
   \keys_define:nn{__erw_counter}
   {%
@@ -21,13 +25,13 @@
   {\keys_set:nn{__erw_counter}{#1}}
   \cs_new_protected:Npn \__erw_counter_increment:n
   %    type   - semantics
-  #1 % string - id infix
+  #1 % string - <infix>
   {%
     \int_incr:c{\__erw_counter_name:n{#1}}
   }
   \cs_new:Npn \__erw_counter_use:n
   %    type   - semantics
-  #1 % string - id infix
+  #1 % string - <infix>
   {%
     \int_use:c{\__erw_counter_name:n{#1}}
   }
