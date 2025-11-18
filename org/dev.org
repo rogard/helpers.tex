@@ -1,5 +1,4 @@
 * tex
-
 ** license
 
 #+name: tex-license
@@ -13,31 +12,30 @@
 #+end_src
 
 ** counter
-:PROPERTIES:
-:header-args: :tangle "../tex/counter.tex"
-:END:
+*** usage
 
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-usage
 #+begin_src latex
   % Usage:
-  % - \CounterSet{ new = <infix> }
-  % - \CounterIncrement{<infix>}
-  % - \CounterUse{<infix>}
+  % \CounterSetup{ new = <name> }
+  % \CounterIncrement{<name>}
+  % \CounterUse{<name>}
+  % \CounterLabel{<name>}{<label>}
+  % \CounterRef{<name>}{<label>}
 #+end_src
-
+*** state
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-implem
+#+header: :noweb-ref tex-counter-state
 #+begin_src latex
   \cs_new:Npn \__erw_counter_name:n
-  %    type   - semantics
-  #1 % string - <infix>
-  {g_#1_int}
+  #1 % string - <name>
+  {g__erw_counter_#1_int}
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-implem
+#+header: :noweb-ref tex-counter-state
 #+begin_src latex
   \keys_define:nn{__erw_counter}
   {%
@@ -46,40 +44,172 @@
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-implem
+#+header: :noweb-ref tex-counter-state
 #+begin_src latex
-  \ProvideDocumentCommand{\CounterSet}{m}
-  {\keys_set:nn{__erw_counter}{#1}}
+  \ProvideDocumentCommand{\CounterSetup}{m}
+  { \keys_set:nn{__erw_counter}{#1} }
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-implem
+#+header: :noweb-ref tex-counter-state
 #+begin_src latex
   \cs_new_protected:Npn \__erw_counter_increment:n
   %    type   - semantics
-  #1 % string - <infix>
+  #1 % string - <name>
   {%
     \int_incr:c{\__erw_counter_name:n{#1}}
   }
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-implem
+#+header: :noweb-ref tex-counter-state
 #+begin_src latex
   \cs_new:Npn \__erw_counter_use:n
   %    type   - semantics
-  #1 % string - <infix>
+  #1 % string - <name>
   {%
     \int_use:c{\__erw_counter_name:n{#1}}
   }
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-implem
+#+header: :noweb-ref tex-counter-state
  #+begin_src latex
   \ProvideDocumentCommand{\CounterIncrement}{m}{\__erw_counter_increment:n{#1}}
   \ProvideDocumentCommand{\CounterUse}{m}{\__erw_counter_use:n{#1}}
 #+end_src
+
+*** reference
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \iow_new:N \g__erw_counter_aux_iow
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \str_const:Ne\c__erw_counter_aux_str
+  {\c_sys_jobname_str .erw.counter.aux}
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \AtBeginDocument
+  {
+    \file_if_exist:nTF { \c__erw_counter_aux_str }
+    {
+      \file_input:n { \c__erw_counter_aux_str }
+    }
+    {
+      \exp_args:NNe
+      \iow_open:Nn \g__erw_counter_aux_iow { \c__erw_counter_aux_str }
+    }
+  }
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \AtEndDocument
+  {
+    \iow_close:N \g__erw_counter_aux_iow
+  }
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \cs_new_protected:Npn \__erw_counter_write:nnn
+  #1 % <value>
+  #2 % <name>
+  #3 % <label>
+  {
+    \iow_now:Nx \g__erw_counter_aux_iow
+    {
+      \token_to_str:N \ExplSyntaxOn
+      \token_to_str:N \__erw_counter_set:nnn { #2 }{ #3 }{ #1 }
+      \token_to_str:N \ExplSyntaxOff
+    }
+  }
+  \cs_generate_variant:Nn \__erw_counter_write:nnn{e}
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \cs_new_protected:Npn \__erw_counter_write:nn
+  #1 % <name>
+  #2 % <label>
+  {%
+    \__erw_counter_write:enn{ \__erw_counter_use:n{ #1 } }
+    { #1 }
+    { #2 }
+  }
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \cs_new:Npn\__erw_counter_label:nn
+  #1 % <name>
+  #2 % <label>
+  {g__erw_counter_label_#1_#2_tl}
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \cs_new_protected:Npn \__erw_counter_set:nnn
+  #1 % infix
+  #2 % label
+  #3 % value
+  {%
+    \exp_args:Ne
+    \tl_gset:cn { \__erw_counter_label:nn{ #1 }{ #2 } } { #3 }
+  }
+  \cs_generate_variant:Nn\__erw_counter_set:nnn{e}
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \cs_new:Npn \__erw_counter_ref:nn
+  #1 % infix
+  #2 % label
+  {%
+    \tl_if_exist:cTF { \__erw_counter_label:nn{ #1 }{ #2 } }
+    { \tl_use:c { \__erw_counter_label:nn{ #1 }{ #2 } } }
+    { /!\textbackslash{}Compile~one~more~time/!\textbackslash }
+  }
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \ProvideDocumentCommand{\CounterLabel}{mm}
+  % <name>
+  % <label>
+  {%
+    \__erw_counter_write:nn { #1 }{ #2 }
+  }
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-reference
+#+begin_src latex
+  \ProvideDocumentCommand{\CounterRef}{mm}
+  {
+    \__erw_counter_ref:nn { #1 }{ #2 }
+  }
+#+end_src
+
+*** main
+:PROPERTIES:
+:header-args: :tangle "../tex/counter.tex"
+:END:
 
 #+header: :noweb yes
 #+begin_src latex
@@ -90,8 +220,54 @@
   \g__erw_counter_flag_tl
   {\c_empty_tl}
   {%
-    <<tex-counter-implem>>
+    <<tex-counter-state>>
+    <<tex-counter-reference>>
     \tl_new:N\g__erw_counter_flag_tl
   }
   \ExplSyntaxOff
+#+end_src
+*** example
+:PROPERTIES:
+:header-args: :tangle "../tex/example-counter.tex"
+:END:
+
+#+header: :tangle no
+#+header: :noweb-ref tex-example-preamble
+#+begin_src latex
+  \ExplSyntaxOn
+  \file_input:n{./counter.tex}
+  \ExplSyntaxOff
+  \CounterSetup{ new = foo }
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-example-document
+#+begin_src latex
+  Initial value: \CounterUse{foo}
+
+  Final value: \CounterRef{foo}{final}
+
+  \CounterIncrement{foo}
+  \CounterIncrement{foo}
+  \CounterIncrement{foo}
+
+  Value after 3 increments: \CounterUse{foo}
+
+  \CounterIncrement{foo}
+  \CounterIncrement{foo}
+
+  \CounterLabel{foo}{final}  
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  \documentclass{article}
+  <<tex-example-preamble>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  \begin{document}
+  <<tex-example-document>>
+  \end{document}
 #+end_src
