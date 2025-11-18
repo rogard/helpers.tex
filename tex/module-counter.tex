@@ -5,16 +5,19 @@
 % - See http://www.latex-project.org/lppl.txt
 % -----------------------------------------------------------------
 % Usage:
-% - \CounterSetup{ new = <name> }
-% - \CounterIncrement{<name>}
-% - \CounterUse{<name>}
-% - \CounterLabel{<name>}{<label>}
-% - \CounterRef{<name>}{<label>}
+% \CounterSetup{ new = <name> }
+% \CounterIncrement{<name>}
+% \CounterUse{<name>}
+% \CounterLabel{<name>}{<label>}
+% \CounterRef{<name>}{<label>}
 \ExplSyntaxOn
 \tl_if_exist:NTF
 \g__erw_counter_flag_tl
 {\c_empty_tl}
 {%
+  %
+  % --- state -------
+  % 
   \cs_new:Npn \__erw_counter_name:n
   #1 % string - <name>
   {g__erw_counter_#1_int}
@@ -38,6 +41,9 @@
   }
   \ProvideDocumentCommand{\CounterIncrement}{m}{\__erw_counter_increment:n{#1}}
   \ProvideDocumentCommand{\CounterUse}{m}{\__erw_counter_use:n{#1}}
+  %
+  % --- reference ---
+  %
   \iow_new:N \g__erw_counter_aux_iow
   \str_const:Ne\c__erw_counter_aux_str
   {\c_sys_jobname_str .erw.counter.aux}
@@ -108,6 +114,9 @@
   {
     \__erw_counter_ref:nn { #1 }{ #2 }
   }
+  %
+  % --- flag --------
+  %
   \tl_new:N\g__erw_counter_flag_tl
 }
 \ExplSyntaxOff
