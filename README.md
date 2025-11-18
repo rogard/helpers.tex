@@ -4,7 +4,9 @@ Reusable LaTeX3 modules.
 
 ## Usage
 ```latex
-\include{/path/to/module.tex}
+  \ExplSyntaxOn
+  \file_input:n{/path/to/repo/module-name.tex}
+  \ExplSyntaxOff
 ```
 
 ## Source
