@@ -25,6 +25,21 @@
   % \CounterLabel{<name>}{<label>}
   % \CounterRef{<name>}{<label>}
 #+end_src
+
+**** msg
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-msg
+#+begin_src latex
+  \msg_new:nnn{__erw_counter}{compile}{Compile~one~more~time}
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-msg
+#+begin_src latex
+  \msg_new:nnn{__erw_counter}{generic}{#1}
+#+end_src
+
 **** state
 
 #+header: :tangle no
@@ -182,8 +197,12 @@
   #2 % label
   {%
     \tl_if_exist:cTF { \__erw_counter_label:nn{ #1 }{ #2 } }
-    { \tl_use:c { \__erw_counter_label:nn{ #1 }{ #2 } } }
-    { /!\textbackslash{}Compile~one~more~time/!\textbackslash }
+    {%
+      \tl_use:c { \__erw_counter_label:nn{ #1 }{ #2 } }
+      \msg_warning:nnn { __erw_counter } { generic }
+      { To~reset~counter~references,~delete~\c__erw_counter_aux_str. }
+    }
+    { \msg_warning:nn{__erw_counter}{compile} }
   }
 #+end_src
 
@@ -221,6 +240,10 @@
   \g__erw_counter_flag_tl
   {\c_empty_tl}
   {%
+    %
+    % --- msg ---------
+    % 
+    <<tex-counter-msg>>
     %
     % --- state -------
     % 

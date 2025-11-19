@@ -16,6 +16,11 @@
 {\c_empty_tl}
 {%
   %
+  % --- msg ---------
+  % 
+  \msg_new:nnn{__erw_counter}{compile}{Compile~one~more~time}
+  \msg_new:nnn{__erw_counter}{generic}{#1}
+  %
   % --- state -------
   % 
   \cs_new:Npn \__erw_counter_name:n
@@ -101,8 +106,12 @@
   #2 % label
   {%
     \tl_if_exist:cTF { \__erw_counter_label:nn{ #1 }{ #2 } }
-    { \tl_use:c { \__erw_counter_label:nn{ #1 }{ #2 } } }
-    { /!\textbackslash{}Compile~one~more~time/!\textbackslash }
+    {%
+      \tl_use:c { \__erw_counter_label:nn{ #1 }{ #2 } }
+      \msg_warning:nnn { __erw_counter } { generic }
+      { To~reset~counter~references,~delete~\c__erw_counter_aux_str. }
+    }
+    { \msg_warning:nn{__erw_counter}{compile} }
   }
   \ProvideDocumentCommand{\CounterLabel}{mm}
   % <name>
