@@ -5,12 +5,17 @@
 % - See http://www.latex-project.org/lppl.txt
 % -----------------------------------------------------------------
 
-% Usage:
-% \CounterSetup{ new = <name> }
-% \CounterIncrement{<name>}
-% \CounterUse{<name>}
-% \CounterLabel{<name>}{<label>}
-% \CounterRef{<name>}{<label>}
+% Info:
+% - Counter commands allowing cross-referencing
+% - Commands:
+% `\CounterSetup{ new = <name> }`
+% `\CounterIncrement{<name>}`
+% `\CounterUse{<name>}`
+% `\CounterLabel{<name>}{<label>}`
+% `\CounterRef{<name>}{<label>}`
+% - Compilation:
+% -- Two passes required
+% -- To start anew, delete auxiliary files
 
 \ExplSyntaxOn
 

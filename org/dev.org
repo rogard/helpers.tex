@@ -1,6 +1,6 @@
 #+title: helpers.tex --- dev.org
 
-Meta file to generate files
+Meta file to generate files.
 
 * tex
 ** license
@@ -18,17 +18,29 @@ Meta file to generate files
 ** counter
 *** source
 **** section
-***** usage
+***** info
 
-#+header: :tangle no
-#+header: :noweb-ref tex-counter-usage
+#+header: :noweb-ref tex-counter-info
 #+begin_src latex
-  % Usage:
-  % \CounterSetup{ new = <name> }
-  % \CounterIncrement{<name>}
-  % \CounterUse{<name>}
-  % \CounterLabel{<name>}{<label>}
-  % \CounterRef{<name>}{<label>}
+  % Info:
+  % - Counter commands allowing cross-referencing
+#+end_src
+
+#+header: :noweb-ref tex-counter-info
+#+begin_src latex
+  % - Commands:
+  % `\CounterSetup{ new = <name> }`
+  % `\CounterIncrement{<name>}`
+  % `\CounterUse{<name>}`
+  % `\CounterLabel{<name>}{<label>}`
+  % `\CounterRef{<name>}{<label>}`
+#+end_src
+
+#+header: :noweb-ref tex-counter-info
+#+begin_src latex
+  % - Compilation:
+  % -- Two passes required
+  % -- To start anew, delete auxiliary files
 #+end_src
 
 ***** guard
@@ -247,7 +259,7 @@ Meta file to generate files
 
 #+header: :noweb yes
 #+begin_src latex  
-  <<tex-counter-usage>>
+  <<tex-counter-info>>
 #+end_src
 
 #+begin_src latex
@@ -341,21 +353,24 @@ Meta file to generate files
 
 #+header: :noweb-ref tex-biblatex-info
 #+begin_src latex
-  % Description:
-  % - In text citation template
-  %
+  % Info:
+  % - In text citation template exposing a keys interface
 #+end_src
 
 #+header: :noweb-ref tex-biblatex-info
 #+begin_src latex
-  % Usage:
-  % - Preamble:
-  %  \DeclareInstance{erw-biblatex}{default}{standard}
-  %   { cite = { <code> } } % code in terms of #1, #2, and #3,
-  % representing prenote, postnote, and key.
-  % - Document:
-  %   \BiblatexCite[<instance>]
-  %   { key = <key>, prenote = <prenote>, postnote = <postnote>}
+  % - In the preamble:
+  %  `\DeclareInstance{erw-biblatex}{default}{standard}
+  %   { cite = { <code> } }`,
+  %   where <code> is in terms of #1, #2, and #3,
+  %   and represents prenote, postnote, and key.
+#+end_src
+
+#+header: :noweb-ref tex-biblatex-info
+#+begin_src latex
+  % - In the document:
+  %   `\BiblatexCite[<instance>]
+  %   { key = <key>, prenote = <prenote>, postnote = <postnote> }`
 #+end_src
 
 ***** guard
