@@ -339,11 +339,14 @@ Meta file to generate files
 **** section
 ***** info
 
+#+header: :noweb-ref tex-biblatex-info
 #+begin_src latex
   % Description:
   % - In text citation template
+  %
 #+end_src
 
+#+header: :noweb-ref tex-biblatex-info
 #+begin_src latex
   % Usage:
   % - Preamble:
@@ -563,7 +566,7 @@ Meta file to generate files
 
 #+header: :noweb yes
 #+begin_src latex
-  <<tex-biblatex-usage>>
+  <<tex-biblatex-info>>
 #+end_src
 
 #+begin_src latex

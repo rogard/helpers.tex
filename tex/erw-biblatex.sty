@@ -5,7 +5,17 @@
 % - See http://www.latex-project.org/lppl.txt
 % -----------------------------------------------------------------
 
-
+% Description:
+% - In text citation template
+%
+% Usage:
+% - Preamble:
+%  \DeclareInstance{erw-biblatex}{default}{standard}
+%   { cite = { <code> } } % code in terms of #1, #2, and #3,
+% representing prenote, postnote, and key.
+% - Document:
+%   \BiblatexCite[<instance>]
+%   { key = <key>, prenote = <prenote>, postnote = <postnote>}
 
 \ExplSyntaxOn
 
