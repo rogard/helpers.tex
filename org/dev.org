@@ -363,7 +363,7 @@ Meta file to generate files.
   %  `\DeclareInstance{erw-biblatex}{default}{standard}
   %   { cite = { <code> } }`,
   %   where <code> is in terms of #1, #2, and #3,
-  %   and represents prenote, postnote, and key.
+  %   representing prenote, postnote, and key.
 #+end_src
 
 #+header: :noweb-ref tex-biblatex-info
@@ -402,6 +402,7 @@ Meta file to generate files.
 #+header: :noweb-ref tex-biblatex-expl3
 #+begin_src latex
   \makeatletter
+  % should this be a const?
   \tl_const:Nx \c__erw_biblatex_bbxfile_tl { \blx@bbxfile }
   \makeatother
 #+end_src
@@ -413,12 +414,13 @@ Meta file to generate files.
 
 #+header: :noweb tex-biblatex-expl3
 #+begin_src latex
-  \msg_warning:nnn{__erw_biblatex}{generic}
-  {Add~to~your~preamble~inside~expl3~syntax~mode:
-    \makeatletter
-    \tl_const:Nx \c__erw_biblatex_bbxfile_tl { \blx@bbxfile }
-    \makeatother
-  }  
+  % Warning no longer needed
+  % \msg_warning:nnn{__erw_biblatex}{generic}
+  % {Add~to~your~preamble~inside~expl3~syntax~mode:
+  %   \makeatletter
+  %   \tl_const:Nx \c__erw_biblatex_bbxfile_tl { \blx@bbxfile }
+  %   \makeatother
+  % }  
 #+end_src
 
 #+header: :tangle no
@@ -549,7 +551,6 @@ Meta file to generate files.
 
 #+header: :noweb-ref tex-biblatex-doc-cmd
 #+begin_src latex
-  \makeatletter
   \ProvideDocumentCommand{\BiblatexCite}{O{default}m}
   {%
     \tl_if_regex_match:nnTF { #1 }{ -num$ }
@@ -559,14 +560,13 @@ Meta file to generate files.
       {%
         \exp_last_unbraced:Ne
         \msg_warning:nnnn{{__erw_biblatex}{generic}
-          { \tl_to_str:N\blx@bbxfile~\c__erw_biblatex_bbxfile_tl~inconsistent~with~template~`#1`}
-          {Use~ \tl_to_str:N\blx@bbxfile~`numeric`~or~`numeric-comp`}}
+          { \tl_to_str:N\c__erw_biblatex_bbxfile_tl~\c__erw_biblatex_bbxfile_tl~inconsistent~with~template~`#1`}
+          {Use~ \tl_to_str:N\c__erw_biblatex_bbxfile_tl~`numeric`~or~`numeric-comp`}}
       }
     }{}
     % 
     \UseInstance{erw-biblatex}{#1}{#2}
   }
-  \makeatother
 #+end_src
 
 **** tangle

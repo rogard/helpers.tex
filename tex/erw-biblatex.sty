@@ -11,7 +11,7 @@
 %  `\DeclareInstance{erw-biblatex}{default}{standard}
 %   { cite = { <code> } }`,
 %   where <code> is in terms of #1, #2, and #3,
-%   and represents prenote, postnote, and key.
+%   representing prenote, postnote, and key.
 % - In the document:
 %   `\BiblatexCite[<instance>]
 %   { key = <key>, prenote = <prenote>, postnote = <postnote> }`
@@ -30,6 +30,7 @@
 
 % --- expl3
 \makeatletter
+% should this be a const?
 \tl_const:Nx \c__erw_biblatex_bbxfile_tl { \blx@bbxfile }
 \makeatother
 \msg_new:nnn{__erw_biblatex}{generic}{#1}
@@ -121,7 +122,6 @@
 }
 
 % --- document command
-\makeatletter
 \ProvideDocumentCommand{\BiblatexCite}{O{default}m}
 {%
   \tl_if_regex_match:nnTF { #1 }{ -num$ }
@@ -131,13 +131,12 @@
     {%
       \exp_last_unbraced:Ne
       \msg_warning:nnnn{{__erw_biblatex}{generic}
-        { \tl_to_str:N\blx@bbxfile~\c__erw_biblatex_bbxfile_tl~inconsistent~with~template~`#1`}
-        {Use~ \tl_to_str:N\blx@bbxfile~`numeric`~or~`numeric-comp`}}
+        { \tl_to_str:N\c__erw_biblatex_bbxfile_tl~\c__erw_biblatex_bbxfile_tl~inconsistent~with~template~`#1`}
+        {Use~ \tl_to_str:N\c__erw_biblatex_bbxfile_tl~`numeric`~or~`numeric-comp`}}
     }
   }{}
   % 
   \UseInstance{erw-biblatex}{#1}{#2}
 }
-\makeatother
 
 \ExplSyntaxOff
