@@ -20,14 +20,17 @@
   % \ExplSyntaxOff
   % \CounterSetup{ new = foo }
 
+  % Expected: 0
   Initial value: \CounterUse{foo}
 
+  % Expected: 5
   Final value: \CounterRef{foo}{final}
 
   \CounterIncrement{foo}
   \CounterIncrement{foo}
   \CounterIncrement{foo}
 
+  % Expected: 3
   Value after 3 increments: \CounterUse{foo}
 
   \CounterIncrement{foo}

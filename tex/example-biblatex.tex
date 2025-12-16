@@ -1,0 +1,34 @@
+\documentclass{article}
+% \usepackage[style=authoryear]{biblatex}
+\usepackage[style=numeric-comp]{biblatex}
+\addbibresource{../tex/biblatex-examples.bib}
+
+\usepackage{lipsum,xtemplate,tcolorbox}
+\tcbuselibrary{listings}
+\newtcblisting{listing-tex}
+{ listing options = { language = Tex, style = tcblatex } }
+
+\input{../tex/erw-biblatex.sty}
+
+\begin{document}
+
+\begin{listing-tex}
+  %\usepackage[style=numeric-comp]{biblatex}
+  %\addbibresource{../tex/biblatex-examples.bib}
+  % \input{../tex/erw-biblatex.sty}
+  \section{Fancy quotes}
+
+  \noindent\lipsum[1][1]\\
+  ---~\BiblatexCite[author-num]{ key = aristotle:anima }
+
+  \vspace{1em}
+
+  \noindent\lipsum[1][2]\\
+  ---~\BiblatexCite[title-num]{ key = aristotle:anima, postnote = {413a3-10} }
+
+  \section{References}
+  \printbibliography[heading=none]
+
+\end{listing-tex}
+
+\end{document}

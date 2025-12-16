@@ -1,0 +1,138 @@
+% -----------------------------------------------------------------
+% Copyright (C) 2025 by Erwann Rogard
+% - Source repository: https://github.com/rogard/helpers.tex
+% - Released under the LaTeX Project Public License v1.3c or later
+% - See http://www.latex-project.org/lppl.txt
+% -----------------------------------------------------------------
+
+% \DeclareInstance{erw-biblatex}{default}{standard}
+% {
+%   cite = { \cite[#1][#2]{#3} }
+% }
+% \BiblatexCite[instance]{ key = <key>, prenote = <prenote>, postnote = <postnote>}
+
+\ExplSyntaxOn
+
+% --- guard
+\tl_if_exist:NTF \g__erw_biblatex_flag_tl
+{%
+  \msg_warning:nnn { __erw_biblatex }{ generic }{ already-loaded }
+  \file_input_stop:
+}
+{%
+  \tl_gset:Nn \g__erw_biblatex_flag_tl{}
+}
+
+% --- expl3
+\makeatletter
+\tl_const:Nx \c__erw_biblatex_bbxfile_tl { \blx@bbxfile }
+\makeatother
+\msg_new:nnn{__erw_biblatex}{generic}{#1}
+\prg_new_conditional:Npnn \__erw_biblatex_numeric: { TF }
+{
+  \bool_lazy_or:nnTF
+  { \str_if_eq_p:Vn \c__erw_biblatex_bbxfile_tl { numeric } }
+  { \str_if_eq_p:Vn \c__erw_biblatex_bbxfile_tl { numeric-comp } }
+  { \prg_return_true: }
+  { \prg_return_false: }
+}
+\prop_new:N\g__erw_biblatex_prop
+\keys_define:nn{__erw_biblatex}
+{
+  key.prop_gput:N = \g__erw_biblatex_prop,
+  key.default:n = {\c_novalue_tl},
+  prenote.prop_gput:N = \g__erw_biblatex_prop,
+  prenote.default:n = {\c_empty_tl},
+  postnote.prop_gput:N = \g__erw_biblatex_prop,
+  postnote.default:n = {\c_empty_tl},
+}
+
+% --- biblatex
+\DeclareCiteCommand{\__erw_citeauthorfull}
+{}
+{\printnames[given-family][1-1]{author}}
+{}
+{}
+
+% --- template
+\DeclareObjectType{erw-biblatex}{1}
+\DeclareTemplateInterface{erw-biblatex}
+{ standard }{1}
+{
+  cite : function{3},
+}
+\cs_new:Nn
+\__erw_biblatex_helper:nnnN
+{#4{#1}{#2}{#3}}
+\cs_generate_variant:Nn\__erw_biblatex_helper:nnnN{eee,ffe}
+\DeclareTemplateCode{erw-biblatex}
+{ standard }
+{1}
+{
+  cite = \__erw_biblatex_cite:nnn,
+}
+{%
+  \AssignTemplateKeys
+  
+  \keys_set:nn{__erw_biblatex}{#1}
+
+  \group_begin:
+
+  \exp_args:NNe
+  \tl_set:Nn\l_tmpa_tl
+  { \prop_item:Nn\g__erw_biblatex_prop{key} }
+
+  \exp_args:Ne
+  \tl_if_novalue:nTF{\l_tmpa_tl}
+  {%
+    \msg_warning:nnn{__erw_biblatex}{generic}{bibliography~key~not~set}
+  }
+  {%
+    \__erw_biblatex_helper:ffeN
+    { \prop_item:Nn\g__erw_biblatex_prop{ prenote } }
+    { \prop_item:Nn\g__erw_biblatex_prop{ postnote } }
+    { \l_tmpa_tl }
+    \__erw_biblatex_cite:nnn
+  }
+  
+  \group_end:
+
+  \keys_set:nn{__erw_biblatex}{ key, prenote, postnote }
+  
+}
+
+% --- instance
+\DeclareInstance{erw-biblatex}{default}{standard}
+{
+  cite = { \cite[#1][#2]{#3} }
+}
+\DeclareInstance{erw-biblatex}{author-num}{standard}
+{
+  cite = { \__erw_citeauthorfull{#3}\cite[#1][#2]{#3} }
+}
+\DeclareInstance{erw-biblatex}{title-num}{standard}
+{
+  cite = { \citetitle{#3}\cite[#1][#2]{#3} }
+}
+
+% --- document command
+\makeatletter
+\ProvideDocumentCommand{\BiblatexCite}{O{default}m}
+{%
+  \tl_if_regex_match:nnTF { #1 }{ -num$ }
+  {%
+    \__erw_biblatex_numeric:TF
+    {}
+    {%
+      \exp_last_unbraced:Ne
+      \msg_warning:nnnn{{__erw_biblatex}{generic}
+        { \tl_to_str:N\blx@bbxfile~\c__erw_biblatex_bbxfile_tl~inconsistent~with~template~`#1`}
+        {Use~ \tl_to_str:N\blx@bbxfile~`numeric`~or~`numeric-comp`}}
+    }
+  }{}
+  % 
+  \UseInstance{erw-biblatex}{#1}{#2}
+}
+\makeatother
+
+\ExplSyntaxOff
