@@ -22,13 +22,13 @@ Meta file to generate files.
 
 #+header: :noweb-ref tex-counter-info
 #+begin_src latex
-  % Info:
+  % Summary:
   % - Counter commands allowing cross-referencing
 #+end_src
 
 #+header: :noweb-ref tex-counter-info
 #+begin_src latex
-  % - Commands:
+  % - Usage:
   % `\CounterSetup{ new = <name> }`
   % `\CounterIncrement{<name>}`
   % `\CounterUse{<name>}`
@@ -39,8 +39,8 @@ Meta file to generate files.
 #+header: :noweb-ref tex-counter-info
 #+begin_src latex
   % - Compilation:
-  % -- Two passes required
-  % -- To start anew, delete auxiliary files
+  %  - Two passes required
+  %  - To start anew, delete auxiliary files
 #+end_src
 
 ***** guard
@@ -353,24 +353,31 @@ Meta file to generate files.
 
 #+header: :noweb-ref tex-biblatex-info
 #+begin_src latex
-  % Info:
+  % Summary:
   % - In text citation template exposing a keys interface
 #+end_src
 
 #+header: :noweb-ref tex-biblatex-info
 #+begin_src latex
-  % - In the preamble:
-  %  `\DeclareInstance{erw-biblatex}{default}{standard}
-  %   { cite = { <code> } }`,
-  %   where <code> is in terms of #1, #2, and #3,
+  % Usage:
+  % - `\DeclareInstance{erw-biblatex}{<instance>}{standard}
+  %   { cite = { <code> } }`
+  %   where `<code>` is in terms of `#1`, `#2`, and `#3`,
   %   representing prenote, postnote, and key.
+  % - `\BiblatexCite[<instance>]
+  %   { key = <key>, prenote = <prenote>, postnote = <postnote> }`
 #+end_src
 
 #+header: :noweb-ref tex-biblatex-info
 #+begin_src latex
-  % - In the document:
-  %   `\BiblatexCite[<instance>]
-  %   { key = <key>, prenote = <prenote>, postnote = <postnote> }`
+  % Limitation:
+  % - Does not handle multicite
+#+end_src
+
+#+header: :noweb-ref tex-biblatex-info
+#+begin_src latex
+  % Also see:
+  % - https://mirrors.ibiblio.org/CTAN/macros/latex/contrib/biblatex/doc/biblatex.pdf#subsection.3.9
 #+end_src
 
 ***** guard

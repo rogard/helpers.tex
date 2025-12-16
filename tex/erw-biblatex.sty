@@ -5,16 +5,19 @@
 % - See http://www.latex-project.org/lppl.txt
 % -----------------------------------------------------------------
 
-% Info:
+% Summary:
 % - In text citation template exposing a keys interface
-% - In the preamble:
-%  `\DeclareInstance{erw-biblatex}{default}{standard}
-%   { cite = { <code> } }`,
-%   where <code> is in terms of #1, #2, and #3,
+% Usage:
+% - `\DeclareInstance{erw-biblatex}{<instance>}{standard}
+%   { cite = { <code> } }`
+%   where `<code>` is in terms of `#1`, `#2`, and `#3`,
 %   representing prenote, postnote, and key.
-% - In the document:
-%   `\BiblatexCite[<instance>]
+% - `\BiblatexCite[<instance>]
 %   { key = <key>, prenote = <prenote>, postnote = <postnote> }`
+% Limitation:
+% - Does not handle multicite
+% Also see:
+% - https://mirrors.ibiblio.org/CTAN/macros/latex/contrib/biblatex/doc/biblatex.pdf#subsection.3.9
 
 \ExplSyntaxOn
 
