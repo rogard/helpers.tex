@@ -10,6 +10,7 @@ Reusable LaTeX3 modules.
 ```
 
 ## Module
+[biblatex](https://github.com/rogard/helpers.tex/blob/main/tex/erw-biblatex.sty)
 [counter](https://github.com/rogard/helpers.tex/blob/main/tex/erw-counter.sty)
 
 ## Source
