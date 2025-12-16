@@ -5,9 +5,12 @@ Reusable LaTeX3 modules.
 ## Usage
 ```latex
   \ExplSyntaxOn
-  \file_input:n{/path/to/repo/module-name.tex}
+  \file_input:n{/path/to/module.sty}
   \ExplSyntaxOff
 ```
+
+## Module
+[counter](https://github.com/rogard/helpers.tex/blob/main/tex/erw-counter.sty)
 
 ## Source
 [helpers.tex on GitHub](https://github.com/rogard/helpers.tex)

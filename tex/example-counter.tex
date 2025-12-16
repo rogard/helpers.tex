@@ -1,22 +1,38 @@
 \documentclass{article}
+
+\usepackage{lipsum,tcolorbox,graphicx}
+\tcbuselibrary{listings,raster,skins}
+\newtcblisting{listing-tex}{
+  listing and text,
+  listing options={language=Tex, style=tcblatex}
+}
+
 \ExplSyntaxOn
-\file_input:n{./module-counter.tex}
+\file_input:n{../tex/erw-counter.sty}
 \ExplSyntaxOff
 \CounterSetup{ new = foo }
 
 \begin{document}
-Initial value: \CounterUse{foo}
 
-Final value: \CounterRef{foo}{final}
+\begin{listing-tex}
+  % \ExplSyntaxOn
+  % \file_input:n{../tex/erw-counter.sty}
+  % \ExplSyntaxOff
+  % \CounterSetup{ new = foo }
 
-\CounterIncrement{foo}
-\CounterIncrement{foo}
-\CounterIncrement{foo}
+  Initial value: \CounterUse{foo}
 
-Value after 3 increments: \CounterUse{foo}
+  Final value: \CounterRef{foo}{final}
 
-\CounterIncrement{foo}
-\CounterIncrement{foo}
-\CounterUse{foo}
-\CounterLabel{foo}{final}  
+  \CounterIncrement{foo}
+  \CounterIncrement{foo}
+  \CounterIncrement{foo}
+
+  Value after 3 increments: \CounterUse{foo}
+
+  \CounterIncrement{foo}
+  \CounterIncrement{foo}
+  \CounterLabel{foo}{final}
+\end{listing-tex}
+
 \end{document}

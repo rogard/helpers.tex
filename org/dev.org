@@ -1,3 +1,7 @@
+#+title: helpers.tex --- dev.org
+
+Meta file to generate files
+
 * tex
 ** license
 
@@ -12,8 +16,9 @@
 #+end_src
 
 ** counter
-*** module
-**** usage
+*** source
+**** section
+***** usage
 
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-usage
@@ -26,24 +31,30 @@
   % \CounterRef{<name>}{<label>}
 #+end_src
 
-**** msg
+***** guard
 
-#+header: :tangle no
-#+header: :noweb-ref tex-counter-msg
+#+header: :noweb-ref tex-counter-guard
 #+begin_src latex
-  \msg_new:nnn{__erw_counter}{compile}{Compile~one~more~time}
+  \tl_if_exist:NTF \g__erw_counter_flag_tl
+  {%
+    \msg_warning:nnn { __erw_counter }{ generic }{ already-loaded }
+    \file_input_stop:
+  }
+  {%
+    \tl_gset:Nn \g__erw_counter_flag_tl{}
+  }
 #+end_src
 
+***** expl3
+
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-msg
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \msg_new:nnn{__erw_counter}{generic}{#1}
 #+end_src
 
-**** state
-
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-state
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new:Npn \__erw_counter_name:n
   #1 % string - <name>
@@ -51,67 +62,49 @@
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-state
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \keys_define:nn{__erw_counter}
   {%
-    new.code:n = {\int_gzero_new:c{\__erw_counter_name:n{#1}}}
+    new.code:n = { \int_gzero_new:c{\__erw_counter_name:n{#1}} }
   }
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-state
-#+begin_src latex
-  \ProvideDocumentCommand{\CounterSetup}{m}
-  { \keys_set:nn{__erw_counter}{#1} }
-#+end_src
-
-#+header: :tangle no
-#+header: :noweb-ref tex-counter-state
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new_protected:Npn \__erw_counter_increment:n
-  %    type   - semantics
-  #1 % string - <name>
+  #1 % <string: name>
   {%
     \int_incr:c{\__erw_counter_name:n{#1}}
   }
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-state
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new:Npn \__erw_counter_use:n
-  %    type   - semantics
-  #1 % string - <name>
+  #1 % <string: name>
   {%
     \int_use:c{\__erw_counter_name:n{#1}}
   }
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-state
- #+begin_src latex
-  \ProvideDocumentCommand{\CounterIncrement}{m}{\__erw_counter_increment:n{#1}}
-  \ProvideDocumentCommand{\CounterUse}{m}{\__erw_counter_use:n{#1}}
-#+end_src
-
-**** reference
-
-#+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \iow_new:N \g__erw_counter_aux_iow
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \str_const:Ne\c__erw_counter_aux_str
   {\c_sys_jobname_str .erw.counter.aux}
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \AtBeginDocument
   {
@@ -127,7 +120,7 @@
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \AtEndDocument
   {
@@ -136,7 +129,7 @@
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new_protected:Npn \__erw_counter_write:nnn
   #1 % <value>
@@ -154,7 +147,7 @@
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new_protected:Npn \__erw_counter_write:nn
   #1 % <name>
@@ -167,7 +160,7 @@
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new:Npn\__erw_counter_label:nn
   #1 % <name>
@@ -176,7 +169,7 @@
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new_protected:Npn \__erw_counter_set:nnn
   #1 % infix
@@ -190,7 +183,7 @@
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new:Npn \__erw_counter_ref:nn
   #1 % infix
@@ -199,15 +192,31 @@
     \tl_if_exist:cTF { \__erw_counter_label:nn{ #1 }{ #2 } }
     {%
       \tl_use:c { \__erw_counter_label:nn{ #1 }{ #2 } }
-      \msg_warning:nnn { __erw_counter } { generic }
+      \msg_note:nnn { __erw_counter } { generic }
       { To~reset~counter~references,~delete~\c__erw_counter_aux_str. }
     }
-    { \msg_warning:nn{__erw_counter}{compile} }
+    { \msg_warning:nnn{__erw_counter}{generic}{Compile~one~more~time} }
   }
 #+end_src
 
+***** doc-cmd
+
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-doc-cmd
+#+begin_src latex
+  \ProvideDocumentCommand{\CounterSetup}{m}
+  { \keys_set:nn{__erw_counter}{#1} }
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-doc-cmd
+ #+begin_src latex
+  \ProvideDocumentCommand{\CounterIncrement}{m}{\__erw_counter_increment:n{#1}}
+  \ProvideDocumentCommand{\CounterUse}{m}{\__erw_counter_use:n{#1}}
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-counter-doc-cmd
 #+begin_src latex
   \ProvideDocumentCommand{\CounterLabel}{mm}
   % <name>
@@ -218,7 +227,7 @@
 #+end_src
 
 #+header: :tangle no
-#+header: :noweb-ref tex-counter-reference
+#+header: :noweb-ref tex-counter-doc-cmd
 #+begin_src latex
   \ProvideDocumentCommand{\CounterRef}{mm}
   {
@@ -228,35 +237,42 @@
 
 **** tangle
 :PROPERTIES:
-:header-args: :tangle "../tex/module-counter.tex"
+:header-args: :tangle "../tex/erw-counter.sty"
 :END:
 
 #+header: :noweb yes
 #+begin_src latex
   <<tex-license>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex  
   <<tex-counter-usage>>
+#+end_src
+
+#+begin_src latex
   \ExplSyntaxOn
-  \tl_if_exist:NTF
-  \g__erw_counter_flag_tl
-  {\c_empty_tl}
-  {%
-    %
-    % --- msg ---------
-    % 
-    <<tex-counter-msg>>
-    %
-    % --- state -------
-    % 
-    <<tex-counter-state>>
-    %
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  % --- guard ---------
+  <<tex-counter-guard>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
     % --- reference ---
-    %
-    <<tex-counter-reference>>
-    %
-    % --- flag --------
-    %
-    \tl_new:N\g__erw_counter_flag_tl
-  }
+    <<tex-counter-expl3>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+    % --- reference ---
+    <<tex-counter-doc-cmd>>
+#+end_src
+
+#+begin_src latex
   \ExplSyntaxOff
 #+end_src
 
@@ -265,42 +281,56 @@
 :header-args: :tangle "../tex/example-counter.tex"
 :END:
 
-#+header: :tangle no
-#+header: :noweb-ref tex-example-preamble
+#+begin_src latex
+  \documentclass{article}  
+#+end_src
+
+#+begin_src latex
+  \usepackage{lipsum,tcolorbox,graphicx}
+  \tcbuselibrary{listings,raster,skins}
+  \newtcblisting{listing-tex}{
+    listing and text,
+    listing options={language=Tex, style=tcblatex}
+  }
+#+end_src
+
 #+begin_src latex
   \ExplSyntaxOn
-  \file_input:n{./module-counter.tex}
+  \file_input:n{../tex/erw-counter.sty}
   \ExplSyntaxOff
   \CounterSetup{ new = foo }
 #+end_src
 
-#+header: :tangle no
-#+header: :noweb-ref tex-example-document
-#+begin_src latex
-  Initial value: \CounterUse{foo}
-
-  Final value: \CounterRef{foo}{final}
-
-  \CounterIncrement{foo}
-  \CounterIncrement{foo}
-  \CounterIncrement{foo}
-
-  Value after 3 increments: \CounterUse{foo}
-
-  \CounterIncrement{foo}
-  \CounterIncrement{foo}
-  \CounterLabel{foo}{final}  
-#+end_src
-
-#+header: :noweb yes
-#+begin_src latex
-  \documentclass{article}
-  <<tex-example-preamble>>
-#+end_src
-
-#+header: :noweb yes
 #+begin_src latex
   \begin{document}
-  <<tex-example-document>>
+#+end_src
+
+#+begin_src latex
+  \begin{listing-tex}
+    % \ExplSyntaxOn
+    % \file_input:n{../tex/erw-counter.sty}
+    % \ExplSyntaxOff
+    % \CounterSetup{ new = foo }
+
+    % Expected: 0
+    Initial value: \CounterUse{foo}
+
+    % Expected: 5
+    Final value: \CounterRef{foo}{final}
+
+    \CounterIncrement{foo}
+    \CounterIncrement{foo}
+    \CounterIncrement{foo}
+
+    % Expected: 3
+    Value after 3 increments: \CounterUse{foo}
+
+    \CounterIncrement{foo}
+    \CounterIncrement{foo}
+    \CounterLabel{foo}{final}
+  \end{listing-tex}
+#+end_src
+
+#+begin_src latex
   \end{document}
 #+end_src
