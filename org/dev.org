@@ -346,6 +346,149 @@ Meta file to generate files.
 #+begin_src latex
   \end{document}
 #+end_src
+
+** impl-helper
+*** source
+**** info
+
+#+header: :noweb-ref tex-impl-helper-info
+#+begin_src latex
+  % Summary:
+  % - Narrow purpose commands for use in implementations
+#+end_src
+
+**** braced-plh
+
+#+header: :noweb-ref tex-braced-plh
+#+begin_src latex
+  \cs_new:Npn
+  \__erw_braced_plh:n
+  #1
+  {{## #1}}
+  \cs_new:Npn
+  \__erw_braced_plh_aux:nn
+  #1 % <finish>
+  #2 % <start>
+  { \int_step_function:nnN {#2}{#1}\__erw_braced_plh:n}
+  \cs_new:Npn
+  \__erw_braced_plh:nn
+  #1 % <start>
+  #2 % <count>
+  {%
+    \exp_args:Ne
+    \__erw_braced_plh_aux:nn
+    {\int_eval:n{#1+#2-1}}{#1}}
+  \cs_generate_variant:Nn\__erw_braced_plh:nn{ne}
+#+end_src
+
+**** cmd-wrapper-to-N
+
+#+header: :noweb-ref tex-cmd-wrapper-to-N
+#+begin_src latex
+\cs_new_protected:Npn
+\__erw_adapt_cmd_wrapper_to_N:N #1
+{
+  \group_begin:
+  
+  \exp_args:NNe
+  \tl_set:Nn \l_tmpa_tl
+  { \cs_split_function:N #1 }
+  
+  \exp_args:NNe
+  \str_set:Nn \l__erw_base_str
+  { \exp_last_unbraced:Ne
+    \use_i:nnn {\l_tmpa_tl}  }
+
+  \exp_args:NNe
+  \str_set:Nn \l__erw_sig_str
+  { \exp_last_unbraced:Ne
+    \use_ii:nnn{\l_tmpa_tl} }
+
+  \exp_args:NNe
+  \str_set:Nn \l__erw_sig_tail_str
+  { \exp_args:Ne
+    \tl_range:nnn {\l__erw_sig_str} {3} {-1} }
+
+  \exp_args:NNe
+  \int_set:Nn \l_tmpa_int% \l__erw_sig_tail_int
+  { \str_count:N \l__erw_sig_tail_str }
+
+  % \int_show:N%\l__erw_sig_tail_int
+  % \l_tmpa_int % pass
+
+  \__erw_adapt_cmd_wrapper_to_N:eeee
+  { \str_use:N\l__erw_base_str }
+  { \str_use:N\l__erw_sig_str }
+  { \str_use:N\l__erw_sig_tail_str }
+  { \__erw_braced_plh:ne
+    { 2 }{ \l_tmpa_int } }
+
+  \group_end:
+  
+}
+#+end_src
+
+#+header: :noweb-ref tex-cmd-wrapper-to-N
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_adapt_cmd_wrapper_to_N:nnnn
+  #1
+  #2
+  #3
+  #4
+  {
+    \cs_new_protected:cn
+    { #1 :N #3 }
+    {
+      \group_begin:
+      
+      \exp_args:NNe
+      \tl_set:Nn \l_tmpa_tl
+      { \cs_split_function:N ##1 }
+
+      \exp_args:NNe
+      \str_set:Nn \l__erw_base_str
+      { \exp_last_unbraced:Ne
+        \use_i:nnn {\l_tmpa_tl}  }
+
+      \exp_args:NNe
+      \str_set:Nn \l__erw_sig_str
+      { \exp_last_unbraced:Ne
+        \use_ii:nnn{\l_tmpa_tl} }
+      
+      \exp_last_unbraced:Ne
+      \use:c { { #1 : #2 }
+        { \l__erw_base_str }
+        { \l__erw_sig_str }
+      }
+      #4
+
+      \group_end:
+      
+    }
+  }
+  \cs_generate_variant:Nn\__erw_adapt_cmd_wrapper_to_N:nnnn{eeee}
+#+end_src
+
+*** tangle
+:PROPERTIES:
+:header-args: :tangle ../tex/erw_impl_helper.sty
+:END:
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-license>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-impl-helper-info>>
+#+end_src
+
+#+begin_src latex
+  \ExplSyntaxOn
+#+end_src
+
 ** biblatex
 *** source
 **** section
@@ -686,4 +829,545 @@ Meta file to generate files.
 #+begin_src latex
   \end{document}
 #+end_src
+** marker
 
+#+begin_src latex
+% -----------------------------------------------------------------
+% Copyright (C) 2025 by Erwann Rogard
+% - Source repository: https://github.com/erwannr/helpers.tex
+% - Released under the LaTeX Project Public License v1.3c or later
+% - See http://www.latex-project.org/lppl.txt
+% -----------------------------------------------------------------
+#+end_src
+
+#+begin_src latex
+      \MarkerTypeset[colback=black!80, colframe=black, colupper=white]
+    {\faEyeSlash}{Élément~censuré}%
+#+end_src
+
+#+begin_src latex
+  \ExplSyntaxOn
+  \hbox_set:Nn \l_tmpa_box { Hello }
+  \AtBeginDocument{
+    \box_scale:Nnn \l_tmpa_box { 0.8 } { 0.8 }
+  }
+  \ExplSyntaxOff
+#+end_src
+
+#+begin_src latex
+  \msg_new:nnn{__erw_marker}{generic}{#1}
+#+end_src
+
+#+begin_src latex
+  \fp_new:N\g__erw_marker_scale_fp
+  \keys_define:nn{__erw_marker}
+  {
+    scale.fp_gset:N = \g__erw_marker_scale_fp,
+    scale.default:n = {0.8}
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareObjectType{erw-marker}{1}
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateInterface{erw-marker}
+  {standard}{1}
+  {
+    text : tokenlist,
+    symbol : tokentlist,
+    box-scale-h : real = 0.8,
+    box-scale-v : real = 0.8,
+    tcbox-options : comma-list = {colback=black!80, colframe=black, colupper=white}
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateCode{erw-marker}
+  {standard}{1}
+  {
+    text = \l__erw_marker_tl
+  }
+  {
+
+    \IfPackageLoadedT{tcolorbox}
+    {
+      \IfValueTF{#1}
+      {
+        \tcbox[on~line,\clist_]
+      }
+      {
+        \tcbox[on~line]
+      }
+    }
+    {
+      \IfPackageLoadedTF{fontawesome5}
+      {\__erw_marker_typeset:nn{#2}{#3}}%
+      {#3}%
+    }%
+
+
+  }
+#+end_src
+
+
+#+begin_src latex
+  \cs_new:Npn \__erw_marker_typeset:nn #1 #2
+  {
+    \scalebox{\fp_use:N\g__erw_marker_scale_fp}{#1}#2
+  }
+
+  \ProvideDocumentCommand{\MarkerTypeset}{omm}
+  {
+    % #1 = optional tcbox parameters
+    % #2 = name of fa font (e.g., \faEyeSlash)
+    % #3 = text
+    
+    \IfPackageLoadedT{tcolorbox}
+    {
+      \IfValueTF{#1}
+      {
+        \tcbox[on~line,#1]
+      }
+      {
+        \tcbox[on~line]
+      }
+    }
+    {
+      \IfPackageLoadedTF{fontawesome5}
+      {\__erw_marker_typeset:nn{#2}{#3}}%
+      {#3}%
+    }%
+  }
+
+  \ExplSyntaxOff
+
+#+end_src
+
+** socket
+
+#+begin_src latex
+% Also see:
+% - https://tex.stackexchange.com/q/755612/112708
+#+end_src
+
+*** boilerplate
+
+#+begin_src latex
+  % boilerplate
+  \cs_new_protected:Npn
+  \__erw_socket_inline:nn
+  #1 % <arg spec>
+  #2 % <code>
+  {
+    \cs_gset:cn{__erw_socket_lambda:#1}{#2}
+    \use:c{__erw_socket_lambda:#1}
+  }
+#+end_src
+
+#+begin_src latex
+  \cs_new_protected:Nn
+  \__erw_socket_cs_new_from_split:N
+  #1 %\__erw_socket_assign_plug_method:nnn
+  {%
+    \group_begin:
+
+    \exp_args:NNe
+    \tl_set:Nn
+    \l_tmpa_tl{ \cs_split_function:N#1 }
+
+    \exp_args:NNe
+    \str_set:Nn
+    \l__erw_base_str
+    { \exp_args:Ne\use_i:nn{\l_tmpa_tl} }
+
+    \exp_args:NNe
+    \str_set:N
+    \l__erw_sig_str
+    { \exp_args:Ne\use_ii:nn{\l_tmpa_tl} }
+
+    \cs_new_protected:cn
+    { \l__erw_base_str:N\tl_range:nnn{\l__erw_sig_str}{3}{-1} }
+    {
+      \exp_args:NNe
+      \tl_set:Nn
+      \l_tmpa_tl{ \cs_split_function:N##1 }
+
+      \exp_args:NNe
+      \str_set:Nn
+      \l__erw_base_str
+      { \exp_args:Ne\use_i:nn{\l_tmpa_tl} }
+
+      \exp_args:NNe
+      \str_set:N
+      \l__erw_sig_str
+      { \exp_args:Ne\use_ii:nn{\l_tmpa_tl} }
+
+      #1
+      {\l__erw_base_str}
+      {\l__erw_sig_str}
+    }
+  }
+
+  \group_end:
+
+  }
+#+end_src
+
+*** msg
+
+#+begin_src latex
+  % msg
+  \msg_new:nnn{__erw_socket}{generic}{#1}
+  \msg_new:nnn{__erw_socket}{missing}{Missing~value~for~key~#1}
+#+end_src
+
+*** cs-new
+
+#+begin_src latex  
+  % socket-specific
+  \keys_define:nn{__erw_socket}
+  {
+    global / cs-new.code:n = { \cs_gset_eq:NN\__erw_socket_new:nn#1 },
+    global / cs-new.default:n = { \socket_new:nn },
+    global / cs-new-plug.code:n = { \cs_gset_eq:NN\__erw_socket_new_plug:nnn#1 },
+    global / cs-new-plug.default:n = {
+      \socket_new_plug:nnn
+      % alternatively:
+      % \socket_new_set:nnn
+    },
+    global / cs-assign-plug.code:n = { \cs_gset_eq:NN\__erw_socket_assign_plug:nn#1 },
+    global / cs-assign-plug.default:n = {\socket_assign_plug:nnn}
+  }
+  \keys_set:nn{__erw_socket}
+  {%
+    global / cs-new,
+    global / cs-new-plug,
+    global / cs-assign-plug
+  }
+#+end_src
+
+*** plugs
+**** seq
+
+#+begin_src latex
+  \seq_new:c{g__erw_socket_#1_plugs_seq}
+#+end_src
+
+**** put
+
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_socket_plugs_put:nn
+  #1 % <socket name>
+  #2 % <plug name>
+  {%
+    \seq_if_in:cnTF{g__erw_socket_#1_plugs_seq}
+    {#2}
+    { \c_empty_tl }
+    { \seq_put_right:cn{ g__erw_socket_#1_plugs_seq{##1} } }
+    % 
+    % Example:
+    % \__erw_socket_plugs_put:n
+    % { greeting }
+    % { formal }
+  }
+#+end_src
+  
+**** new
+
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_socket_new_plugs:nn
+  % placeholder
+  #1 % <socket name>
+  #2 % <clist>
+  {
+    \keyval_parse:nnn
+    {
+      \msg_warning:nnn
+      {__erw_socket}
+      {missing}
+    }
+    {
+      \__erw_socket_inline:nn{nn}
+      { \__erw_socket_new_plug:nnn
+        {#1}{###1}{###2} }
+    }
+    { #2 }
+
+    % Example:
+    % \__erw_socket_new_plugs:nn
+    % { greeting }
+    % {
+    % formal = {Dear Sir/Madam,},
+    % informal = {Hi there,},
+    % friendly = {Hello, friend!}
+    % }
+    %   
+    % Side effect:
+    % \socket_new_plug:nnn{ greeting }{ formal }{ Dear Sir/Madam, }
+    % \socket_new_plug:nnn{ greeting }{ informal }{ Hi there, }
+    % \socket_new_plug:nnn{ greeting }{ friendly }{ Hello, friend! }
+  }
+  \cs_new_protected:Npn
+  \__erw_socket_new_plugs:nn
+  {\__erw_socket_new_plugs:nnN{#1}{#2}
+    \__erw_socket_new_plug:nnn}
+#+end_src
+
+*** define
+**** assign-plug
+***** code
+
+#+begin_src latex
+  \cs_new_protected:Nn
+  \__erw_socket_define_assign_plug_method:nnn
+  #1 % <cs name>
+  #2 % <signature>
+  #3 % <code>
+  {
+    \keys_define:nn{__erw_socket}
+    {
+      assign-plug / #1:#2 .code:n =
+      {
+        \prop_gput_from_keyval:Nn
+        \g__erw_socket_set_prop
+        {
+          socket-name = \c_novalue_tl,
+          arguments = \c_novalue_tl,
+          default-arguments = \c_novalue_tl,
+          ##1
+        }
+        
+        \__erw_socket_inline:nn
+        {#2}
+        {
+          \__erw_socket_assign_plug:nn
+          {}
+          {#3}
+        }
+      }
+    }
+  }
+#+end_src
+
+#+begin_src latex
+  \prop_new:N\g__erw_socket_define_prop
+  \prop_new:N\g__erw_socket_set_prop
+  \keys_define:nn{__erw_socket}
+  {
+    define / assign-plug / method.code:n =
+    % Example:
+    % - code:
+    %   \keys_set:nn{__erw_socket}
+    %   {
+    %      define / assign-plug =
+    %      {
+    %        cs-name = { identity:n },
+    %        code = { #1 }
+    %      }
+    %   }
+    %   \keys_set:nn{__erw_socket}
+    %   {
+    %       assign-plug.identity:n =
+    %       {
+    %         socket-name = { greeting },
+    %         arguments = {friendly}
+    %       }
+    %   }
+    %   - side effect:
+    %   \__erw_socket_assign_plug:nn{ greeting }{ friendly }
+    {
+      \prop_gput_from_keyval:Nn
+      \g__erw_socket_define_prop
+      {
+        cs-name = \c_novalue_tl,
+        code = \c_novalue_tl,
+        #1
+      }
+      \prop_map_inline:Nn
+      \g__erw_socket_define_prop
+      {
+        \str_case:nnTF{##1}
+        {
+          {cs-name}{}
+          {code}{}
+        }
+        {
+          \tl_if_novalue:nT{ ##2 }
+          { { \msg_error:nnn{ __erw_socket }
+              { generic }{ key~#1~novalue } } }
+        }{}
+      }
+
+      \__erw_socket_define_assign_plug_method:ee
+      {
+        \prop_item:Nn
+        \g__erw_socket_define_prop{ cs-name }
+      }
+      {
+        \prop_item:Nn
+        \g__erw_socket_define_prop{ argspec }
+      }
+#+end_src
+
+#+begin_src latex
+  % \keys_set:nn{__erw_socket}
+  % {
+  % define / assign-plug / default =
+  % {
+  % socket-name = { identity },
+  % key = { identity / n },
+  % arguments = { friendly }
+  % }
+  % }
+  %   \keys_set:nn{__erw_socket}
+  %   {
+  %   assign-plug / default =
+  %   {
+  %   socket-name = greeting,
+  %   arguments = {friendly}
+  % }
+  % }
+
+  \exp_args:Ne
+  \tl_if_novalue:nTF
+  { \prop_item:Nn
+    \g__erw_socket_meta_prop{ default } }
+  { \c_empty_tl }
+  {
+    \keys_define:nn{ __erw_socket }
+    {
+      \prop_item:Nn\g__erw_socket_meta_prop / 
+    }
+  }
+  }
+  }
+#+end_src
+
+***** default
+
+  #+begin_src latex
+    \cs_new_protected:Npn
+    \__erw_socket_meta_assign_plug_default:nnnN
+    % placeholder
+    #1 % <socket name>
+    #2 % <method>
+    #3 % <code>
+    {
+      \keys_define:nn{__erw_socket}
+      {
+        #1 / assign-plug / #2.default:n = #3
+      }
+      % Example:
+      % - code
+      % \__erw_socket_meta_assign_plug_default:nnnN
+      % { greeting }{ identity }{formal}
+      % \keys_define:nn{__erw_socket}
+      % {  greeting / assign-plug / identity }
+      % - side effect:
+      %  \socket_assign_plug:nn{greeting}{formal}
+    }
+#+end_src
+
+***** keys
+
+#+begin_src latex
+  \keys_define:nn{__erw_socket}
+  {
+
+  }
+#+end_src
+
+*** new
+  
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_socket_new:nn
+  #1 % socket name
+  #2 % arity
+  #3 % <cs-new
+  {
+    \socket_new:nn{#1}{#2}
+    \keys_define:nn{__erw_socket}
+    {
+      #1 / plugs.code:n = 
+      {
+        \keyval_parse:nnn
+        {
+          \msg_warning:nnn
+          {__erw_socket}
+          {missing}
+        }
+        {
+          \__erw_socket_inline:nn{nn}
+          {
+            \seq_if_in:cnTF{g__erw_socket_#1_plugs_seq}
+            {###1}
+            { \c_empty_tl }
+            { \seq_put_right:Nn\l__erw_socket_plugs_seq{##1} }
+            \socket_new_plug:nnn{#1}{###1}{###2}
+          }
+        }
+        { ##1 }
+      },
+      internal / #1 / meta / assign.code:n
+
+      #1 / meta / assign.default:n = {
+        { code = { identity = {##1} } },
+        {
+          match =
+          {        
+            \seq_if_empty:NTF\l__erw_socket_plug_seq
+            {
+              \msg_warning:nnn
+              {__erw_socket}
+              {generic}
+              {no~plugs~to~iterate~over}
+            }
+            {
+              \group_begin:
+              \tl_clear:N\l_tmpa_tl
+              \seq_map_inline:cn
+              {g__erw_socket_#1_plugs_seq}
+              {            
+                \__erw_socket_inline:nn{nn} % TODO extend to arbitrary args
+                {\bool_if:nTF{##1}}
+                {
+                  \keys_set:nn{__erw_socket}
+                  { #1 / assign / identity = {###1} }
+                  \seq_map_break:
+                }
+                {\c_empty_tl}
+              }
+              \group_end:
+            }
+          }
+        }
+      }
+    }
+    \cs_new_protected:Npn
+    \__erw_socket_set:n
+    #1 % keyval
+    { \keys_set:nn{__erw_socket}{#1} }
+    \__erw_socket_set:nn
+    #1 % prefix
+    #2 % keyval
+    {%
+      \keys_set:nn{__erw_socket}
+      {
+        \keyval_parse:nnn
+        {
+          \__erw_socket_inline:nn{n}
+          { \__erw_socket_set:n{ #1 / ##1 } }
+        }
+        {
+          \__erw_socket_inline:nn{nn}
+          { \__erw_socket_set:n{ #1 / ##1 = ##2 } }
+        }
+        {#2}
+      }
+    }
+#+end_src
