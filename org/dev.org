@@ -15,46 +15,83 @@ Meta file to generate files.
 % -----------------------------------------------------------------
 #+end_src
 
+** gotcha
+:PROPERTIES:
+:header-args: :tangle "../tex/gotcha-solution.tex"
+:END:
+
+*** ~\file_input:n~ breaks expl3
+
+#+begin_src latex
+  % ---
+  % Gotcha: \file_input:n breaks expl3 syntax mode
+  % Solution: \ExplSyntaxOff\ExplSyntaxOn after \file_input:n
+#+end_src
+
+*** ~\usepackage{../tex/module}~
+
+#+begin_src latex
+  % ---
+  % Code:     \usepackage{../tex/module} 
+  % Warning:  You have requested file `../tex/module',
+  %           but the file provides `<module>'
+  % Solution: Ignore the warning
+#+end_src
+
 ** counter
 *** source
 **** section
 ***** info
 
-#+header: :noweb-ref tex-counter-info
+#+name: org-counter-summary
 #+begin_src latex
-  % Summary:
-  % - Counter commands allowing cross-referencing
+  Counter commands allowing cross-referencing
 #+end_src
 
 #+header: :noweb-ref tex-counter-info
 #+begin_src latex
-  % - Usage:
-  % `\CounterSetup{ new = <name> }`
-  % `\CounterIncrement{<name>}`
-  % `\CounterUse{<name>}`
-  % `\CounterLabel{<name>}{<label>}`
-  % `\CounterRef{<name>}{<label>}`
+  % -----------------------------------------------------------------
 #+end_src
 
 #+header: :noweb-ref tex-counter-info
 #+begin_src latex
-  % - Compilation:
-  %  - Two passes required
-  %  - To start anew, delete auxiliary files
+  % Usage:
+#+end_src
+
+#+header: :noweb-ref tex-counter-info
+#+begin_src latex  
+  % \CounterSetup{ new = <name> }
+  % \CounterIncrement{ <name> }
+  % \CounterUse{ <name> }
+  % \CounterLabel{ <name> }{ <label> }
+  % \CounterRef{ <name> }{ <label> }
+#+end_src
+
+#+header: :noweb-ref tex-counter-info
+#+begin_src latex
+  % Other:
+  % - Compile twice
+  % - To start anew, delete `\jobname.aux`
+#+end_src
+
+#+header: :noweb-ref tex-counter-info
+#+begin_src latex
+  % -----------------------------------------------------------------
 #+end_src
 
 ***** guard
 
 #+header: :noweb-ref tex-counter-guard
 #+begin_src latex
-  \tl_if_exist:NTF \g__erw_counter_flag_tl
-  {%
-    \msg_warning:nnn { __erw_counter }{ generic }{ already-loaded }
-    \file_input_stop:
-  }
-  {%
-    \tl_gset:Nn \g__erw_counter_flag_tl{}
-  }
+  % TODO remove
+  %  \tl_if_exist:NTF \g__erw_counter_flag_tl
+  %  {%
+  %    \msg_warning:nnn { __erw_counter }{ generic }{ already-loaded }
+  %    \file_input_stop:
+  %  }
+  %  {%
+  %    \tl_gset:Nn \g__erw_counter_flag_tl{}
+  %  }
 #+end_src
 
 ***** expl3
@@ -257,6 +294,11 @@ Meta file to generate files.
   <<tex-license>>
 #+end_src
 
+#+begin_src latex
+  \ProvidesPackage{erw-boilerplate}{2025/12/21}{1.0}
+  { <<org-counter-summary> }
+#+end_src
+
 #+header: :noweb yes
 #+begin_src latex  
   <<tex-counter-info>>
@@ -310,6 +352,9 @@ Meta file to generate files.
   \ExplSyntaxOn
   \file_input:n{../tex/erw-counter.sty}
   \ExplSyntaxOff
+#+end_src
+
+#+begin_src latex
   \CounterSetup{ new = foo }
 #+end_src
 
@@ -347,88 +392,92 @@ Meta file to generate files.
   \end{document}
 #+end_src
 
-** impl-helper
+** boilerplate
 *** source
-**** info
+**** section
+***** info
 
-#+header: :noweb-ref tex-impl-helper-info
+#+name: org-boilerplate-summary
 #+begin_src latex
-  % Summary:
-  % - Narrow purpose commands for use in implementations
+  Standalone expl3-like commands for use in implementations
 #+end_src
 
-**** braced-plh
+***** int
 
-#+header: :noweb-ref tex-braced-plh
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new:Npn
+  \__erw_int_finish:nn
+  #1 % start
+  #2 % count
+  { \int_eval:n{#1+#2-1} }
+#+end_src
+
+***** plh
+
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new:Npn
   \__erw_braced_plh:n
   #1
   {{## #1}}
   \cs_new:Npn
-  \__erw_braced_plh_aux:nn
-  #1 % <finish>
-  #2 % <start>
-  { \int_step_function:nnN {#2}{#1}\__erw_braced_plh:n}
-  \cs_new:Npn
   \__erw_braced_plh:nn
   #1 % <start>
-  #2 % <count>
-  {%
-    \exp_args:Ne
-    \__erw_braced_plh_aux:nn
-    {\int_eval:n{#1+#2-1}}{#1}}
+  #2 % <finish>
+  { \int_step_function:nnN {#1}{#2}\__erw_braced_plh:n}
   \cs_generate_variant:Nn\__erw_braced_plh:nn{ne}
 #+end_src
 
-**** cmd-wrapper-to-N
+***** refactor
 
-#+header: :noweb-ref tex-cmd-wrapper-to-N
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
-\cs_new_protected:Npn
-\__erw_adapt_cmd_wrapper_to_N:N #1
-{
-  \group_begin:
-  
-  \exp_args:NNe
-  \tl_set:Nn \l_tmpa_tl
-  { \cs_split_function:N #1 }
-  
-  \exp_args:NNe
-  \str_set:Nn \l__erw_base_str
-  { \exp_last_unbraced:Ne
-    \use_i:nnn {\l_tmpa_tl}  }
+  \cs_new_protected:Npn
+  \__erw_adapt_cmd_wrapper_to_N:N #1
+  {
+    \group_begin:
+    
+    \exp_args:NNe
+    \tl_set:Nn \l_tmpa_tl
+    { \cs_split_function:N #1 }
+    
+    \exp_args:NNe
+    \str_set:Nn \l__erw_base_str
+    { \exp_last_unbraced:Ne
+      \use_i:nnn {\l_tmpa_tl}  }
 
-  \exp_args:NNe
-  \str_set:Nn \l__erw_sig_str
-  { \exp_last_unbraced:Ne
-    \use_ii:nnn{\l_tmpa_tl} }
+    \exp_args:NNe
+    \str_set:Nn \l__erw_sig_str
+    { \exp_last_unbraced:Ne
+      \use_ii:nnn{\l_tmpa_tl} }
 
-  \exp_args:NNe
-  \str_set:Nn \l__erw_sig_tail_str
-  { \exp_args:Ne
-    \tl_range:nnn {\l__erw_sig_str} {3} {-1} }
+    \exp_args:NNe
+    \str_set:Nn \l__erw_sig_tail_str
+    { \exp_args:Ne
+      \tl_range:nnn {\l__erw_sig_str} {3} {-1} }
 
-  \exp_args:NNe
-  \int_set:Nn \l_tmpa_int% \l__erw_sig_tail_int
-  { \str_count:N \l__erw_sig_tail_str }
+    \exp_args:NNe
+    \int_set:Nn \l_tmpa_int% \l__erw_sig_tail_int
+    { \str_count:N \l__erw_sig_tail_str }
 
-  % \int_show:N%\l__erw_sig_tail_int
-  % \l_tmpa_int % pass
+    % \int_show:N%\l__erw_sig_tail_int
+    % \l_tmpa_int % pass
 
-  \__erw_adapt_cmd_wrapper_to_N:eeee
-  { \str_use:N\l__erw_base_str }
-  { \str_use:N\l__erw_sig_str }
-  { \str_use:N\l__erw_sig_tail_str }
-  { \__erw_braced_plh:ne
-    { 2 }{ \l_tmpa_int } }
+    \__erw_adapt_cmd_wrapper_to_N:eeee
+    { \str_use:N\l__erw_base_str }
+    { \str_use:N\l__erw_sig_str }
+    { \str_use:N\l__erw_sig_tail_str }
+    { \__erw_braced_plh:ne
+      { 2 }{ \exp_args:Ne
+        \__erw_int_finish:nn{ 2 }{ \l_tmpa_int } } }
 
-  \group_end:
-  
-}
+    \group_end:
+    
+  }
 #+end_src
 
-#+header: :noweb-ref tex-cmd-wrapper-to-N
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Npn
   \__erw_adapt_cmd_wrapper_to_N:nnnn
@@ -470,9 +519,9 @@ Meta file to generate files.
   \cs_generate_variant:Nn\__erw_adapt_cmd_wrapper_to_N:nnnn{eeee}
 #+end_src
 
-*** tangle
+**** tangle
 :PROPERTIES:
-:header-args: :tangle ../tex/erw_impl_helper.sty
+:header-args: :tangle ../tex/erw-boilerplate.sty
 :END:
 
 #+header: :noweb yes
@@ -482,11 +531,68 @@ Meta file to generate files.
 
 #+header: :noweb yes
 #+begin_src latex
-  <<tex-impl-helper-info>>
+  \ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
+  { <<org-boilerplate-summary>> }
 #+end_src
 
 #+begin_src latex
+%  \ExplSyntaxOn
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-boilerplate>>
+#+end_src
+
+#+begin_src latex
+%  \ExplSyntaxOff
+#+end_src
+
+*** example
+:PROPERTIES:
+:header-args: :tangle ../tex/example-boilerplate.tex
+:END:
+
+#+begin_src latex
+  \documentclass{article}
+#+end_src
+
+#+begin_src latex
+%  \ExplSyntaxOn
+%  \file_input:n{../tex/erw-boilerplate.sty}
+%  \ExplSyntaxOff
+  \usepackage{../tex/erw-boilerplate}
+#+end_src  
+
+#+begin_src latex
   \ExplSyntaxOn
+#+end_src  
+
+#+begin_src latex
+  \cs_new:Nn\__erw_bar:n
+  { Hello~#1! }
+
+  \cs_new_protected:Nn
+  \__erw_foo:nnn
+  { \use:c{#1:#2}{#3} }
+
+  \__erw_adapt_cmd_wrapper_to_N:N
+  \__erw_foo:nnn
+#+end_src
+
+#+begin_src latex
+  \ExplSyntaxOff
+#+end_src
+
+#+begin_src latex
+  \begin{document}
+
+  \ExplSyntaxOn
+  \__erw_foo:Nn
+  \__erw_bar:n{world}
+  \ExplSyntaxOff
+
+  \end{document}
 #+end_src
 
 ** biblatex
@@ -494,21 +600,37 @@ Meta file to generate files.
 **** section
 ***** info
 
+#+name: org-biblatex-summary
+#+begin_src org
+  In text citation template exposing a keyval interface
+#+end_src
+
 #+header: :noweb-ref tex-biblatex-info
 #+begin_src latex
-  % Summary:
-  % - In text citation template exposing a keys interface
+  % -----------------------------------------------------------------
 #+end_src
 
 #+header: :noweb-ref tex-biblatex-info
 #+begin_src latex
   % Usage:
-  % - `\DeclareInstance{erw-biblatex}{<instance>}{standard}
-  %   { cite = { <code> } }`
-  %   where `<code>` is in terms of `#1`, `#2`, and `#3`,
-  %   representing prenote, postnote, and key.
-  % - `\BiblatexCite[<instance>]
-  %   { key = <key>, prenote = <prenote>, postnote = <postnote> }`
+#+end_src
+
+#+header: :noweb-ref tex-biblatex-info
+#+begin_src latex
+  % ```
+  % \DeclareInstance{erw-biblatex}{<instance>}{standard}
+  %   { cite = { <code> } }
+  % ```
+  % where `<code>` is in terms of `#1`, `#2`, and `#3`,
+  % representing prenote, postnote, and key.
+#+end_src
+
+#+header: :noweb-ref tex-biblatex-info
+#+begin_src latex
+  % ```
+  % \BiblatexCite[<instance>]
+  % { key = <key>, prenote = <prenote>, postnote = <postnote> }
+  % ```
 #+end_src
 
 #+header: :noweb-ref tex-biblatex-info
@@ -523,19 +645,32 @@ Meta file to generate files.
   % - https://mirrors.ibiblio.org/CTAN/macros/latex/contrib/biblatex/doc/biblatex.pdf#subsection.3.9
 #+end_src
 
+#+header: :noweb-ref tex-biblatex-info
+#+begin_src latex
+  % Versioning:
+  % 2025-12-21 1.1 Guard using \ProvidesPackage
+#+end_src
+
+#+header: :noweb-ref tex-biblatex-info
+#+begin_src latex
+  % -----------------------------------------------------------------
+#+end_src
+
 ***** guard
 
 #+header: :noweb-ref tex-biblatex-guard
 #+begin_src latex
-  \tl_if_exist:NTF \g__erw_biblatex_flag_tl
-  {%
-    \msg_warning:nnn { __erw_biblatex }{ generic }{ already-loaded }
-    \file_input_stop:
-  }
-  {%
-    \tl_gset:Nn \g__erw_biblatex_flag_tl{}
-  }
+  % TODO remove
+  %  \tl_if_exist:NTF \g__erw_biblatex_flag_tl
+  %  {%
+  %    \msg_warning:nnn { __erw_biblatex }{ generic }{ already-loaded }
+  %    \file_input_stop:
+  %  }
+  %  {%
+  %    \tl_gset:Nn \g__erw_biblatex_flag_tl{}
+  %  }
 #+end_src
+
 ***** biblatex
 
 #+header: :noweb-ref tex-biblatex-biblatex
@@ -731,17 +866,19 @@ Meta file to generate files.
 
 #+header: :noweb yes
 #+begin_src latex
-  <<tex-biblatex-info>>
-#+end_src
-
-#+begin_src latex
-  \ExplSyntaxOn
+  \ProvidesPackage{erw-biblatex}{2025/12/21}{1.1}
+  { <<org-biblatex-summary>> }
 #+end_src
 
 #+header: :noweb yes
 #+begin_src latex
-  % --- guard
-  <<tex-biblatex-guard>>
+  <<tex-biblatex-info>>
+#+end_src
+
+#+end_src
+
+#+begin_src latex
+  \ExplSyntaxOn
 #+end_src
 
 #+header: :noweb yes
@@ -787,7 +924,7 @@ Meta file to generate files.
     \documentclass{article}
     % \usepackage[style=authoryear]{biblatex}
     \usepackage[style=numeric-comp]{biblatex}
-    \addbibresource{../tex/biblatex-examples.bib}
+    \addbibresource{../tex/sample-1.bib}
 #+end_src
     
 #+begin_src latex
@@ -798,7 +935,9 @@ Meta file to generate files.
 #+end_src
     
 #+begin_src latex
-  \input{../tex/erw-biblatex.sty}
+  \ExplSyntaxOn
+  \file_input:n{../tex/erw-biblatex.sty}
+  \ExplSyntaxOff
 #+end_src
     
 #+begin_src latex
@@ -808,7 +947,7 @@ Meta file to generate files.
 #+begin_src latex
   \begin{listing-tex}
     %\usepackage[style=numeric-comp]{biblatex}
-    %\addbibresource{../tex/biblatex-examples.bib}
+    %\addbibresource{../tex/sample.bib}
     % \input{../tex/erw-biblatex.sty}
     \section{Fancy quotes}
 
@@ -841,8 +980,8 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-      \MarkerTypeset[colback=black!80, colframe=black, colupper=white]
-    {\faEyeSlash}{Élément~censuré}%
+  \MarkerTypeset[colback=black!80, colframe=black, colupper=white]
+  {\faEyeSlash}{Élément~censuré}%
 #+end_src
 
 #+begin_src latex
@@ -1371,3 +1510,12 @@ Meta file to generate files.
       }
     }
 #+end_src
+
+* shell
+
+#+begin_src shell
+  curl -L -o ../tex/sample-1.bib \
+https://raw.githubusercontent.com/plk/biblatex/8e5b0605f017b64af04463447e10f02c933dee89/bibtex/bib/biblatex/biblatex-examples.bib
+#+end_src
+
+#+RESULTS:
