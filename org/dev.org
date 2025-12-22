@@ -28,6 +28,17 @@ Meta file to generate files.
   % Solution: \ExplSyntaxOff\ExplSyntaxOn after \file_input:n
 #+end_src
 
+*** writing in non-nested directory
+
+See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
+
+#+begin_src latex
+  % ---
+  % Warning: pdflatex: Not writing to  <path> (openout_any=p; no extended check)
+  % Solution: https://tex.stackexchange.com/a/756108/112708
+  % Other: 
+#+end_src
+
 *** ~\usepackage{../tex/module}~
 
 #+begin_src latex
@@ -536,7 +547,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-%  \ExplSyntaxOn
+  % \ExplSyntaxOn
 #+end_src
 
 #+header: :noweb yes
@@ -545,7 +556,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-%  \ExplSyntaxOff
+  % \ExplSyntaxOff
 #+end_src
 
 *** example
@@ -554,44 +565,67 @@ Meta file to generate files.
 :END:
 
 #+begin_src latex
+  % Terminal:
+  % cd pdf
+  % export TEXMFOUTPUT=$(realpath ../tex)
+  % source_file='../tex/example-boilerplate.tex'
+  % pdflatex -shell-escape "\\def\\texdir{$TEXMFOUTPUT}\input " "$source_file"
+#+end_src
+
+#+begin_src latex
+  \def\snippetpath{\texdir/\jobname-snippet}
+#+end_src
+
+#+begin_src latex
+ \begin{filecontents}[overwrite]{\snippetpath.tex}
+   \documentclass{article}
+   \usepackage{../tex/erw-boilerplate}
+   
+   \ExplSyntaxOn
+   \cs_new:Nn\__erw_bar:n{ Hello~#1! }
+   
+   \cs_new_protected:Nn
+   \__erw_foo:nnn{ \use:c{#1:#2}{#3} }
+   
+   \__erw_adapt_cmd_wrapper_to_N:N
+   \__erw_foo:nnn
+   \ExplSyntaxOff
+   
+   \begin{document}
+   \ExplSyntaxOn
+   \__erw_foo:Nn
+   \__erw_bar:n{world}
+   \ExplSyntaxOff
+   \end{document}
+ \end{filecontents}
+#+end_src
+
+#+begin_src latex
   \documentclass{article}
-#+end_src
-
-#+begin_src latex
-%  \ExplSyntaxOn
-%  \file_input:n{../tex/erw-boilerplate.sty}
-%  \ExplSyntaxOff
-  \usepackage{../tex/erw-boilerplate}
-#+end_src  
-
-#+begin_src latex
-  \ExplSyntaxOn
-#+end_src  
-
-#+begin_src latex
-  \cs_new:Nn\__erw_bar:n
-  { Hello~#1! }
-
-  \cs_new_protected:Nn
-  \__erw_foo:nnn
-  { \use:c{#1:#2}{#3} }
-
-  \__erw_adapt_cmd_wrapper_to_N:N
-  \__erw_foo:nnn
-#+end_src
-
-#+begin_src latex
-  \ExplSyntaxOff
+  \usepackage{lipsum,tcolorbox,graphicx}
+  \tcbuselibrary{listings,raster,skins}
+  \newtcblisting{listing-tex}{
+    listing and text,
+    listing options={language=Tex, style=tcblatex}
+  }
 #+end_src
 
 #+begin_src latex
   \begin{document}
-
-  \ExplSyntaxOn
-  \__erw_foo:Nn
-  \__erw_bar:n{world}
-  \ExplSyntaxOff
-
+  \tcbinputlisting{
+    lower separated=false,
+    listing and comment,
+    listing file={\snippetpath},
+    listing options={style=tcblatex},
+    pdf comment = {../pdf/\jobname-snippet.pdf},
+    comment style={
+      raster columns=1,
+      graphics options={trim=1.18in 9.06in 1.18in 1.18in, clip, width=\linewidth},
+      % https://ctan.math.washington.edu/tex-archive/macros/latex/contrib/tcolorbox/tcolorbox.pdf#section*.656
+    },
+    freeze pdf=false,
+    run system command={pdflatex -interaction=nonstopmode \snippetpath.tex}
+  }
   \end{document}
 #+end_src
 
@@ -1512,10 +1546,23 @@ Meta file to generate files.
 #+end_src
 
 * shell
+** compile
+:PROPERTIES:
+:ID:       e9680a4a-1f36-40b5-8d74-d846ce80b618
+:END:
+
+#+name: shell-example
+#+begin_src shell
+  # https://tex.stackexchange.com/a/756108/112708
+  export TEXMFOUTPUT=$(realpath $(pwd)/../tex)
+  module_name="foo"
+  [[ $(basename $(pwd)) == "${module_name}" ]] || { cd pdf; }
+  pdflatex "\\def\\texdir{$TEXMFOUTPUT}\input"  ../tex/example-"${module_name}".tex
+#+end_src
+
+** import
 
 #+begin_src shell
   curl -L -o ../tex/sample-1.bib \
 https://raw.githubusercontent.com/plk/biblatex/8e5b0605f017b64af04463447e10f02c933dee89/bibtex/bib/biblatex/biblatex-examples.bib
 #+end_src
-
-#+RESULTS:
