@@ -1088,6 +1088,7 @@ Meta file to generate files.
 #+begin_src latex
   \end{document}
 #+end_src
+
 ** marker
 
 #+begin_src latex
@@ -1211,7 +1212,9 @@ Meta file to generate files.
 % - https://tex.stackexchange.com/q/755612/112708
 #+end_src
 
-*** msg
+*** source
+**** global
+***** msg
 
 #+begin_src latex
   % msg
@@ -1219,138 +1222,89 @@ Meta file to generate files.
   \msg_new:nnn{__erw_socket}{missing}{Missing~value~for~key~#1}
 #+end_src
 
-*** cs-new
+***** cs-new
+
+#+begin_src latex  
+  \keys_define:nn{__erw_socket}
+  {
+    global / cs-new.code:n = {
+      \cs_gset_eq:NN
+      \__erw_socket_new:nn#1
+    },
+    global / cs-new.default:n = { \socket_new:nn },
+  }
+  \keys_set:nn{__erw_socket}{ global / cs-new }
+#+end_src
+
+#+begin_src latex  
+  \keys_define:nn{__erw_socket}
+  {
+    global / cs-new-plug.code:n = {
+      \cs_gset_eq:NN
+      \__erw_socket_new_plug:nnn#1
+    },
+    global / cs-new-plug.default:n = {
+      \socket_new_plug:nnn
+      % alternatively:
+      % \socket_new_set:nnn
+    }
+  }
+  \keys_set:nn{__erw_socket}{ global / cs-new-plug }
+#+end_src
 
 #+begin_src latex  
   % socket-specific
   \keys_define:nn{__erw_socket}
   {
-    global / cs-new.code:n = { \cs_gset_eq:NN\__erw_socket_new:nn#1 },
-    global / cs-new.default:n = { \socket_new:nn },
-    global / cs-new-plug.code:n = { \cs_gset_eq:NN\__erw_socket_new_plug:nnn#1 },
-    global / cs-new-plug.default:n = {
-      \socket_new_plug:nnn
-      % alternatively:
-      % \socket_new_set:nnn
+    global / cs-assign-plug.code:n = {
+      \cs_gset_eq:NN
+      \__erw_socket_assign_plug:nn#1
     },
-    global / cs-assign-plug.code:n = { \cs_gset_eq:NN\__erw_socket_assign_plug:nn#1 },
-    global / cs-assign-plug.default:n = {\socket_assign_plug:nnn}
-  }
-  \keys_set:nn{__erw_socket}
-  {%
-    global / cs-new,
-    global / cs-new-plug,
-    global / cs-assign-plug
-  }
-#+end_src
-
-*** plugs
-**** seq
-
-#+begin_src latex
-  \seq_new:c{g__erw_socket_#1_plugs_seq}
-#+end_src
-
-**** put
-
-#+begin_src latex
-  \cs_new_protected:Npn
-  \__erw_socket_plugs_put:nn
-  #1 % <socket name>
-  #2 % <plug name>
-  {%
-    \seq_if_in:cnTF{g__erw_socket_#1_plugs_seq}
-    {#2}
-    { \c_empty_tl }
-    { \seq_put_right:cn{ g__erw_socket_#1_plugs_seq{##1} } }
-    % Example:
-    % \__erw_socket_plugs_put:n
-    % { greeting }
-    % { formal }
-  }
-#+end_src
-  
-**** new
-
-#+begin_src latex
-  \cs_new_protected:Npn
-  \__erw_socket_new_plugs:nn
-  % placeholder
-  #1 % <socket name>
-  #2 % <clist>
-  {
-    \keyval_parse:nnn
-    {
-      \msg_warning:nnn
-      {__erw_socket}
-      {missing}
+    global / cs-assign-plug.default:n = {
+      \socket_assign_plug:nnn
     }
-    {
-      \__erw_inline:nn{nn}
-      { \__erw_socket_new_plug:nnn
-        {#1}{###1}{###2} }
-    }
-    { #2 }
-    % Example:
-    % \__erw_socket_new_plugs:nn
-    % { greeting }
-    % {
-    %   formal = {Dear Sir/Madam,},
-    %   informal = {Hi there,},
-    %   friendly = {Hello, friend!}
-    % }
-    %   
-    % Side effect:
-    % \socket_new_plug:nnn{ greeting }{ formal }{ Dear Sir/Madam, }
-    % \socket_new_plug:nnn{ greeting }{ informal }{ Hi there, }
-    % \socket_new_plug:nnn{ greeting }{ friendly }{ Hello, friend! }
   }
-  \cs_new_protected:Npn
-  \__erw_socket_new_plugs:nn
-  {\__erw_socket_new_plugs:nnN{#1}{#2}
-    \__erw_socket_new_plug:nnn}
+  \keys_set:nn{__erw_socket}{ global / cs-assign-plug }
 #+end_src
 
-*** define
-**** assign-plug
-***** code
+***** assign-plug
+****** code
 
 #+begin_src latex
   \cs_new_protected:Nn
-  \__erw_socket_define_assign_plug_meta:nnn
+  \__erw_socket_define_assign_plug:nnn
   #1 % <cs name>
   #2 % <signature>
   #3 % <code>
   {
-    \cs_new_protected:Nn
-    \__erw_socket_define_assign_plug:nnn
-    #1 % <cs name>
-    #2 % <signature>
-    #3 % <code>
+    \keys_define:nn{__erw_socket}
     {
-      \keys_define:nn{__erw_socket}
+      internal / assign-plug / #1:#2 .code:n =
+      % ##1 <socket name>
+      % ##2 <arguments>
       {
-        internal / assign-plug / #1:#2 .code:n =
-        % ##1 <socket name>
-        % ##2 <arguments>
+        \__erw_inline:nn
+        {n#2}
         {
           \__erw_inline:nn
-          {n#2}
+          {#2}
           {
-            \__erw_inline:nn
-            {#2}
             \__erw_socket_assign_plug:nn
             {##1}
             {#3}
-          }
+          }\__erw_braced_plh:ne{2}
+          {%
+            \exp_args:Nne
+            \__erw_int_finish:nn{2}
+            {\str_count:n{#2}}}
         }
-
-        % Call: \__erw_socket_define_assign_plug:nnn{identity}{n}{#1}
-        % Side effect: \keys_define:nn{__erw_socket}
-        % {internal/assign-plug/identity:n.code:n = \erw_socket_assign_plug:nn{##1}{##1}}
-        % Wanted instead: \erw_socket_assign_plug:nn{##1}{##2}    
       }
+      % Call: \__erw_socket_define_assign_plug:nnn{identity}{n}{#1}
+      % Side effect: \keys_define:nn{__erw_socket}
+      % {internal/assign-plug/identity:n.code:n = \erw_socket_assign_plug:nn{##1}{##1}}
+      % Wanted instead: \erw_socket_assign_plug:nn{##1}{##2}    
     }
+  }
 #+end_src
 
 #+begin_src latex
@@ -1421,122 +1375,130 @@ Meta file to generate files.
       }
 #+end_src
 
-***** default
+**** socket
+***** plugs
+****** prop
 
 #+begin_src latex
-  \cs_new_protected:Npn
-  \__erw_socket_meta_assign_plug_default:nnnN
-  % placeholder
-  #1 % <socket name>
-  #2 % <method>
-  #3 % <code>
-  {
-    \keys_define:nn{__erw_socket}
-    {
-      #1 / assign-plug / #2.default:n = #3
-    }
-    % Example:
-    % - code
-    % \__erw_socket_meta_assign_plug_default:nnnN
-    % { greeting }{ identity }{formal}
-    % \keys_define:nn{__erw_socket}
-    % {  greeting / assign-plug / identity }
-    % - side effect:
-    % \socket_assign_plug:nn{greeting}{formal}
-  }
+  \seq_new:c{g__erw_socket_#1_plugs_seq}
 #+end_src
 
-***** keys
+****** put
 
-*** new
-  
 #+begin_src latex
   \cs_new_protected:Npn
-  \__erw_socket_new:nn
-  #1 % socket name
-  #2 % arity
-  #3 % <cs-new
-  {
-    \socket_new:nn{#1}{#2}
-    \keys_define:nn{__erw_socket}
-    {
-      #1 / plugs.code:n = 
-      {
-        \keyval_parse:nnn
-        {
-          \msg_warning:nnn
-          {__erw_socket}
-          {missing}
-        }
-        {
-          \__erw_inline:nn{nn}
-          {
-            \seq_if_in:cnTF{g__erw_socket_#1_plugs_seq}
-            {###1}
-            { \c_empty_tl }
-            { \seq_put_right:Nn\l__erw_socket_plugs_seq{##1} }
-            \socket_new_plug:nnn{#1}{###1}{###2}
-          }
-        }
-        { ##1 }
-      },
-      internal / #1 / meta / assign.code:n
+  \__erw_socket_plugs_put:nn
+  #1 % <socket name>
+  #2 % <plug name>
+  {%
+    \seq_if_in:cnTF{g__erw_socket_#1_plugs_seq}
+    { #2 }
+    { \c_empty_tl }
+    { \seq_put_right:cn{ g__erw_socket_#1_plugs_seq{ ##1 } } }
+    % Example:
+    % \__erw_socket_plugs_put:n
+    % { greeting }
+    % { formal }
+  }
+#+end_src
+  
+***** keys
 
-      #1 / meta / assign.default:n = {
-        { code = { identity = {##1} } },
+#+begin_src latex
+  \keys_define:nn{ __erw_socket }
+  {
+    socket / new.code:n
+    {
+      \group_begin:
+      
+      \prop_clear_new:N
+      \l__erw_socket_new_prop
+
+      \prop_set_from_keyval:Nn
+      \__erw_socket_new_prop{ #1 }
+
+      \prop_get:NnNTF
+      \__erw_socket_prop
+      { name }
+      \l__erw_name_str
+      {%
+        \prop_get:NnNTF
+        \__erw_socket_prop
+        { arity }
+        \l__erw_arity_int
         {
-          match =
-          {        
-            \seq_if_empty:NTF\l__erw_socket_plug_seq
+          \exp_last_unbraced:Ne
+          \__erw_socket_new:nn
+          { { \l__erw_name_str }{ \l__erw_arity_int } }
+          \seq_new:c{ g__erw_socket_ \l__erw_name_str _plugs_seq }
+        }
+        { \msg_warning:nnn{ __erw_socket }{ missing }{ arity } }
+
+        \prop_get:NnNTF
+        \__erw_socket_new_prop{ plugs }
+        \l__erw_plugs_tl
+        {
+          \seq_if_exist:c{ g__erw_socket_ \l__erw_name_str _plugs_seq }
+          {
+            \keyval_parse:nnn
             {
               \msg_warning:nnn
-              {__erw_socket}
-              {generic}
-              {no~plugs~to~iterate~over}
+              { __erw_socket }
+              { missing }
             }
             {
-              \group_begin:
-              \tl_clear:N\l_tmpa_tl
-              \seq_map_inline:cn
-              {g__erw_socket_#1_plugs_seq}
-              {            
-                \__erw_inline:nn{nn} % TODO extend to arbitrary args
-                {\bool_if:nTF{##1}}
-                {
-                  \keys_set:nn{__erw_socket}
-                  { #1 / assign / identity = {###1} }
-                  \seq_map_break:
-                }
-                {\c_empty_tl}
+              \__erw_inline:nn{ nn }
+              {
+                \__erw_socket_new_plug:nnn
+                { #1 }{ ##1 }{ ##2 }
+                \seq_gput_right:cn{
+                  g__erw_socket_ \l__erw_name_str _plugs_seq
+                }{ ##1 }
               }
-              \group_end:
             }
+            { #2 }
           }
+          {
+            \msg_warning:nnn
+            { __erw_socket }
+            { generic }
+            { unable~to~process~plugs }
+          }
+
+          % TODO assign-plug
+          
+          \group_end:
+          
         }
+        { \msg_warning:nnn{ __erw_socket }{ generic }{ plugs } }
       }
+      { \msg_warning:nnn{ __erw_socket }{ missing }{ name } }
     }
-    \cs_new_protected:Npn
-    \__erw_socket_set:n
-    #1 % keyval
-    { \keys_set:nn{__erw_socket}{#1} }
-    \__erw_socket_set:nn
-    #1 % prefix
-    #2 % keyval
-    {%
-      \keys_set:nn{__erw_socket}
-      {
-        \keyval_parse:nnn
-        {
-          \__erw_inline:nn{n}
-          { \__erw_socket_set:n{ #1 / ##1 } }
-        }
-        {
-          \__erw_inline:nn{nn}
-          { \__erw_socket_set:n{ #1 / ##1 = ##2 } }
-        }
-        {#2}
-      }
-    }
+  }
+  % Example:
+  % \keys_set:nn{__erw_socket}
+  % {
+  % socket / new =
+  % {
+  % name = {greeting},
+  % arity = {0},
+  % plugs = {
+  % formal = {Dear Sir/Madam,},
+  % informal = {Hi there,},
+  % friendly = {Hello, friend!}
+  % },
+  %   assign-plug = {
+  %   method = {identity:n},
+  %   args = {formal}
+  % }
+  % }
+  % }
+#+end_src
+
+*** example
+
+#+begin_src latex
+  
 #+end_src
 
 * shell
