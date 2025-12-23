@@ -20,31 +20,67 @@ Meta file to generate files.
 :header-args: :tangle "../tex/gotcha-solution.tex"
 :END:
 
+#+begin_src latex
+  % -----------------------------------------------------------------
+  % Gotchas with their solutions
+  % -----------------------------------------------------------------
+#+end_src
+
 *** ~\file_input:n~ breaks expl3
 
 #+begin_src latex
   % ---
-  % Gotcha: \file_input:n breaks expl3 syntax mode
-  % Solution: \ExplSyntaxOff\ExplSyntaxOn after \file_input:n
+  % Gotcha:   \file_input:n breaks expl3 syntax mode
+  % Solution: use \ExplSyntaxOff\ExplSyntaxOn after \file_input:n
 #+end_src
 
-*** writing in non-nested directory
-
-See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
+*** writing to a non-nested directory
 
 #+begin_src latex
   % ---
-  % Warning: pdflatex: Not writing to  <path> (openout_any=p; no extended check)
-  % Solution: https://tex.stackexchange.com/a/756108/112708
-  % Other: 
+  % Gotcha: writing to a non-nested directory
+  % Warning:
+  %   "pdflatex: Not writing to <path>
+  %    (openout_any=p; no extended check)"
+  % Solution:
 #+end_src
 
-*** ~\usepackage{../tex/module}~
+#+begin_src latex
+  % % \jobname.tex:
+  % \def\snippetpath{\texdir/\jobname-snippet}
+  % \begin{filecontents}[overwrite]{\snippetpath.tex}
+  % [content]
+  % \end{filecontents}
+#+end_src
+
+#+header: :noweb-ref tex-snippetpath
+#+begin_src latex
+  % # shell:
+  % cd pdf
+  % export TEXMFOUTPUT=$(realpath ../tex)
+  % source_file='../tex/<jobname>.tex'
+  % pdflatex [-shell-escape] "\\def\\texdir{$TEXMFOUTPUT}\input "\
+  % "$source_file"
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-snippetpath
+#+begin_src latex
+  \def\snippetpath{\texdir/\jobname-snippet}
+#+end_src
+
+#+begin_src latex
+  % Credits:
+  % https://tex.stackexchange.com/a/756108/112708
+#+end_src
+
+*** ~\usepackage~ warning about path
 
 #+begin_src latex
   % ---
+  % Gotcha:   \usepackage warning about path
   % Code:     \usepackage{../tex/module} 
-  % Warning:  You have requested file `../tex/module',
+  % Warning:  You have requested file `../tex/module`,
   %           but the file provides `<module>'
   % Solution: Ignore the warning
 #+end_src
@@ -431,13 +467,30 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
   \cs_new:Npn
   \__erw_braced_plh:n
   #1
-  {{## #1}}
+  { \exp_not:n{ {## #1} } }
   \cs_new:Npn
   \__erw_braced_plh:nn
   #1 % <start>
   #2 % <finish>
-  { \int_step_function:nnN {#1}{#2}\__erw_braced_plh:n}
+  { \int_step_function:nnN {#1}{#2}\__erw_braced_plh:n }
   \cs_generate_variant:Nn\__erw_braced_plh:nn{ne}
+#+end_src
+
+***** inline
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  % boilerplate
+  \cs_new_protected:Npn
+  \__erw_inline:nn
+  #1 % <arg spec>
+  #2 % <code>
+  {
+    \cs_gset:cn{__erw_lambda:#1}{#2}
+    \use:c{__erw_lambda:#1}
+  }
+  % Example:
+  % \__erw_inline:nn{n}{Hello~#1!}{world}
 #+end_src
 
 ***** refactor
@@ -560,20 +613,23 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
 #+end_src
 
 *** example
+**** adapt-cmd-wrapper-to-N
 :PROPERTIES:
-:header-args: :tangle ../tex/example-boilerplate.tex
+:header-args: :tangle ../tex/example-adapt-cmd-wrapper-to-N.tex
 :END:
 
 #+begin_src latex
   % Terminal:
   % cd pdf
   % export TEXMFOUTPUT=$(realpath ../tex)
-  % source_file='../tex/example-boilerplate.tex'
+  % source_file='../tex/example-<module>.tex'
   % pdflatex -shell-escape "\\def\\texdir{$TEXMFOUTPUT}\input " "$source_file"
 #+end_src
 
+#+header: :noweb yes
 #+begin_src latex
-  \def\snippetpath{\texdir/\jobname-snippet}
+  <<tex-snippetpath>>
+  %\def\snippetpath{\texdir/\jobname-snippet}
 #+end_src
 
 #+begin_src latex
@@ -626,6 +682,60 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
     freeze pdf=false,
     run system command={pdflatex -interaction=nonstopmode \snippetpath.tex}
   }
+  \end{document}
+#+end_src
+
+**** inline
+:PROPERTIES:
+:header-args: :tangle ../tex/example-inline.tex
+:END:
+
+#+begin_src latex
+  \documentclass{article}
+  \usepackage{tcolorbox}
+  \usepackage{../tex/erw-boilerplate}
+  \tcbuselibrary{listings}
+  \newtcblisting{listing-tex}{
+    listing and text,
+    listing options={language=Tex, style=tcblatex}
+  }
+#+end_src
+
+#+begin_src latex
+  \ExplSyntaxOn
+  \exp_args:NNx
+  \cs_new_protected:Nn\__erw_test:nn
+  {
+    \exp_not:n
+    {
+      \__erw_inline:nn{n}
+      {
+        (##1)
+      }
+    }\__erw_braced_plh:nn{2}{2}
+  }
+  \ExplSyntaxOff
+#+end_src
+
+#+begin_src latex
+  \begin{document}
+  \begin{listing-tex}
+    % \documentclass{article}
+    % \usepackage{../tex/erw-boilerplate}
+    % \ExplSyntaxOn
+    % \exp_args:NNe
+    % \cs_new_protected:Nn\__erw_test:nn
+    % { \exp_not:n
+    %   {\__erw_inline:nn{n}{ (##1) } }
+    %   \__erw_braced_plh:nn{2}{2} }
+    % \ExplSyntaxOff
+    % \begin{document}
+    \ExplSyntaxOn
+    \__erw_inline:nn{n}{Hello~#1!}{world}\par
+    \__erw_test:nn{foo}{bar}
+    \ExplSyntaxOff
+    % \end{document}
+  \end{listing-tex}
   \end{document}
 #+end_src
 
@@ -688,21 +798,6 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
 #+header: :noweb-ref tex-biblatex-info
 #+begin_src latex
   % -----------------------------------------------------------------
-#+end_src
-
-***** guard
-
-#+header: :noweb-ref tex-biblatex-guard
-#+begin_src latex
-  % TODO remove
-  %  \tl_if_exist:NTF \g__erw_biblatex_flag_tl
-  %  {%
-  %    \msg_warning:nnn { __erw_biblatex }{ generic }{ already-loaded }
-  %    \file_input_stop:
-  %  }
-  %  {%
-  %    \tl_gset:Nn \g__erw_biblatex_flag_tl{}
-  %  }
 #+end_src
 
 ***** biblatex
@@ -900,19 +995,13 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
 
 #+header: :noweb yes
 #+begin_src latex
-  \ProvidesPackage{erw-biblatex}{2025/12/21}{1.1}
+  \ProvidesExplPackage{erw-biblatex}{2025/12/22}{1.1}
   { <<org-biblatex-summary>> }
 #+end_src
 
 #+header: :noweb yes
 #+begin_src latex
   <<tex-biblatex-info>>
-#+end_src
-
-#+end_src
-
-#+begin_src latex
-  \ExplSyntaxOn
 #+end_src
 
 #+header: :noweb yes
@@ -945,10 +1034,6 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
   <<tex-biblatex-doc-cmd>>
 #+end_src
 
-#+begin_src latex
-  \ExplSyntaxOff
-#+end_src
-
 *** example
 :PROPERTIES:
 :header-args: :tangle ../tex/example-biblatex.tex
@@ -969,9 +1054,10 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
 #+end_src
     
 #+begin_src latex
-  \ExplSyntaxOn
-  \file_input:n{../tex/erw-biblatex.sty}
-  \ExplSyntaxOff
+  \usepackage{../tex/erw-biblatex}
+  %  \ExplSyntaxOn
+  %  \file_input:n{../tex/erw-biblatex.sty}
+  %  \ExplSyntaxOff
 #+end_src
     
 #+begin_src latex
@@ -1125,69 +1211,6 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
 % - https://tex.stackexchange.com/q/755612/112708
 #+end_src
 
-*** boilerplate
-
-#+begin_src latex
-  % boilerplate
-  \cs_new_protected:Npn
-  \__erw_socket_inline:nn
-  #1 % <arg spec>
-  #2 % <code>
-  {
-    \cs_gset:cn{__erw_socket_lambda:#1}{#2}
-    \use:c{__erw_socket_lambda:#1}
-  }
-#+end_src
-
-#+begin_src latex
-  \cs_new_protected:Nn
-  \__erw_socket_cs_new_from_split:N
-  #1 %\__erw_socket_assign_plug_method:nnn
-  {%
-    \group_begin:
-
-    \exp_args:NNe
-    \tl_set:Nn
-    \l_tmpa_tl{ \cs_split_function:N#1 }
-
-    \exp_args:NNe
-    \str_set:Nn
-    \l__erw_base_str
-    { \exp_args:Ne\use_i:nn{\l_tmpa_tl} }
-
-    \exp_args:NNe
-    \str_set:N
-    \l__erw_sig_str
-    { \exp_args:Ne\use_ii:nn{\l_tmpa_tl} }
-
-    \cs_new_protected:cn
-    { \l__erw_base_str:N\tl_range:nnn{\l__erw_sig_str}{3}{-1} }
-    {
-      \exp_args:NNe
-      \tl_set:Nn
-      \l_tmpa_tl{ \cs_split_function:N##1 }
-
-      \exp_args:NNe
-      \str_set:Nn
-      \l__erw_base_str
-      { \exp_args:Ne\use_i:nn{\l_tmpa_tl} }
-
-      \exp_args:NNe
-      \str_set:N
-      \l__erw_sig_str
-      { \exp_args:Ne\use_ii:nn{\l_tmpa_tl} }
-
-      #1
-      {\l__erw_base_str}
-      {\l__erw_sig_str}
-    }
-  }
-
-  \group_end:
-
-  }
-#+end_src
-
 *** msg
 
 #+begin_src latex
@@ -1240,7 +1263,6 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
     {#2}
     { \c_empty_tl }
     { \seq_put_right:cn{ g__erw_socket_#1_plugs_seq{##1} } }
-    % 
     % Example:
     % \__erw_socket_plugs_put:n
     % { greeting }
@@ -1264,19 +1286,18 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
       {missing}
     }
     {
-      \__erw_socket_inline:nn{nn}
+      \__erw_inline:nn{nn}
       { \__erw_socket_new_plug:nnn
         {#1}{###1}{###2} }
     }
     { #2 }
-
     % Example:
     % \__erw_socket_new_plugs:nn
     % { greeting }
     % {
-    % formal = {Dear Sir/Madam,},
-    % informal = {Hi there,},
-    % friendly = {Hello, friend!}
+    %   formal = {Dear Sir/Madam,},
+    %   informal = {Hi there,},
+    %   friendly = {Hello, friend!}
     % }
     %   
     % Side effect:
@@ -1296,34 +1317,40 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
 
 #+begin_src latex
   \cs_new_protected:Nn
-  \__erw_socket_define_assign_plug_method:nnn
+  \__erw_socket_define_assign_plug_meta:nnn
   #1 % <cs name>
   #2 % <signature>
   #3 % <code>
   {
-    \keys_define:nn{__erw_socket}
+    \cs_new_protected:Nn
+    \__erw_socket_define_assign_plug:nnn
+    #1 % <cs name>
+    #2 % <signature>
+    #3 % <code>
     {
-      assign-plug / #1:#2 .code:n =
+      \keys_define:nn{__erw_socket}
       {
-        \prop_gput_from_keyval:Nn
-        \g__erw_socket_set_prop
+        internal / assign-plug / #1:#2 .code:n =
+        % ##1 <socket name>
+        % ##2 <arguments>
         {
-          socket-name = \c_novalue_tl,
-          arguments = \c_novalue_tl,
-          default-arguments = \c_novalue_tl,
-          ##1
+          \__erw_inline:nn
+          {n#2}
+          {
+            \__erw_inline:nn
+            {#2}
+            \__erw_socket_assign_plug:nn
+            {##1}
+            {#3}
+          }
         }
-        
-        \__erw_socket_inline:nn
-        {#2}
-        {
-          \__erw_socket_assign_plug:nn
-          {}
-          {#3}
-        }
+
+        % Call: \__erw_socket_define_assign_plug:nnn{identity}{n}{#1}
+        % Side effect: \keys_define:nn{__erw_socket}
+        % {internal/assign-plug/identity:n.code:n = \erw_socket_assign_plug:nn{##1}{##1}}
+        % Wanted instead: \erw_socket_assign_plug:nn{##1}{##2}    
       }
     }
-  }
 #+end_src
 
 #+begin_src latex
@@ -1331,23 +1358,31 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
   \prop_new:N\g__erw_socket_set_prop
   \keys_define:nn{__erw_socket}
   {
-    define / assign-plug / method.code:n =
+    define / assign-plug.code:n =
     % Example:
     % - code:
     %   \keys_set:nn{__erw_socket}
     %   {
     %      define / assign-plug =
     %      {
-    %        cs-name = { identity:n },
+    %        method = { identity:n },
     %        code = { #1 }
     %      }
     %   }
     %   \keys_set:nn{__erw_socket}
     %   {
-    %       assign-plug.identity:n =
+    %      bind / assign-plug =
+    %      {
+    %        socket-name = {greeting},
+    %        method = { identity:n },
+    %        args = { friendly }
+    %      }
+    %   }
+    %   \keys_set:nn{__erw_socket}
+    %   {
+    %       eval / assign-plug  =
     %       {
     %         socket-name = { greeting },
-    %         arguments = {friendly}
     %       }
     %   }
     %   - side effect:
@@ -1386,73 +1421,32 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
       }
 #+end_src
 
-#+begin_src latex
-  % \keys_set:nn{__erw_socket}
-  % {
-  % define / assign-plug / default =
-  % {
-  % socket-name = { identity },
-  % key = { identity / n },
-  % arguments = { friendly }
-  % }
-  % }
-  %   \keys_set:nn{__erw_socket}
-  %   {
-  %   assign-plug / default =
-  %   {
-  %   socket-name = greeting,
-  %   arguments = {friendly}
-  % }
-  % }
-
-  \exp_args:Ne
-  \tl_if_novalue:nTF
-  { \prop_item:Nn
-    \g__erw_socket_meta_prop{ default } }
-  { \c_empty_tl }
-  {
-    \keys_define:nn{ __erw_socket }
-    {
-      \prop_item:Nn\g__erw_socket_meta_prop / 
-    }
-  }
-  }
-  }
-#+end_src
-
 ***** default
 
-  #+begin_src latex
-    \cs_new_protected:Npn
-    \__erw_socket_meta_assign_plug_default:nnnN
-    % placeholder
-    #1 % <socket name>
-    #2 % <method>
-    #3 % <code>
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_socket_meta_assign_plug_default:nnnN
+  % placeholder
+  #1 % <socket name>
+  #2 % <method>
+  #3 % <code>
+  {
+    \keys_define:nn{__erw_socket}
     {
-      \keys_define:nn{__erw_socket}
-      {
-        #1 / assign-plug / #2.default:n = #3
-      }
-      % Example:
-      % - code
-      % \__erw_socket_meta_assign_plug_default:nnnN
-      % { greeting }{ identity }{formal}
-      % \keys_define:nn{__erw_socket}
-      % {  greeting / assign-plug / identity }
-      % - side effect:
-      %  \socket_assign_plug:nn{greeting}{formal}
+      #1 / assign-plug / #2.default:n = #3
     }
+    % Example:
+    % - code
+    % \__erw_socket_meta_assign_plug_default:nnnN
+    % { greeting }{ identity }{formal}
+    % \keys_define:nn{__erw_socket}
+    % {  greeting / assign-plug / identity }
+    % - side effect:
+    % \socket_assign_plug:nn{greeting}{formal}
+  }
 #+end_src
 
 ***** keys
-
-#+begin_src latex
-  \keys_define:nn{__erw_socket}
-  {
-
-  }
-#+end_src
 
 *** new
   
@@ -1475,7 +1469,7 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
           {missing}
         }
         {
-          \__erw_socket_inline:nn{nn}
+          \__erw_inline:nn{nn}
           {
             \seq_if_in:cnTF{g__erw_socket_#1_plugs_seq}
             {###1}
@@ -1506,7 +1500,7 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
               \seq_map_inline:cn
               {g__erw_socket_#1_plugs_seq}
               {            
-                \__erw_socket_inline:nn{nn} % TODO extend to arbitrary args
+                \__erw_inline:nn{nn} % TODO extend to arbitrary args
                 {\bool_if:nTF{##1}}
                 {
                   \keys_set:nn{__erw_socket}
@@ -1533,11 +1527,11 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
       {
         \keyval_parse:nnn
         {
-          \__erw_socket_inline:nn{n}
+          \__erw_inline:nn{n}
           { \__erw_socket_set:n{ #1 / ##1 } }
         }
         {
-          \__erw_socket_inline:nn{nn}
+          \__erw_inline:nn{nn}
           { \__erw_socket_set:n{ #1 / ##1 = ##2 } }
         }
         {#2}
@@ -1561,6 +1555,21 @@ See [[id:e9680a4a-1f36-40b5-8d74-d846ce80b618][this]].
 #+end_src
 
 ** import
+
+#+begin_src shell
+  # don't indent
+  url='https://'\
+  'raw.githubusercontent.com/plk/biblatex/'\
+  '8e5b0605f017b64af04463447e10f02c933dee89/'\
+  'bibtex/bib/biblatex/'\
+  'biblatex-examples.bib'
+  keys_ar=('aristotle:anima')
+  #    keys_ar=('aristotle:anima' 'kant:krv')
+  pattern=$(IFS="|"; echo "${keys_ar[*]}")
+  curl "$url" | sed -En "/^@.*\{(${pattern}),/,/^}/p" > ../tex/sample-1.bib
+#+end_src
+
+#+RESULTS:
 
 #+begin_src shell
   curl -L -o ../tex/sample-1.bib \
