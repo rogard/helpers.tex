@@ -1111,17 +1111,17 @@ Meta file to generate files.
 :END:
 
 #+begin_src latex
-    \documentclass{article}
-    % \usepackage[style=authoryear]{biblatex}
-    \usepackage[style=numeric-comp]{biblatex}
-    \addbibresource{../tex/sample-1.bib}
+  \documentclass{article}
+  % \usepackage[style=authoryear]{biblatex}
+  \usepackage[style=numeric-comp]{biblatex}
+  \addbibresource{../tex/sample-1.bib}
 #+end_src
     
 #+begin_src latex
-    \usepackage{lipsum,xtemplate,tcolorbox}
-    \tcbuselibrary{listings}
-    \newtcblisting{listing-tex}
-    { listing options = { language = Tex, style = tcblatex } }
+  \usepackage{ lipsum, xtemplate, tcolorbox }
+  \tcbuselibrary{listings}
+  \newtcblisting{listing-tex}
+  { listing options = { language = Tex, style = tcblatex } }
 #+end_src
     
 #+begin_src latex
@@ -1160,16 +1160,137 @@ Meta file to generate files.
   \end{document}
 #+end_src
 
-** socket
+** lang
+*** source
+**** info
+
+#+name: org-lang-summary
+#+begin_src org
+  Package-agnostic interface for detecting loaded languages
+#+end_src
+
+#+header: :noweb-ref tex-lang-info
+#+begin_src latex
+  % Usage:
+  % TODO
+#+end_src
+
+**** socket
+
+#+header: :noweb-ref tex-lang
+#+begin_src latex
+  \socket_new:nn {erw-lang} {1}  % language name
+#+end_src
+
+#+header: :noweb-ref tex-lang
+#+begin_src latex
+  \makeatletter
+  \socket_new_plug:nnn {erw-lang} {babel} 
+  { \cs_if_exist:cTF {bbl@loaded@#1} }
+  \makeatother
+#+end_src
+
+#+header: :noweb-ref tex-lang
+#+begin_src latex
+  \makeatletter
+  \socket_new_plug:nnn {erw-lang} {polyglossia}
+  { \clist_if_in:NnTF \xpg@loaded {#1} }
+  \makeatother
+#+end_src
+
+#+header: :noweb-ref tex-lang
+#+begin_src latex
+  \seq_gset_from_clist:Nn
+  \g__erw_lang_plugs_seq
+  { babel, polyglossia }
+#+end_src
+
+#+header: :noweb-ref tex-lang
+#+begin_src latex
+  \seq_map_inline:Nn \g__erw_lang_plugs_seq {
+    \IfPackageLoadedTF{#1} {
+      \socket_assign_plug:nn {erw-lang} {#1}
+      \seq_map_break:  % Stop after first match
+    }{}
+  }
+#+end_src
+
+#+header: :noweb-ref tex-lang
+#+begin_src latex
+  \prg_new_conditional:Npnn
+  \__erw_lang_loaded:n #1 { TF }
+  {
+    \socket_use:nn {erw-lang} {#1}
+    { \prg_return_true: }
+    { \prg_return_false: }
+  }
+#+end_src
+
+#+header: :noweb-ref tex-lang
+#+begin_src latex
+  \NewDocumentCommand{\IfLangLoaded}{m m m}
+  {
+    \__erw_lang_loaded:nTF {#1} {#2} {#3}
+  }
+#+end_src
+
+*** tangle
+:PROPERTIES:
+:header-args: :tangle ../tex/erw-lang.sty
+:END:
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-license>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-lang-info>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  \ProvidesExplPackage{erw-biblatex}{2026/02/03}{1.0}
+  { <<org-biblatex-summary>> }
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-lang>>
+#+end_src
+
+*** example
+:PROPERTIES:
+:header-args: :tangle ../tex/example-lang.tex
+:END:
+
+#+begin_src latex
+  \documentclass{article}
+  \usepackage{polyglossia}
+  \setdefaultlanguage{english}
+  \setotherlanguages{french}
+
+  \usepackage{../tex/erw-lang}
+#+end_src
+
+#+begin_src latex
+  \begin{document}
+  \IfLangLoaded{french}{French~is~loaded}{}
+  \end{document}
+#+end_src
+
+** trash
+*** socket
 
 #+begin_src latex
 % Also see:
 % - https://tex.stackexchange.com/q/755612/112708
 #+end_src
 
-*** source
-**** section
-***** info
+**** source
+***** section
+****** info
 
 #+name: org-socket-summary
 #+begin_src org
@@ -1198,15 +1319,15 @@ Meta file to generate files.
   % }
 #+end_src
 
-***** global
-****** usepackage
+****** global
+******* usepackage
 
 #+header: :noweb-ref tex-socket-expl3
 #+begin_src latex
   \usepackage{../tex/erw-boilerplate}
 #+end_src
 
-****** msg
+******* msg
 
 #+header: :noweb-ref tex-socket-expl3
 #+begin_src latex
@@ -1215,7 +1336,7 @@ Meta file to generate files.
   \msg_new:nnn{erw-socket}{missing}{❌ missing~value~for~key~#1}
 #+end_src
 
-****** cs-new
+******* cs-new
 
 #+header: :noweb-ref tex-socket-expl3
 #+begin_src latex  
@@ -1263,8 +1384,8 @@ Meta file to generate files.
   \keys_set:nn{erw-socket}{ global / cs-assign-plug }
 #+end_src
 
-****** assign-plug
-******* code
+******* assign-plug
+******** code
 
 #+header: :noweb-ref tex-socket-expl3
 #+begin_src latex
@@ -1375,16 +1496,16 @@ Meta file to generate files.
   }
 #+end_src
 
-***** socket
-****** plugs
-******* prop
+****** socket
+******* plugs
+******** prop
 
 #+header: :noweb-ref tex-socket-expl3
 #+begin_src latex
   \seq_new:c{ g__erw_socket_#1_plugs_seq }
 #+end_src
 
-******* put
+******** put
 
 #+header: :noweb-ref tex-socket-expl3
 #+begin_src latex
@@ -1404,7 +1525,7 @@ Meta file to generate files.
   }
 #+end_src
   
-****** keys
+******* keys
 
 #+begin_src latex
   % Global bc "We only support declarations on top-level"
@@ -1500,10 +1621,7 @@ Meta file to generate files.
   }
  #+end_src
 
-**** tangle
-:PROPERTIES:
-:header-args: :tangle ../tex/erw-socket.sty
-:END:
+***** tangle
 
 #+header: :noweb yes
 #+begin_src latex
@@ -1527,10 +1645,7 @@ Meta file to generate files.
   <<tex-socket-expl3>>
 #+end_src
 
-*** example
-:PROPERTIES:
-:header-args: :tangle ../tex/example-socket.tex
-:END:
+**** example
 
 #+begin_src latex
   \documentclass{article}
