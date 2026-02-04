@@ -8,7 +8,7 @@ Meta file to generate files.
 #+name: tex-license
 #+begin_src latex
 % -----------------------------------------------------------------
-% Copyright (C) 2025 by Erwann Rogard
+% Copyright (C) 2025-2026 by Erwann Rogard
 % - Source repository: https://github.com/rogard/helpers.tex
 % - Released under the LaTeX Project Public License v1.3c or later
 % - See http://www.latex-project.org/lppl.txt
@@ -34,7 +34,7 @@ Meta file to generate files.
   % Solution: use \ExplSyntaxOff\ExplSyntaxOn after \file_input:n
 #+end_src
 
-*** writing to a non-nested directory
+*** Writing to a non-nested directory
 
 #+begin_src latex
   % ---
@@ -462,6 +462,8 @@ Meta file to generate files.
 
 ***** plh
 
+~plh~ means placeholder
+
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new:Npn
@@ -581,6 +583,75 @@ Meta file to generate files.
     }
   }
   \cs_generate_variant:Nn\__erw_adapt_cmd_wrapper_to_N:nnnn{eeee}
+#+end_src
+
+***** clist
+
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_clist_sort_in_place:N
+  #1 % <clist>
+  {
+    \clist_sort:Nn#1
+    {
+      \str_compare:nNnTF { ##1 } < { ##2 }
+      { \sort_return_same: }
+      { \sort_return_swapped: }
+    }
+  }
+#+end_src
+
+#+begin_src latex
+  \prg_new_protected_conditional:Npnn
+  \__erw_clist_if_subset:NN #1#2 { TF }
+  {
+    \clist_map_inline:Nn #1
+    {
+      \clist_if_in:NnF #2 { ##1 }
+      { \prg_return_false: }
+    }
+    \prg_return_true:
+  }
+#+end_src
+
+***** scope-infix-type
+
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_scope_infix_type:nNN
+  #1 % <input>
+  #2 % <output>
+  #3 % <regex>
+  {
+    \seq_set_regex_extract_once:NNn
+    #2
+    #3
+    { #1 }
+  }
+#+end_src
+
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_scope_infix_type:NNN
+  #1 % <input>
+  #2 % <output>
+  #3 % <regex>
+  {
+    \exp_args:Ne
+    \__erw_scope_infix_type:nNN
+    { \cs_to_str:N #1 }
+    #2#3
+    % Example:
+    % \tl_set:N\l_tmpa_tl{ \l__foo_str }
+    % \__erw_scope_infix_type:NN
+    % \l_tmpa_tl
+    % \l_tmpa_seq
+    % \exp_args:Ne\tl_show:n{
+    % Scope: \seq_item:Nn\l_tmpa_seq{ 2 } % l
+    % Infix: \seq_item:Nn\l_tmpa_seq{ 3 } % foo
+    % Type: \seq_item:Nn\l_tmpa_seq{ 4 } % str
+    % }
+  }
 #+end_src
 
 **** tangle
@@ -804,9 +875,9 @@ Meta file to generate files.
 
 #+header: :noweb-ref tex-biblatex-biblatex
 #+begin_src latex
-  \DeclareCiteCommand{\__erw_citeauthorfull}
+  \DeclareCiteCommand{ \__erw_citeauthorfull }
   {}
-  {\printnames[given-family][1-1]{author}}
+  { \printnames[given-family][1-1]{author} }
   {}
   {}
 #+end_src
@@ -823,7 +894,7 @@ Meta file to generate files.
 
 #+header: :noweb-ref tex-biblatex-expl3
 #+begin_src latex
-  \msg_new:nnn{__erw_biblatex}{generic}{#1}
+  \msg_new:nnn{ __erw_biblatex }{ generic }{ #1 }
 #+end_src
 
 #+header: :noweb tex-biblatex-expl3
@@ -1089,122 +1160,6 @@ Meta file to generate files.
   \end{document}
 #+end_src
 
-** marker
-
-#+begin_src latex
-% -----------------------------------------------------------------
-% Copyright (C) 2025 by Erwann Rogard
-% - Source repository: https://github.com/erwannr/helpers.tex
-% - Released under the LaTeX Project Public License v1.3c or later
-% - See http://www.latex-project.org/lppl.txt
-% -----------------------------------------------------------------
-#+end_src
-
-#+begin_src latex
-  \MarkerTypeset[colback=black!80, colframe=black, colupper=white]
-  {\faEyeSlash}{Élément~censuré}%
-#+end_src
-
-#+begin_src latex
-  \ExplSyntaxOn
-  \hbox_set:Nn \l_tmpa_box { Hello }
-  \AtBeginDocument{
-    \box_scale:Nnn \l_tmpa_box { 0.8 } { 0.8 }
-  }
-  \ExplSyntaxOff
-#+end_src
-
-#+begin_src latex
-  \msg_new:nnn{__erw_marker}{generic}{#1}
-#+end_src
-
-#+begin_src latex
-  \fp_new:N\g__erw_marker_scale_fp
-  \keys_define:nn{__erw_marker}
-  {
-    scale.fp_gset:N = \g__erw_marker_scale_fp,
-    scale.default:n = {0.8}
-  }
-#+end_src
-
-#+begin_src latex
-  \DeclareObjectType{erw-marker}{1}
-#+end_src
-
-#+begin_src latex
-  \DeclareTemplateInterface{erw-marker}
-  {standard}{1}
-  {
-    text : tokenlist,
-    symbol : tokentlist,
-    box-scale-h : real = 0.8,
-    box-scale-v : real = 0.8,
-    tcbox-options : comma-list = {colback=black!80, colframe=black, colupper=white}
-  }
-#+end_src
-
-#+begin_src latex
-  \DeclareTemplateCode{erw-marker}
-  {standard}{1}
-  {
-    text = \l__erw_marker_tl
-  }
-  {
-
-    \IfPackageLoadedT{tcolorbox}
-    {
-      \IfValueTF{#1}
-      {
-        \tcbox[on~line,\clist_]
-      }
-      {
-        \tcbox[on~line]
-      }
-    }
-    {
-      \IfPackageLoadedTF{fontawesome5}
-      {\__erw_marker_typeset:nn{#2}{#3}}%
-      {#3}%
-    }%
-
-
-  }
-#+end_src
-
-
-#+begin_src latex
-  \cs_new:Npn \__erw_marker_typeset:nn #1 #2
-  {
-    \scalebox{\fp_use:N\g__erw_marker_scale_fp}{#1}#2
-  }
-
-  \ProvideDocumentCommand{\MarkerTypeset}{omm}
-  {
-    % #1 = optional tcbox parameters
-    % #2 = name of fa font (e.g., \faEyeSlash)
-    % #3 = text
-    
-    \IfPackageLoadedT{tcolorbox}
-    {
-      \IfValueTF{#1}
-      {
-        \tcbox[on~line,#1]
-      }
-      {
-        \tcbox[on~line]
-      }
-    }
-    {
-      \IfPackageLoadedTF{fontawesome5}
-      {\__erw_marker_typeset:nn{#2}{#3}}%
-      {#3}%
-    }%
-  }
-
-  \ExplSyntaxOff
-
-#+end_src
-
 ** socket
 
 #+begin_src latex
@@ -1213,19 +1168,58 @@ Meta file to generate files.
 #+end_src
 
 *** source
-**** global
-***** msg
+**** section
+***** info
 
-#+begin_src latex
-  % msg
-  \msg_new:nnn{__erw_socket}{generic}{#1}
-  \msg_new:nnn{__erw_socket}{missing}{Missing~value~for~key~#1}
+#+name: org-socket-summary
+#+begin_src org
+  Keyval wrapper around LaTeX's socket management.
 #+end_src
 
-***** cs-new
+#+header: :noweb-ref tex-socket-info
+#+begin_src latex
+  % Example:
+  % \keys_set:nn{erw-socket}
+  % {
+  %   socket / new =
+  %   {
+  %     name = {greeting},
+  %     arity = {0},
+  %     plugs = {
+  %       formal = {Dear Sir/Madam,},
+  %       informal = {Hi there,},
+  %       friendly = {Hello, friend!}
+  %     },
+  %     assign-plug = {
+  %       method = {identity:n},
+  %       args = {formal}
+  %     }
+  %   }
+  % }
+#+end_src
 
+***** global
+****** usepackage
+
+#+header: :noweb-ref tex-socket-expl3
+#+begin_src latex
+  \usepackage{../tex/erw-boilerplate}
+#+end_src
+
+****** msg
+
+#+header: :noweb-ref tex-socket-expl3
+#+begin_src latex
+  % msg
+  \msg_new:nnn{erw-socket}{generic}{❌ #1}
+  \msg_new:nnn{erw-socket}{missing}{❌ missing~value~for~key~#1}
+#+end_src
+
+****** cs-new
+
+#+header: :noweb-ref tex-socket-expl3
 #+begin_src latex  
-  \keys_define:nn{__erw_socket}
+  \keys_define:nn{erw-socket}
   {
     global / cs-new.code:n = {
       \cs_gset_eq:NN
@@ -1233,11 +1227,12 @@ Meta file to generate files.
     },
     global / cs-new.default:n = { \socket_new:nn },
   }
-  \keys_set:nn{__erw_socket}{ global / cs-new }
+  \keys_set:nn{erw-socket}{ global / cs-new }
 #+end_src
 
+#+header: :noweb-ref tex-socket-expl3
 #+begin_src latex  
-  \keys_define:nn{__erw_socket}
+  \keys_define:nn{erw-socket}
   {
     global / cs-new-plug.code:n = {
       \cs_gset_eq:NN
@@ -1249,12 +1244,13 @@ Meta file to generate files.
       % \socket_new_set:nnn
     }
   }
-  \keys_set:nn{__erw_socket}{ global / cs-new-plug }
+  \keys_set:nn{erw-socket}{ global / cs-new-plug }
 #+end_src
 
+#+header: :noweb-ref tex-socket-expl3
 #+begin_src latex  
   % socket-specific
-  \keys_define:nn{__erw_socket}
+  \keys_define:nn{erw-socket}
   {
     global / cs-assign-plug.code:n = {
       \cs_gset_eq:NN
@@ -1264,20 +1260,21 @@ Meta file to generate files.
       \socket_assign_plug:nnn
     }
   }
-  \keys_set:nn{__erw_socket}{ global / cs-assign-plug }
+  \keys_set:nn{erw-socket}{ global / cs-assign-plug }
 #+end_src
 
-***** assign-plug
-****** code
+****** assign-plug
+******* code
 
+#+header: :noweb-ref tex-socket-expl3
 #+begin_src latex
-  \cs_new_protected:Nn
+  \cs_new_protected:Npn
   \__erw_socket_define_assign_plug:nnn
   #1 % <cs name>
   #2 % <signature>
   #3 % <code>
   {
-    \keys_define:nn{__erw_socket}
+    \keys_define:nn{erw-socket}
     {
       internal / assign-plug / #1:#2 .code:n =
       % ##1 <socket name>
@@ -1300,45 +1297,46 @@ Meta file to generate files.
         }
       }
       % Call: \__erw_socket_define_assign_plug:nnn{identity}{n}{#1}
-      % Side effect: \keys_define:nn{__erw_socket}
-      % {internal/assign-plug/identity:n.code:n = \erw_socket_assign_plug:nn{##1}{##1}}
+      % Side effect: \keys_define:nn{erw-socket}
+      % { internal/assign-plug/identity:n.code:n = \erw_socket_assign_plug:nn{##1}{##1} }
       % Wanted instead: \erw_socket_assign_plug:nn{##1}{##2}    
     }
   }
 #+end_src
 
+#+header: :noweb-ref tex-socket-expl3
 #+begin_src latex
   \prop_new:N\g__erw_socket_define_prop
   \prop_new:N\g__erw_socket_set_prop
-  \keys_define:nn{__erw_socket}
+  \keys_define:nn{erw-socket}
   {
     define / assign-plug.code:n =
     % Example:
     % - code:
-    %   \keys_set:nn{__erw_socket}
+    % \keys_set:nn{erw-socket}
+    % {
+    % define / assign-plug =
+    % {
+    % method = { identity:n },
+    % code = { #1 }
+    % }
+    % }
+    %   \keys_set:nn{erw-socket}
     %   {
-    %      define / assign-plug =
-    %      {
-    %        method = { identity:n },
-    %        code = { #1 }
-    %      }
-    %   }
-    %   \keys_set:nn{__erw_socket}
+    %   bind / assign-plug =
     %   {
-    %      bind / assign-plug =
-    %      {
-    %        socket-name = {greeting},
-    %        method = { identity:n },
-    %        args = { friendly }
-    %      }
-    %   }
-    %   \keys_set:nn{__erw_socket}
+    %   socket-name = {greeting},
+    %   method = { identity:n },
+    %   args = { friendly }
+    % }
+    % }
+    %   \keys_set:nn{erw-socket}
     %   {
-    %       eval / assign-plug  =
-    %       {
-    %         socket-name = { greeting },
-    %       }
-    %   }
+    %   eval / assign-plug  =
+    %   {
+    %   socket-name = { greeting },
+    % }
+    % }
     %   - side effect:
     %   \__erw_socket_assign_plug:nn{ greeting }{ friendly }
     {
@@ -1373,18 +1371,22 @@ Meta file to generate files.
         \prop_item:Nn
         \g__erw_socket_define_prop{ argspec }
       }
+    }
+  }
 #+end_src
 
-**** socket
-***** plugs
-****** prop
+***** socket
+****** plugs
+******* prop
 
+#+header: :noweb-ref tex-socket-expl3
 #+begin_src latex
-  \seq_new:c{g__erw_socket_#1_plugs_seq}
+  \seq_new:c{ g__erw_socket_#1_plugs_seq }
 #+end_src
 
-****** put
+******* put
 
+#+header: :noweb-ref tex-socket-expl3
 #+begin_src latex
   \cs_new_protected:Npn
   \__erw_socket_plugs_put:nn
@@ -1402,103 +1404,166 @@ Meta file to generate files.
   }
 #+end_src
   
-***** keys
+****** keys
 
+#+begin_src latex
+  % Global bc "We only support declarations on top-level"
+  % https://tug.ctan.org/macros/latex-dev/base/ltsockets-code.pdf#HD.16
+  \prop_new:N\g__erw_socket_prop
+  \tl_new:N\g__erw_socket_arity_tl
+  \tl_new:N\g__erw_socket_name_tl
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-socket-expl3-socket-new
+#+begin_src latex
+  \prop_get:NnNTF
+  \g__erw_socket_prop
+  { arity }
+  \g__erw_socket_arity_tl
+  {
+    \exp_last_unbraced:Ne
+    \__erw_socket_new:nn
+    { { \g__erw_socket_name_tl }{ \g__erw_socket_arity_tl } }
+    \seq_new:c{ g__erw_socket_ \g__erw_socket_name_tl _plugs_seq }
+  }
+  { \msg_warning:nnn{ __erw_socket }{ missing }{ arity } }
+#+end_src
+
+#+header: :tangle no
+#+header: :noweb-ref tex-socket-expl3-socket-plugs
+#+begin_src latex
+  \prop_get:NnNTF
+  \g__erw_socket_prop{ plugs }
+  \l__erw_plugs_clist
+  {
+    \seq_if_exist:cTF{ g__erw_socket_ \g__erw_socket_name_tl _plugs_seq }
+    {
+      \keyval_parse:nnV
+      {
+        \msg_warning:nnn
+        { __erw_socket }
+        { missing }
+      }
+      {
+        \__erw_inline:nn{ nn }
+        {
+          \exp_args:Ne
+          \__erw_socket_new_plug:nnn
+          { \g__erw_socket_name_tl }{ ##1 }{ ##2 }
+          \seq_gput_right:cn{
+            g__erw_socket_ \g__erw_socket_name_tl _plugs_seq
+          }{ ##1 }
+        }
+      }\l__erw_plugs_clist
+    }
+    {
+      \msg_warning:nnn
+      { __erw_socket }
+      { generic }
+      { unable~to~process~plugs }
+    }    
+  }
+  { \msg_warning:nnn{ __erw_socket }{ missing }{ plugs } }
+#+end_src
+
+#+header: :noweb yes
+#+header: :noweb-ref tex-socket-expl3
 #+begin_src latex
   \keys_define:nn{ __erw_socket }
   {
-    socket / new.code:n
+    socket / new.code:n =
     {
-      \group_begin:
-      
-      \prop_clear_new:N
-      \l__erw_socket_new_prop
+
+      \prop_clear:N
+      \g__erw_socket_prop
 
       \prop_set_from_keyval:Nn
-      \__erw_socket_new_prop{ #1 }
+      \g__erw_socket_prop{ #1 }
 
       \prop_get:NnNTF
-      \__erw_socket_prop
+      \g__erw_socket_prop
       { name }
-      \l__erw_name_str
-      {%
-        \prop_get:NnNTF
-        \__erw_socket_prop
-        { arity }
-        \l__erw_arity_int
-        {
-          \exp_last_unbraced:Ne
-          \__erw_socket_new:nn
-          { { \l__erw_name_str }{ \l__erw_arity_int } }
-          \seq_new:c{ g__erw_socket_ \l__erw_name_str _plugs_seq }
-        }
-        { \msg_warning:nnn{ __erw_socket }{ missing }{ arity } }
+      \g__erw_socket_name_tl
+      {
+        <<tex-socket-expl3-socket-new>>
 
-        \prop_get:NnNTF
-        \__erw_socket_new_prop{ plugs }
-        \l__erw_plugs_tl
-        {
-          \seq_if_exist:c{ g__erw_socket_ \l__erw_name_str _plugs_seq }
-          {
-            \keyval_parse:nnn
-            {
-              \msg_warning:nnn
-              { __erw_socket }
-              { missing }
-            }
-            {
-              \__erw_inline:nn{ nn }
-              {
-                \__erw_socket_new_plug:nnn
-                { #1 }{ ##1 }{ ##2 }
-                \seq_gput_right:cn{
-                  g__erw_socket_ \l__erw_name_str _plugs_seq
-                }{ ##1 }
-              }
-            }
-            { #2 }
-          }
-          {
-            \msg_warning:nnn
-            { __erw_socket }
-            { generic }
-            { unable~to~process~plugs }
-          }
+        \group_begin:
 
-          % TODO assign-plug
-          
-          \group_end:
-          
-        }
-        { \msg_warning:nnn{ __erw_socket }{ generic }{ plugs } }
+        <<tex-socket-expl3-socket-plugs>>
+
+        \group_end:
       }
       { \msg_warning:nnn{ __erw_socket }{ missing }{ name } }
+
     }
   }
-  % Example:
-  % \keys_set:nn{__erw_socket}
-  % {
-  % socket / new =
-  % {
-  % name = {greeting},
-  % arity = {0},
-  % plugs = {
-  % formal = {Dear Sir/Madam,},
-  % informal = {Hi there,},
-  % friendly = {Hello, friend!}
-  % },
-  %   assign-plug = {
-  %   method = {identity:n},
-  %   args = {formal}
-  % }
-  % }
-  % }
+ #+end_src
+
+**** tangle
+:PROPERTIES:
+:header-args: :tangle ../tex/erw-socket.sty
+:END:
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-license>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  \ProvidesExplPackage{erw-socket}{2025/12/22}{1.1}
+  { <<org-socket-summary>> }
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-socket-info>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  % --- expl3
+  <<tex-socket-expl3>>
 #+end_src
 
 *** example
+:PROPERTIES:
+:header-args: :tangle ../tex/example-socket.tex
+:END:
 
 #+begin_src latex
-  
+  \documentclass{article}
+#+end_src
+
+#+begin_src latex
+  \usepackage{../tex/erw-socket}
+#+end_src
+
+#+begin_src latex
+  \ExplSyntaxOn
+  \keys_set:nn{erw-socket}
+  {
+    socket / new = {
+      name = {greeting},
+      arity = {0},
+      plugs = {
+        formal = {Dear~Sir/Madam,},
+        informal = {Hi~there,},
+        friendly = {Hello,~friend!}
+      },
+    }
+  }
+
+  \AssignSocketPlug{greeting}{formal}
+
+  \ExplSyntaxOff
+#+end_src
+
+#+begin_src latex
+  \begin{document}
+  \UseSocket{greeting}{formal}{}
+  \end{document}
 #+end_src
 
 * shell
