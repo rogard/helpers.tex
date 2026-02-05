@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage{tcolorbox}
+\usepackage{../sty/erw-boilerplate}
+\tcbuselibrary{listings}
+\newtcblisting{listing-tex}{
+  listing and text,
+  listing options={language=Tex, style=tcblatex}
+}
+
+\ExplSyntaxOn
+\exp_args:NNx
+\cs_new_protected:Nn\__erw_test:nn
+{
+  \exp_not:n
+  {
+    \__erw_inline:nn{n}
+    {
+      (##1)
+    }
+  }\__erw_braced_plh:nn{2}{2}
+}
+\ExplSyntaxOff
+
+\begin{document}
+\begin{listing-tex}
+  % \documentclass{article}
+  % \usepackage{../sty/erw-boilerplate}
+  % \ExplSyntaxOn
+  % \exp_args:NNe
+  % \cs_new_protected:Nn\__erw_test:nn
+  % { \exp_not:n
+  %   {\__erw_inline:nn{n}{ (##1) } }
+  %   \__erw_braced_plh:nn{2}{2} }
+  % \ExplSyntaxOff
+  % \begin{document}
+  \ExplSyntaxOn
+  \__erw_inline:nn{n}{Hello~#1!}{world}\par
+  \__erw_test:nn{foo}{bar}
+  \ExplSyntaxOff
+  % \end{document}
+\end{listing-tex}
+\end{document}

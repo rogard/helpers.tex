@@ -1,33 +1,37 @@
 % -----------------------------------------------------------------
-% Copyright (C) 2025 by Erwann Rogard
+% Copyright (C) 2025-2026 by Erwann Rogard
 % - Source repository: https://github.com/rogard/helpers.tex
 % - Released under the LaTeX Project Public License v1.3c or later
 % - See http://www.latex-project.org/lppl.txt
 % -----------------------------------------------------------------
 
-% Summary:
-% - Counter commands allowing cross-referencing
-% - Usage:
-% `\CounterSetup{ new = <name> }`
-% `\CounterIncrement{<name>}`
-% `\CounterUse{<name>}`
-% `\CounterLabel{<name>}{<label>}`
-% `\CounterRef{<name>}{<label>}`
-% - Compilation:
-%  - Two passes required
-%  - To start anew, delete auxiliary files
+\ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
+{ <<org-counter-summary>> }
+
+% -----------------------------------------------------------------
+% Usage:
+% \CounterSetup{ new = <name> }
+% \CounterIncrement{ <name> }
+% \CounterUse{ <name> }
+% \CounterLabel{ <name> }{ <label> }
+% \CounterRef{ <name> }{ <label> }
+% Other:
+% - Compile twice
+% - To start anew, delete `\jobname.aux`
+% -----------------------------------------------------------------
 
 \ExplSyntaxOn
 
 % --- guard ---------
-\tl_if_exist:NTF \g__erw_counter_flag_tl
-{%
-  \msg_warning:nnn { __erw_counter }{ generic }{ already-loaded }
-  \file_input_stop:
-}
-{%
-  \tl_gset:Nn \g__erw_counter_flag_tl{}
-}
+% TODO remove
+%  \tl_if_exist:NTF \g__erw_counter_flag_tl
+%  {%
+%    \msg_warning:nnn { __erw_counter }{ generic }{ already-loaded }
+%    \file_input_stop:
+%  }
+%  {%
+%    \tl_gset:Nn \g__erw_counter_flag_tl{}
+%  }
 
 % --- reference ---
 \msg_new:nnn{__erw_counter}{generic}{#1}

@@ -1,0 +1,25 @@
+\documentclass{article}
+\usepackage{polyglossia} % lualatex
+\setdefaultlanguage{english}
+\setotherlanguages{french}
+%\usepackage[french,english]{babel}
+
+\usepackage{../sty/erw-lang}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\newtcblisting{listing-tex}
+{ listing options = { language = Tex, style = tcblatex } }
+
+\begin{document}
+\begin{listing-tex}
+  \IfLangLoaded{french}
+  {
+    \textfrench{
+      Bonjour:~comment allez vous?
+      % Expected: a space just before `:`
+    }
+  }
+  { Not~as~expected }
+\end{listing-tex}
+\end{document}

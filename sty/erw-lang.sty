@@ -1,0 +1,46 @@
+% -----------------------------------------------------------------
+% Copyright (C) 2025-2026 by Erwann Rogard
+% - Source repository: https://github.com/rogard/helpers.tex
+% - Released under the LaTeX Project Public License v1.3c or later
+% - See http://www.latex-project.org/lppl.txt
+% -----------------------------------------------------------------
+
+% Usage:
+% ```
+% \__erw_lang_loaded:nTF{<language>{<code1>}{<code2}
+% \IfLangLoaded{<language>{<code1>}{<code2>}
+% ```
+
+\ProvidesExplPackage{erw-lang}{2026/02/03}{1.0}
+{ In text citation template exposing a keyval interface }
+
+\socket_new:nn {erw-lang} {1}  % language name
+\makeatletter
+\socket_new_plug:nnn {erw-lang} {babel} 
+{ \cs_if_exist:cTF {bbl@loaded@#1} }
+\socket_new_plug:nnn {erw-lang} {polyglossia}
+{ \clist_if_in:NnTF \xpg@loaded {#1} }
+\makeatother
+\seq_gset_from_clist:Nn
+\g__erw_lang_plugs_seq
+{
+  babel,
+  polyglossia
+} % Extend as necessary
+\seq_map_inline:Nn \g__erw_lang_plugs_seq {
+  \IfPackageLoadedTF{#1} {
+    \socket_assign_plug:nn {erw-lang} {#1}
+    \seq_map_break:  % Stop after first match
+  }{}
+}
+\prg_new_conditional:Npnn
+\__erw_lang_loaded:n #1 { TF }
+{
+  \socket_use:nn {erw-lang} {#1}
+  { \prg_return_true: }
+  { \prg_return_false: }
+}
+\NewDocumentCommand{\IfLangLoaded}{m m m}
+{
+  \__erw_lang_loaded:nTF {#1} {#2} {#3}
+}

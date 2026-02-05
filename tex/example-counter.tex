@@ -7,16 +7,15 @@
   listing options={language=Tex, style=tcblatex}
 }
 
-\ExplSyntaxOn
-\file_input:n{../tex/erw-counter.sty}
-\ExplSyntaxOff
+\usepackage{../sty/erw-counter}
+
 \CounterSetup{ new = foo }
 
 \begin{document}
 
 \begin{listing-tex}
   % \ExplSyntaxOn
-  % \file_input:n{../tex/erw-counter.sty}
+  % \file_input:n{../sty/erw-counter.sty}
   % \ExplSyntaxOff
   % \CounterSetup{ new = foo }
 

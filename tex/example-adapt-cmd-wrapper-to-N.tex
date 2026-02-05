@@ -1,0 +1,55 @@
+% Terminal:
+% cd pdf
+% export TEXMFOUTPUT=$(realpath ../tex)
+% module='adapt-cmd-wrapper-to-N'
+% source_file="../tex/example-${module}.tex"
+% pdflatex -shell-escape "\\def\\texdir{$TEXMFOUTPUT}\input " "$source_file"
+
+\def\snippetpath{\texdir/\jobname-snippet}
+
+\begin{filecontents}[overwrite]{\snippetpath.tex}
+  \documentclass{article}
+  \usepackage{../sty/erw-boilerplate}
+  
+  \ExplSyntaxOn
+  \cs_new:Nn\__erw_bar:n{ Hello~#1! }
+  
+  \cs_new_protected:Nn
+  \__erw_foo:nnn{ \use:c{#1:#2}{#3} }
+  
+  \__erw_adapt_cmd_wrapper_to_N:N
+  \__erw_foo:nnn
+  \ExplSyntaxOff
+  
+  \begin{document}
+  \ExplSyntaxOn
+  \__erw_foo:Nn
+  \__erw_bar:n{world}
+  \ExplSyntaxOff
+  \end{document}
+\end{filecontents}
+
+\documentclass{article}
+\usepackage{lipsum,tcolorbox,graphicx}
+\tcbuselibrary{listings,raster,skins}
+\newtcblisting{listing-tex}{
+  listing and text,
+  listing options={language=Tex, style=tcblatex}
+}
+
+\begin{document}
+\tcbinputlisting{
+  lower separated=false,
+  listing and comment,
+  listing file={\snippetpath},
+  listing options={style=tcblatex},
+  pdf comment = {../pdf/\jobname-snippet.pdf},
+  comment style={
+    raster columns=1,
+    graphics options={trim=1.18in 9.06in 1.18in 1.18in, clip, width=\linewidth},
+    % https://ctan.math.washington.edu/tex-archive/macros/latex/contrib/tcolorbox/tcolorbox.pdf#section*.656
+  },
+  freeze pdf=false,
+  run system command={pdflatex -interaction=nonstopmode \snippetpath.tex}
+}
+\end{document}

@@ -1,0 +1,120 @@
+% -----------------------------------------------------------------
+% Copyright (C) 2025-2026 by Erwann Rogard
+% - Source repository: https://github.com/rogard/helpers.tex
+% - Released under the LaTeX Project Public License v1.3c or later
+% - See http://www.latex-project.org/lppl.txt
+% -----------------------------------------------------------------
+
+\ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
+{ Standalone expl3-like commands for use in implementations }
+
+% \ExplSyntaxOn
+
+\cs_new:Npn
+\__erw_int_finish:nn
+#1 % start
+#2 % count
+{ \int_eval:n{#1+#2-1} }
+\cs_new:Npn
+\__erw_braced_plh:n
+#1
+{ \exp_not:n{ {## #1} } }
+\cs_new:Npn
+\__erw_braced_plh:nn
+#1 % <start>
+#2 % <finish>
+{ \int_step_function:nnN {#1}{#2}\__erw_braced_plh:n }
+\cs_generate_variant:Nn\__erw_braced_plh:nn{ne}
+% boilerplate
+\cs_new_protected:Npn
+\__erw_inline:nn
+#1 % <arg spec>
+#2 % <code>
+{
+  \cs_gset:cn{__erw_lambda:#1}{#2}
+  \use:c{__erw_lambda:#1}
+}
+% Example:
+% \__erw_inline:nn{n}{Hello~#1!}{world}
+\cs_new_protected:Npn
+\__erw_adapt_cmd_wrapper_to_N:N #1
+{
+  \group_begin:
+  
+  \exp_args:NNe
+  \tl_set:Nn \l_tmpa_tl
+  { \cs_split_function:N #1 }
+  
+  \exp_args:NNe
+  \str_set:Nn \l__erw_base_str
+  { \exp_last_unbraced:Ne
+    \use_i:nnn {\l_tmpa_tl}  }
+
+  \exp_args:NNe
+  \str_set:Nn \l__erw_sig_str
+  { \exp_last_unbraced:Ne
+    \use_ii:nnn{\l_tmpa_tl} }
+
+  \exp_args:NNe
+  \str_set:Nn \l__erw_sig_tail_str
+  { \exp_args:Ne
+    \tl_range:nnn {\l__erw_sig_str} {3} {-1} }
+
+  \exp_args:NNe
+  \int_set:Nn \l_tmpa_int% \l__erw_sig_tail_int
+  { \str_count:N \l__erw_sig_tail_str }
+
+  % \int_show:N%\l__erw_sig_tail_int
+  % \l_tmpa_int % pass
+
+  \__erw_adapt_cmd_wrapper_to_N:eeee
+  { \str_use:N\l__erw_base_str }
+  { \str_use:N\l__erw_sig_str }
+  { \str_use:N\l__erw_sig_tail_str }
+  { \__erw_braced_plh:ne
+    { 2 }{ \exp_args:Ne
+      \__erw_int_finish:nn{ 2 }{ \l_tmpa_int } } }
+
+  \group_end:
+  
+}
+\cs_new_protected:Npn
+\__erw_adapt_cmd_wrapper_to_N:nnnn
+#1
+#2
+#3
+#4
+{
+  \cs_new_protected:cn
+  { #1 :N #3 }
+  {
+    \group_begin:
+    
+    \exp_args:NNe
+    \tl_set:Nn \l_tmpa_tl
+    { \cs_split_function:N ##1 }
+
+    \exp_args:NNe
+    \str_set:Nn \l__erw_base_str
+    { \exp_last_unbraced:Ne
+      \use_i:nnn {\l_tmpa_tl}  }
+
+    \exp_args:NNe
+    \str_set:Nn \l__erw_sig_str
+    { \exp_last_unbraced:Ne
+      \use_ii:nnn{\l_tmpa_tl} }
+    
+    \exp_last_unbraced:Ne
+    \use:c { { #1 : #2 }
+      { \l__erw_base_str }
+      { \l__erw_sig_str }
+    }
+    #4
+
+    \group_end:
+    
+  }
+}
+\cs_generate_variant:Nn\__erw_adapt_cmd_wrapper_to_N:nnnn{eeee}
+
+% \ExplSyntaxOff

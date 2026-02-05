@@ -1,21 +1,21 @@
 \documentclass{article}
 % \usepackage[style=authoryear]{biblatex}
 \usepackage[style=numeric-comp]{biblatex}
-\addbibresource{../tex/biblatex-examples.bib}
+\addbibresource{../bib/sample-1.bib}
 
-\usepackage{lipsum,xtemplate,tcolorbox}
+\usepackage{ lipsum, xtemplate, tcolorbox }
 \tcbuselibrary{listings}
 \newtcblisting{listing-tex}
 { listing options = { language = Tex, style = tcblatex } }
 
-\input{../tex/erw-biblatex.sty}
+\usepackage{../sty/erw-biblatex}
 
 \begin{document}
 
 \begin{listing-tex}
   %\usepackage[style=numeric-comp]{biblatex}
-  %\addbibresource{../tex/biblatex-examples.bib}
-  % \input{../tex/erw-biblatex.sty}
+  %\addbibresource{../bib/sample-1.bib}
+  % \input{../sty/erw-biblatex.sty}
   \section{Fancy quotes}
 
   \noindent\lipsum[1][1]\\

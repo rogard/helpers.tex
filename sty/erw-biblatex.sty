@@ -1,42 +1,39 @@
 % -----------------------------------------------------------------
-% Copyright (C) 2025 by Erwann Rogard
+% Copyright (C) 2025-2026 by Erwann Rogard
 % - Source repository: https://github.com/rogard/helpers.tex
 % - Released under the LaTeX Project Public License v1.3c or later
 % - See http://www.latex-project.org/lppl.txt
 % -----------------------------------------------------------------
 
-% Summary:
-% - In text citation template exposing a keys interface
+\ProvidesExplPackage{erw-biblatex}{2025/12/22}{1.1}
+{ In text citation template exposing a keyval interface }
+
+% -----------------------------------------------------------------
 % Usage:
-% - `\DeclareInstance{erw-biblatex}{<instance>}{standard}
-%   { cite = { <code> } }`
-%   where `<code>` is in terms of `#1`, `#2`, and `#3`,
-%   representing prenote, postnote, and key.
-% - `\BiblatexCite[<instance>]
-%   { key = <key>, prenote = <prenote>, postnote = <postnote> }`
+% ```
+% \DeclareInstance{erw-biblatex}{<instance>}{standard}
+%   { cite = { <code> } }
+% ```
+% where `<code>` is in terms of `#1`, `#2`, and `#3`,
+% representing prenote, postnote, and key.
+% ```
+% \BiblatexCite[<instance>]
+% { key = <key>, prenote = <prenote>, postnote = <postnote> }
+% ```
 % Limitation:
 % - Does not handle multicite
 % Also see:
 % - https://mirrors.ibiblio.org/CTAN/macros/latex/contrib/biblatex/doc/biblatex.pdf#subsection.3.9
-
-\ExplSyntaxOn
-
-% --- guard
-\tl_if_exist:NTF \g__erw_biblatex_flag_tl
-{%
-  \msg_warning:nnn { __erw_biblatex }{ generic }{ already-loaded }
-  \file_input_stop:
-}
-{%
-  \tl_gset:Nn \g__erw_biblatex_flag_tl{}
-}
+% Versioning:
+% 2025-12-21 1.1 Guard using \ProvidesPackage
+% -----------------------------------------------------------------
 
 % --- expl3
 \makeatletter
 % should this be a const?
 \tl_const:Nx \c__erw_biblatex_bbxfile_tl { \blx@bbxfile }
 \makeatother
-\msg_new:nnn{__erw_biblatex}{generic}{#1}
+\msg_new:nnn{ __erw_biblatex }{ generic }{ #1 }
 \prg_new_conditional:Npnn \__erw_biblatex_numeric: { TF }
 {
   \bool_lazy_or:nnTF
@@ -57,9 +54,9 @@
 }
 
 % --- biblatex
-\DeclareCiteCommand{\__erw_citeauthorfull}
+\DeclareCiteCommand{ \__erw_citeauthorfull }
 {}
-{\printnames[given-family][1-1]{author}}
+{ \printnames[given-family][1-1]{author} }
 {}
 {}
 
@@ -141,5 +138,3 @@
   % 
   \UseInstance{erw-biblatex}{#1}{#2}
 }
-
-\ExplSyntaxOff
