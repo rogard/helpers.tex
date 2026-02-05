@@ -8,13 +8,15 @@
 \ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
 { Standalone expl3-like commands for use in implementations }
 
-% \ExplSyntaxOn
-
+% -----------------------------------------------------------------
+% integer
 \cs_new:Npn
 \__erw_int_last:nn
 #1 % <first>
 #2 % <count>
 { \int_eval:n{#1+#2-1} }
+% -----------------------------------------------------------------
+% function
 \cs_new:Npn
 \__erw_parameter_braced:n
 #1 % <index>
@@ -36,92 +38,57 @@
 }
 % Example:
 % \__erw_inline:nn{n}{Hello~#1!}{world}
-  \cs_new_protected:Npn
-  \__erw_adapt_cmd_wrapper_to_N:N #1
-  % See \__erw_adapt_cmd_wrapper_to_N:nnnn for a description
-  {
-    \group_begin:
-    
-    \exp_args:NNe
-    \tl_set:Nn \l_tmpa_tl
-    { \cs_split_function:N #1 }
-    
-    \exp_args:NNe
-    \str_set:Nn \l__erw_base_str
-    { \exp_last_unbraced:Ne
-      \use_i:nnn {\l_tmpa_tl}  }
-
-    \exp_args:NNe
-    \str_set:Nn \l__erw_sig_str
-    { \exp_last_unbraced:Ne
-      \use_ii:nnn{\l_tmpa_tl} }
-
-    \exp_args:NNe
-    \str_set:Nn \l__erw_sig_tail_str
-    { \exp_args:Ne
-      \tl_range:nnn {\l__erw_sig_str} {3} {-1} }
-
-    \exp_args:NNe
-    \int_set:Nn \l_tmpa_int% \l__erw_sig_tail_int
-    { \str_count:N \l__erw_sig_tail_str }
-
-    % \int_show:N%\l__erw_sig_tail_int
-    % \l_tmpa_int % pass
-
-    \__erw_adapt_cmd_wrapper_to_N:eeee
-    { \str_use:N\l__erw_base_str }
-    { \str_use:N\l__erw_sig_str }
-    { \str_use:N\l__erw_sig_tail_str }
-    { \__erw_parameter_braced:ne
-      { 2 }{ \exp_args:Ne
-        \__erw_int_last:nn{ 2 }{ \l_tmpa_int } } }
-
-    \group_end:
-    
-  }
-% Example
-% \cs_new:Nn \__erw_foo:nnn { \use:c{#1:#2}{#3} }
-% \__erw_adapt_cmd_wrapper_to_N:N \__erw_foo:nnn
-% \__erw_foo:Nn \__erw_bar:n {world}  % Calls \__erw_bar:n{world}
-% Defines a control sequence \<base>:N<sig_tail>
-% that wraps around \<base>:<sig> function.
 \cs_new_protected:Npn
-\__erw_adapt_cmd_wrapper_to_N:nnnn
-#1 % <base>
-#2 % <sig>
-#3 % <sig tail>
-#4 % <arguments>
+\__erw_scope_infix_type:nNN
+#1 % <input>
+#2 % <output>
+#3 % <regex>
 {
-  \cs_new_protected:cn
-  { #1 :N #3 }
+  \seq_set_regex_extract_once:NNn
+  #2
+  #3
+  { #1 }
+}
+\cs_new_protected:Npn
+\__erw_scope_infix_type:NNN
+#1 % <input>
+#2 % <output>
+#3 % <regex>
+{
+  \exp_args:Ne
+  \__erw_scope_infix_type:nNN
+  { \cs_to_str:N #1 }
+  #2#3
+  % Example:
+  % \__erw_scope_infix_type:NN
+  % \l__foo_str
+  % \l_tmpa_seq
+  % \exp_args:Ne\tl_show:n{
+  % Scope: \seq_item:Nn\l_tmpa_seq{ 2 } % l
+  % Infix: \seq_item:Nn\l_tmpa_seq{ 3 } % foo
+  % Type: \seq_item:Nn\l_tmpa_seq{ 4 } % str
+  % }
+}
+% -----------------------------------------------------------------
+% clist
+\cs_new_protected:Npn
+\__erw_clist_sort_in_place:N
+#1 % <clist>
+{
+  \clist_sort:Nn#1
   {
-    \group_begin:
-    
-    \exp_args:NNe
-    \tl_set:Nn \l_tmpa_tl
-    { \cs_split_function:N ##1 }
-
-    \exp_args:NNe
-    \str_set:Nn \l__erw_base_str
-    { \exp_last_unbraced:Ne
-      \use_i:nnn {\l_tmpa_tl}  }
-
-    \exp_args:NNe
-    \str_set:Nn \l__erw_sig_str
-    { \exp_last_unbraced:Ne
-      \use_ii:nnn{\l_tmpa_tl} }
-    
-    \exp_last_unbraced:Ne
-    \use:c { { #1 : #2 }
-      { \l__erw_base_str }
-      { \l__erw_sig_str }
-    }
-    #4
-
-    \group_end:
-    
+    \str_compare:nNnTF { ##1 } < { ##2 }
+    { \sort_return_same: }
+    { \sort_return_swapped: }
   }
 }
-\cs_generate_variant:Nn\__erw_adapt_cmd_wrapper_to_N:nnnn{eeee}
-
-% \ExplSyntaxOff
+\prg_new_protected_conditional:Npnn
+\__erw_clist_if_subset:NN #1#2 { TF }
+{
+  \clist_map_inline:Nn #1
+  {
+    \clist_if_in:NnF #2 { ##1 }
+    { \prg_return_false: }
+  }
+  \prg_return_true:
+}

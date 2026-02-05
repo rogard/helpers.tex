@@ -526,8 +526,10 @@ Meta file to generate files.
 
 ***** int
 
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   % -----------------------------------------------------------------
+  % integer
 #+end_src
 
 #+header: :noweb-ref tex-boilerplate
@@ -541,11 +543,13 @@ Meta file to generate files.
 
 ***** function
 
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   % -----------------------------------------------------------------
+  % function
 #+end_src
 
-****** argument
+****** parameter
 
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
@@ -582,108 +586,9 @@ Meta file to generate files.
   % \__erw_inline:nn{n}{Hello~#1!}{world}
 #+end_src
 
-****** adapt_cmd_wrapper_to_N
-
-TODO
-- This probably needs to be trashed as I don't remember its purpose.
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-    \cs_new_protected:Npn
-    \__erw_adapt_cmd_wrapper_to_N:N #1
-    % See \__erw_adapt_cmd_wrapper_to_N:nnnn for a description
-    {
-      \group_begin:
-      
-      \exp_args:NNe
-      \tl_set:Nn \l_tmpa_tl
-      { \cs_split_function:N #1 }
-      
-      \exp_args:NNe
-      \str_set:Nn \l__erw_base_str
-      { \exp_last_unbraced:Ne
-        \use_i:nnn {\l_tmpa_tl}  }
-
-      \exp_args:NNe
-      \str_set:Nn \l__erw_sig_str
-      { \exp_last_unbraced:Ne
-        \use_ii:nnn{\l_tmpa_tl} }
-
-      \exp_args:NNe
-      \str_set:Nn \l__erw_sig_tail_str
-      { \exp_args:Ne
-        \tl_range:nnn {\l__erw_sig_str} {3} {-1} }
-
-      \exp_args:NNe
-      \int_set:Nn \l_tmpa_int% \l__erw_sig_tail_int
-      { \str_count:N \l__erw_sig_tail_str }
-
-      % \int_show:N%\l__erw_sig_tail_int
-      % \l_tmpa_int % pass
-
-      \__erw_adapt_cmd_wrapper_to_N:eeee
-      { \str_use:N\l__erw_base_str }
-      { \str_use:N\l__erw_sig_str }
-      { \str_use:N\l__erw_sig_tail_str }
-      { \__erw_parameter_braced:ne
-        { 2 }{ \exp_args:Ne
-          \__erw_int_last:nn{ 2 }{ \l_tmpa_int } } }
-
-      \group_end:
-      
-    }
-  % Example
-  % \cs_new:Nn \__erw_foo:nnn { \use:c{#1:#2}{#3} }
-  % \__erw_adapt_cmd_wrapper_to_N:N \__erw_foo:nnn
-  % \__erw_foo:Nn \__erw_bar:n {world}  % Calls \__erw_bar:n{world}
-#+end_src
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  % Defines a control sequence \<base>:N<sig_tail>
-  % that wraps around \<base>:<sig> function.
-  \cs_new_protected:Npn
-  \__erw_adapt_cmd_wrapper_to_N:nnnn
-  #1 % <base>
-  #2 % <sig>
-  #3 % <sig tail>
-  #4 % <arguments>
-  {
-    \cs_new_protected:cn
-    { #1 :N #3 }
-    {
-      \group_begin:
-      
-      \exp_args:NNe
-      \tl_set:Nn \l_tmpa_tl
-      { \cs_split_function:N ##1 }
-
-      \exp_args:NNe
-      \str_set:Nn \l__erw_base_str
-      { \exp_last_unbraced:Ne
-        \use_i:nnn {\l_tmpa_tl}  }
-
-      \exp_args:NNe
-      \str_set:Nn \l__erw_sig_str
-      { \exp_last_unbraced:Ne
-        \use_ii:nnn{\l_tmpa_tl} }
-      
-      \exp_last_unbraced:Ne
-      \use:c { { #1 : #2 }
-        { \l__erw_base_str }
-        { \l__erw_sig_str }
-      }
-      #4
-
-      \group_end:
-      
-    }
-  }
-  \cs_generate_variant:Nn\__erw_adapt_cmd_wrapper_to_N:nnnn{eeee}
-#+end_src
-
 ****** scope-infix-type
 
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Npn
   \__erw_scope_infix_type:nNN
@@ -698,6 +603,7 @@ TODO
   }
 #+end_src
 
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Npn
   \__erw_scope_infix_type:NNN
@@ -710,9 +616,8 @@ TODO
     { \cs_to_str:N #1 }
     #2#3
     % Example:
-    % \tl_set:N\l_tmpa_tl{ \l__foo_str }
     % \__erw_scope_infix_type:NN
-    % \l_tmpa_tl
+    % \l__foo_str
     % \l_tmpa_seq
     % \exp_args:Ne\tl_show:n{
     % Scope: \seq_item:Nn\l_tmpa_seq{ 2 } % l
@@ -724,6 +629,13 @@ TODO
 
 ***** clist
 
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  % -----------------------------------------------------------------
+  % clist
+#+end_src
+
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Npn
   \__erw_clist_sort_in_place:N
@@ -738,6 +650,7 @@ TODO
   }
 #+end_src
 
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \prg_new_protected_conditional:Npnn
   \__erw_clist_if_subset:NN #1#2 { TF }
@@ -767,95 +680,14 @@ TODO
   { <<org-boilerplate-summary>> }
 #+end_src
 
-#+begin_src latex
-  % \ExplSyntaxOn
-#+end_src
-
 #+header: :noweb yes
 #+begin_src latex
   <<tex-boilerplate>>
 #+end_src
 
-#+begin_src latex
-  % \ExplSyntaxOff
-#+end_src
-
 *** example
-**** adapt-cmd-wrapper-to-N
 :PROPERTIES:
-:header-args: :tangle ../tex/example-adapt-cmd-wrapper-to-N.tex
-:END:
-
-#+begin_src latex
-  % Terminal:
-  % cd pdf
-  % export TEXMFOUTPUT=$(realpath ../tex)
-  % module='adapt-cmd-wrapper-to-N'
-  % source_file="../tex/example-${module}.tex"
-  % pdflatex -shell-escape "\\def\\texdir{$TEXMFOUTPUT}\input " "$source_file"
-#+end_src
-
-#+header: :noweb yes
-#+begin_src latex
-  \def\snippetpath{\texdir/\jobname-snippet}
-#+end_src
-
-#+begin_src latex
- \begin{filecontents}[overwrite]{\snippetpath.tex}
-   \documentclass{article}
-   \usepackage{../sty/erw-boilerplate}
-   
-   \ExplSyntaxOn
-   \cs_new:Nn\__erw_bar:n{ Hello~#1! }
-   
-   \cs_new_protected:Nn
-   \__erw_foo:nnn{ \use:c{#1:#2}{#3} }
-   
-   \__erw_adapt_cmd_wrapper_to_N:N
-   \__erw_foo:nnn
-   \ExplSyntaxOff
-   
-   \begin{document}
-   \ExplSyntaxOn
-   \__erw_foo:Nn
-   \__erw_bar:n{ world }
-   \ExplSyntaxOff
-   \end{document}
- \end{filecontents}
-#+end_src
-
-#+begin_src latex
-  \documentclass{article}
-  \usepackage{lipsum,tcolorbox,graphicx}
-  \tcbuselibrary{listings,raster,skins}
-  \newtcblisting{listing-tex}{
-    listing and text,
-    listing options={language=Tex, style=tcblatex}
-  }
-#+end_src
-
-#+begin_src latex
-  \begin{document}
-  \tcbinputlisting{
-    lower separated=false,
-    listing and comment,
-    listing file={\snippetpath},
-    listing options={style=tcblatex},
-    pdf comment = {../pdf/\jobname-snippet.pdf},
-    comment style={
-      raster columns=1,
-      graphics options={trim=1.18in 9.06in 1.18in 1.18in, clip, width=\linewidth},
-      % https://ctan.math.washington.edu/tex-archive/macros/latex/contrib/tcolorbox/tcolorbox.pdf#section*.656
-    },
-    freeze pdf=false,
-    run system command={pdflatex -interaction=nonstopmode \snippetpath.tex}
-  }
-  \end{document}
-#+end_src
-
-**** inline
-:PROPERTIES:
-:header-args: :tangle ../tex/example-inline.tex
+:header-args: :tangle ../tex/example-boilerplate.tex
 :END:
 
 #+begin_src latex
@@ -870,40 +702,33 @@ TODO
 #+end_src
 
 #+begin_src latex
-  \ExplSyntaxOn
-  \exp_args:NNx
-  \cs_new_protected:Nn\__erw_test:nn
-  {
-    \exp_not:n
-    {
-      \__erw_inline:nn{n}
-      {
-        (##1)
-      }
-    }\__erw_parameter_braced:nn{2}{2}
-  }
-  \ExplSyntaxOff
+  \begin{document}
 #+end_src
 
 #+begin_src latex
-  \begin{document}
+    \begin{listing-tex}
+      \ExplSyntaxOn
+      \__erw_inline:nn{n}{Hello~#1!}{world}\par
+      \ExplSyntaxOff
+    \end{listing-tex}
+#+end_src
+
+#+begin_src latex
   \begin{listing-tex}
-    % \documentclass{article}
-    % \usepackage{../sty/erw-boilerplate}
-    % \ExplSyntaxOn
-    % \exp_args:NNe
-    % \cs_new_protected:Nn\__erw_test:nn
-    % { \exp_not:n
-    %   {\__erw_inline:nn{n}{ (##1) } }
-    %   \__erw_parameter_braced:nn{2}{2} }
-    % \ExplSyntaxOff
-    % \begin{document}
     \ExplSyntaxOn
-    \__erw_inline:nn{n}{Hello~#1!}{world}\par
+    \exp_args:NNx
+    \cs_new_protected:Nn\__erw_test:nn
+    {
+      \exp_not:n
+      { \__erw_inline:nn{n}{ (##1) } }
+      \__erw_parameter_braced:nn{2}{2}
+    }
     \__erw_test:nn{foo}{bar}
     \ExplSyntaxOff
-    % \end{document}
   \end{listing-tex}
+#+end_src
+
+#+begin_src latex
   \end{document}
 #+end_src
 
@@ -1406,6 +1231,176 @@ TODO
 #+end_src
 
 ** trash
+*** source
+**** adapt_cmd_wrapper_to_N
+
+- trashing it because I don't remember its purpose.
+
+#+header: :noweb-ref tex-boilerplate-trash
+#+begin_src latex
+    \cs_new_protected:Npn
+    \__erw_adapt_cmd_wrapper_to_N:N #1
+    % See \__erw_adapt_cmd_wrapper_to_N:nnnn for a description
+    {
+      \group_begin:
+      
+      \exp_args:NNe
+      \tl_set:Nn \l_tmpa_tl
+      { \cs_split_function:N #1 }
+      
+      \exp_args:NNe
+      \str_set:Nn \l__erw_base_str
+      { \exp_last_unbraced:Ne
+        \use_i:nnn {\l_tmpa_tl}  }
+
+      \exp_args:NNe
+      \str_set:Nn \l__erw_sig_str
+      { \exp_last_unbraced:Ne
+        \use_ii:nnn{\l_tmpa_tl} }
+
+      \exp_args:NNe
+      \str_set:Nn \l__erw_sig_tail_str
+      { \exp_args:Ne
+        \tl_range:nnn {\l__erw_sig_str} {3} {-1} }
+
+      \exp_args:NNe
+      \int_set:Nn \l_tmpa_int% \l__erw_sig_tail_int
+      { \str_count:N \l__erw_sig_tail_str }
+
+      % \int_show:N%\l__erw_sig_tail_int
+      % \l_tmpa_int % pass
+
+      \__erw_adapt_cmd_wrapper_to_N:eeee
+      { \str_use:N\l__erw_base_str }
+      { \str_use:N\l__erw_sig_str }
+      { \str_use:N\l__erw_sig_tail_str }
+      { \__erw_parameter_braced:ne
+        { 2 }{ \exp_args:Ne
+          \__erw_int_last:nn{ 2 }{ \l_tmpa_int } } }
+
+      \group_end:
+      
+    }
+  % Example
+  % \cs_new:Nn \__erw_foo:nnn { \use:c{#1:#2}{#3} }
+  % \__erw_adapt_cmd_wrapper_to_N:N \__erw_foo:nnn
+  % \__erw_foo:Nn \__erw_bar:n {world}  % Calls \__erw_bar:n{world}
+#+end_src
+
+#+header: :noweb-ref tex-boilerplate-trash
+#+begin_src latex
+  % Defines a control sequence \<base>:N<sig_tail>
+  % that wraps around \<base>:<sig> function.
+  \cs_new_protected:Npn
+  \__erw_adapt_cmd_wrapper_to_N:nnnn
+  #1 % <base>
+  #2 % <sig>
+  #3 % <sig tail>
+  #4 % <arguments>
+  {
+    \cs_new_protected:cn
+    { #1 :N #3 }
+    {
+      \group_begin:
+      
+      \exp_args:NNe
+      \tl_set:Nn \l_tmpa_tl
+      { \cs_split_function:N ##1 }
+
+      \exp_args:NNe
+      \str_set:Nn \l__erw_base_str
+      { \exp_last_unbraced:Ne
+        \use_i:nnn {\l_tmpa_tl}  }
+
+      \exp_args:NNe
+      \str_set:Nn \l__erw_sig_str
+      { \exp_last_unbraced:Ne
+        \use_ii:nnn{\l_tmpa_tl} }
+      
+      \exp_last_unbraced:Ne
+      \use:c { { #1 : #2 }
+        { \l__erw_base_str }
+        { \l__erw_sig_str }
+      }
+      #4
+
+      \group_end:
+      
+    }
+  }
+  \cs_generate_variant:Nn\__erw_adapt_cmd_wrapper_to_N:nnnn{eeee}
+#+end_src
+
+*** example
+**** adapt-cmd-wrapper-to-N
+
+#+begin_src latex
+  % Terminal:
+  % cd pdf
+  % export TEXMFOUTPUT=$(realpath ../tex)
+  % module='adapt-cmd-wrapper-to-N'
+  % source_file="../tex/example-${module}.tex"
+  % pdflatex -shell-escape "\\def\\texdir{$TEXMFOUTPUT}\input " "$source_file"
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  \def\snippetpath{\texdir/\jobname-snippet}
+#+end_src
+
+#+begin_src latex
+ \begin{filecontents}[overwrite]{\snippetpath.tex}
+   \documentclass{article}
+   \usepackage{../sty/erw-boilerplate}
+   
+   \ExplSyntaxOn
+   \cs_new:Nn\__erw_bar:n{ Hello~#1! }
+   
+   \cs_new_protected:Nn
+   \__erw_foo:nnn{ \use:c{#1:#2}{#3} }
+   
+   \__erw_adapt_cmd_wrapper_to_N:N
+   \__erw_foo:nnn
+   \ExplSyntaxOff
+   
+   \begin{document}
+   \ExplSyntaxOn
+   \__erw_foo:Nn
+   \__erw_bar:n{ world }
+   \ExplSyntaxOff
+   \end{document}
+ \end{filecontents}
+#+end_src
+
+#+begin_src latex
+  \documentclass{article}
+  \usepackage{lipsum,tcolorbox,graphicx}
+  \tcbuselibrary{listings,raster,skins}
+  \newtcblisting{listing-tex}{
+    listing and text,
+    listing options={language=Tex, style=tcblatex}
+  }
+#+end_src
+
+#+begin_src latex
+  \begin{document}
+  \tcbinputlisting{
+    lower separated=false,
+    listing and comment,
+    listing file={\snippetpath},
+    listing options={style=tcblatex},
+    pdf comment = {../pdf/\jobname-snippet.pdf},
+    comment style={
+      raster columns=1,
+      graphics options={trim=1.18in 9.06in 1.18in 1.18in, clip, width=\linewidth},
+      % https://ctan.math.washington.edu/tex-archive/macros/latex/contrib/tcolorbox/tcolorbox.pdf#section*.656
+    },
+    freeze pdf=false,
+    run system command={pdflatex -interaction=nonstopmode \snippetpath.tex}
+  }
+  \end{document}
+#+end_src
+
 * shell
 ** compile
 :PROPERTIES:
