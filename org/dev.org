@@ -573,7 +573,6 @@ Meta file to generate files.
 
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
-  % boilerplate
   \cs_new_protected:Npn
   \__erw_inline:nn
   #1 % <arg spec>
