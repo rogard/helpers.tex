@@ -418,6 +418,7 @@ Meta file to generate files.
   <<tex-license>>
 #+end_src
 
+#+header: :noweb yes
 #+begin_src latex
   \ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
   { <<org-counter-summary>> }
