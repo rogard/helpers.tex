@@ -188,7 +188,7 @@ Meta file to generate files.
   % \CounterIncrement{ <name> }
   % \CounterUse{ <name> }
   % \CounterLabel{ <name> }{ <label> }
-  % \CounterRef{ <name> }{ <label> }
+  % \CounterRetrieve{ <name> }{ <label> }
 #+end_src
 
 #+header: :noweb-ref tex-counter-info
@@ -239,27 +239,27 @@ Meta file to generate files.
 #+begin_src latex
   \keys_define:nn{__erw_counter}
   {%
-    new.code:n = { \int_gzero_new:c{\__erw_counter_name:n{#1}} }
+    new.code:n = { \int_gzero_new:c{ \__erw_counter_name:n{#1} } }
   }
 #+end_src
 
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
-  \cs_new_protected:Npn \__erw_counter_increment:n
+  \cs_new_protected:Npn \erw_counter_increment:n
   #1 % <string: name>
   {%
-    \int_incr:c{\__erw_counter_name:n{#1}}
+    \int_incr:c{ \__erw_counter_name:n{#1} }
   }
 #+end_src
 
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
-  \cs_new:Npn \__erw_counter_use:n
+  \cs_new:Npn \erw_counter_use:n
   #1 % <string: name>
   {%
-    \int_use:c{\__erw_counter_name:n{#1}}
+    \int_use:c{ \__erw_counter_name:n{#1} }
   }
 #+end_src
 
@@ -273,7 +273,7 @@ Meta file to generate files.
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \str_const:Ne\c__erw_counter_aux_str
-  {\c_sys_jobname_str .erw.counter.aux}
+  { \c_sys_jobname_str .erw.counter.aux }
 #+end_src
 
 #+header: :tangle no
@@ -304,7 +304,7 @@ Meta file to generate files.
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
-  \cs_new_protected:Npn \__erw_counter_write:nnn
+  \cs_new_protected:Npn \erw_counter_remember:nnn
   #1 % <value>
   #2 % <name>
   #3 % <label>
@@ -316,17 +316,17 @@ Meta file to generate files.
       \token_to_str:N \ExplSyntaxOff
     }
   }
-  \cs_generate_variant:Nn \__erw_counter_write:nnn{e}
+  \cs_generate_variant:Nn \erw_counter_remember:nnn{e}
 #+end_src
 
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
-  \cs_new_protected:Npn \__erw_counter_write:nn
+  \cs_new_protected:Npn \erw_counter_remember:nn
   #1 % <name>
   #2 % <label>
   {%
-    \__erw_counter_write:enn{ \__erw_counter_use:n{ #1 } }
+    \erw_counter_remember:enn{ \erw_counter_use:n{ #1 } }
     { #1 }
     { #2 }
   }
@@ -358,7 +358,7 @@ Meta file to generate files.
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
-  \cs_new:Npn \__erw_counter_ref:nn
+  \cs_new:Npn \erw_counter_retrieve:nn
   #1 % infix
   #2 % label
   {%
@@ -384,27 +384,27 @@ Meta file to generate files.
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-doc-cmd
  #+begin_src latex
-  \ProvideDocumentCommand{\CounterIncrement}{m}{\__erw_counter_increment:n{#1}}
-  \ProvideDocumentCommand{\CounterUse}{m}{\__erw_counter_use:n{#1}}
+  \ProvideDocumentCommand{\CounterIncrement}{m}{\erw_counter_increment:n{#1}}
+  \ProvideDocumentCommand{\CounterUse}{m}{\erw_counter_use:n{#1}}
 #+end_src
 
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-doc-cmd
 #+begin_src latex
-  \ProvideDocumentCommand{\CounterLabel}{mm}
+  \ProvideDocumentCommand{\CounterRemember}{mm}
   % <name>
   % <label>
   {%
-    \__erw_counter_write:nn { #1 }{ #2 }
+    \erw_counter_remember:nn { #1 }{ #2 }
   }
 #+end_src
 
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-doc-cmd
 #+begin_src latex
-  \ProvideDocumentCommand{\CounterRef}{mm}
+  \ProvideDocumentCommand{\CounterRetrieve}{mm}
   {
-    \__erw_counter_ref:nn { #1 }{ #2 }
+    \erw_counter_retrieve:nn { #1 }{ #2 }
   }
 #+end_src
 
@@ -496,7 +496,7 @@ Meta file to generate files.
     Initial value: \CounterUse{foo}
 
     % Expected: 5
-    Final value: \CounterRef{foo}{final}
+    Final value: \CounterRetrieve{foo}{final}
 
     \CounterIncrement{foo}
     \CounterIncrement{foo}
@@ -507,7 +507,7 @@ Meta file to generate files.
 
     \CounterIncrement{foo}
     \CounterIncrement{foo}
-    \CounterLabel{foo}{final}
+    \CounterRemember{foo}{final}
   \end{listing-tex}
 #+end_src
 
