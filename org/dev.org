@@ -162,6 +162,223 @@ Meta file to generate files.
   \end{document}
 #+end_src
 
+** boilerplate
+*** source
+**** section
+***** info
+
+#+name: org-boilerplate-summary
+#+begin_src latex
+  Standalone expl3-like commands for use in implementations
+#+end_src
+
+***** int
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  % -----------------------------------------------------------------
+  % integer
+#+end_src
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new:Npn
+  \__erw_int_last:nn
+  #1 % <first>
+  #2 % <count>
+  { \int_eval:n{#1+#2-1} }
+#+end_src
+
+***** function
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  % -----------------------------------------------------------------
+  % function
+#+end_src
+
+****** parameter
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new:Npn
+  \__erw_parameter_braced:n
+  #1 % <index>
+  { \exp_not:n{ {## #1} } }
+#+end_src
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new:Npn
+  \__erw_parameter_braced:nn
+  #1 % <first>
+  #2 % <last>
+  { \int_step_function:nnN {#1}{#2}\__erw_parameter_braced:n }
+  \cs_generate_variant:Nn\__erw_parameter_braced:nn{ne}
+#+end_src
+
+****** inline
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_inline:nn
+  #1 % <arg spec>
+  #2 % <code>
+  {
+    \cs_gset:cn{__erw_lambda:#1}{#2}
+    \use:c{__erw_lambda:#1}
+  }
+  % Example:
+  % \__erw_inline:nn{n}{Hello~#1!}{world}
+#+end_src
+
+****** scope-infix-type
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_scope_infix_type:nNN
+  #1 % <input>
+  #2 % <output>
+  #3 % <regex>
+  {
+    \seq_set_regex_extract_once:NNn
+    #2
+    #3
+    { #1 }
+  }
+#+end_src
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_scope_infix_type:NNN
+  #1 % <input>
+  #2 % <output>
+  #3 % <regex>
+  {
+    \exp_args:Ne
+    \__erw_scope_infix_type:nNN
+    { \cs_to_str:N #1 }
+    #2#3
+    % Example:
+    % \__erw_scope_infix_type:NN
+    % \l__foo_str
+    % \l_tmpa_seq
+    % \exp_args:Ne\tl_show:n{
+    % Scope: \seq_item:Nn\l_tmpa_seq{ 2 } % l
+    % Infix: \seq_item:Nn\l_tmpa_seq{ 3 } % foo
+    % Type: \seq_item:Nn\l_tmpa_seq{ 4 } % str
+    % }
+  }
+#+end_src
+
+***** clist
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  % -----------------------------------------------------------------
+  % clist
+#+end_src
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new_protected:Npn
+  \__erw_clist_sort_in_place:N
+  #1 % <clist>
+  {
+    \clist_sort:Nn#1
+    {
+      \str_compare:nNnTF { ##1 } < { ##2 }
+      { \sort_return_same: }
+      { \sort_return_swapped: }
+    }
+  }
+#+end_src
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \prg_new_protected_conditional:Npnn
+  \__erw_clist_if_subset:NN #1#2 { TF }
+  {
+    \clist_map_inline:Nn #1
+    {
+      \clist_if_in:NnF #2 { ##1 }
+      { \prg_return_false: }
+    }
+    \prg_return_true:
+  }
+#+end_src
+
+**** tangle
+:PROPERTIES:
+:header-args: :tangle ../sty/erw-boilerplate.sty
+:END:
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-license>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  \ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
+  { <<org-boilerplate-summary>> }
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-boilerplate>>
+#+end_src
+
+*** example
+:PROPERTIES:
+:header-args: :tangle ../tex/example-boilerplate.tex
+:END:
+
+#+begin_src latex
+  \documentclass{article}
+  \usepackage{tcolorbox}
+  \usepackage{../sty/erw-boilerplate}
+  \tcbuselibrary{listings}
+  \newtcblisting{listing-tex}{
+    listing and text,
+    listing options={language=Tex, style=tcblatex}
+  }
+#+end_src
+
+#+begin_src latex
+  \begin{document}
+#+end_src
+
+#+begin_src latex
+    \begin{listing-tex}
+      \ExplSyntaxOn
+      \__erw_inline:nn{n}{Hello~#1!}{world}\par
+      \ExplSyntaxOff
+    \end{listing-tex}
+#+end_src
+
+#+begin_src latex
+  \begin{listing-tex}
+    \ExplSyntaxOn
+    \exp_args:NNx
+    \cs_new_protected:Nn\__erw_test:nn
+    {
+      \exp_not:n
+      { \__erw_inline:nn{n}{ (##1) } }
+      \__erw_parameter_braced:nn{2}{2}
+    }
+    \__erw_test:nn{foo}{bar}
+    \ExplSyntaxOff
+  \end{listing-tex}
+#+end_src
+
+#+begin_src latex
+  \end{document}
+#+end_src
+
 ** counter
 *** source
 **** section
@@ -515,223 +732,209 @@ Meta file to generate files.
   \end{document}
 #+end_src
 
-** boilerplate
+** xtempl-math
 *** source
-**** section
-***** info
-
-#+name: org-boilerplate-summary
-#+begin_src latex
-  Standalone expl3-like commands for use in implementations
-#+end_src
-
-***** int
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  % -----------------------------------------------------------------
-  % integer
-#+end_src
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  \cs_new:Npn
-  \__erw_int_last:nn
-  #1 % <first>
-  #2 % <count>
-  { \int_eval:n{#1+#2-1} }
-#+end_src
-
-***** function
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  % -----------------------------------------------------------------
-  % function
-#+end_src
-
-****** parameter
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  \cs_new:Npn
-  \__erw_parameter_braced:n
-  #1 % <index>
-  { \exp_not:n{ {## #1} } }
-#+end_src
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  \cs_new:Npn
-  \__erw_parameter_braced:nn
-  #1 % <first>
-  #2 % <last>
-  { \int_step_function:nnN {#1}{#2}\__erw_parameter_braced:n }
-  \cs_generate_variant:Nn\__erw_parameter_braced:nn{ne}
-#+end_src
-
-****** inline
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  \cs_new_protected:Npn
-  \__erw_inline:nn
-  #1 % <arg spec>
-  #2 % <code>
-  {
-    \cs_gset:cn{__erw_lambda:#1}{#2}
-    \use:c{__erw_lambda:#1}
-  }
-  % Example:
-  % \__erw_inline:nn{n}{Hello~#1!}{world}
-#+end_src
-
-****** scope-infix-type
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  \cs_new_protected:Npn
-  \__erw_scope_infix_type:nNN
-  #1 % <input>
-  #2 % <output>
-  #3 % <regex>
-  {
-    \seq_set_regex_extract_once:NNn
-    #2
-    #3
-    { #1 }
-  }
-#+end_src
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  \cs_new_protected:Npn
-  \__erw_scope_infix_type:NNN
-  #1 % <input>
-  #2 % <output>
-  #3 % <regex>
-  {
-    \exp_args:Ne
-    \__erw_scope_infix_type:nNN
-    { \cs_to_str:N #1 }
-    #2#3
-    % Example:
-    % \__erw_scope_infix_type:NN
-    % \l__foo_str
-    % \l_tmpa_seq
-    % \exp_args:Ne\tl_show:n{
-    % Scope: \seq_item:Nn\l_tmpa_seq{ 2 } % l
-    % Infix: \seq_item:Nn\l_tmpa_seq{ 3 } % foo
-    % Type: \seq_item:Nn\l_tmpa_seq{ 4 } % str
-    % }
-  }
-#+end_src
-
-***** clist
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  % -----------------------------------------------------------------
-  % clist
-#+end_src
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  \cs_new_protected:Npn
-  \__erw_clist_sort_in_place:N
-  #1 % <clist>
-  {
-    \clist_sort:Nn#1
-    {
-      \str_compare:nNnTF { ##1 } < { ##2 }
-      { \sort_return_same: }
-      { \sort_return_swapped: }
-    }
-  }
-#+end_src
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  \prg_new_protected_conditional:Npnn
-  \__erw_clist_if_subset:NN #1#2 { TF }
-  {
-    \clist_map_inline:Nn #1
-    {
-      \clist_if_in:NnF #2 { ##1 }
-      { \prg_return_false: }
-    }
-    \prg_return_true:
-  }
-#+end_src
-
-**** tangle
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-boilerplate.sty
+:header-args: :tangle ../sty/erw-xtempl-math.sty
 :END:
 
 #+header: :noweb yes
 #+begin_src latex
-  <<tex-license>>
+  \ProvidesExplPackage{erw-xtempl-math}{2026/03/28}{1.0}
+  { A math xtemplate hierarchy }
 #+end_src
 
-#+header: :noweb yes
 #+begin_src latex
-  \ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
-  { <<org-boilerplate-summary>> }
+  \DeclareObjectType{math-unary}{ 1 }
 #+end_src
 
-#+header: :noweb yes
 #+begin_src latex
-  <<tex-boilerplate>>
+  \DeclareTemplateInterface{math-unary}{root}{ 1 }
+  {%
+    format : function{ 1 }
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateCode{math-unary}{root}{ 1 }
+  {
+    format = \__erw_format:n
+  }
+  {%
+    \AssignTemplateKeys
+    \__erw_format:n{ #1 }
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateInterface{math-unary}{descendant}{ 1 }
+  {%
+    parent : instance{math-unary},
+    format : function{ 1 }
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateCode{math-unary}{descendant}{ 1 }
+  {
+    parent = \__erw_parent:n,
+    format = \__erw_format:n
+  }
+  {%
+    \AssignTemplateKeys
+    \exp_args:Nf
+    \__erw_parent:n
+    { \__erw_format:n{ #1 } }
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareObjectType{math-nullary}{ 0 }
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateInterface
+  {math-nullary}
+  {symbol}
+  {0}
+  {
+    parent : instance{math-unary},
+    symbol : tokenlist
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateCode{math-nullary}{symbol}{ 0 }
+  {
+    parent = \__erw_parent:n,
+    symbol = \l__erw_symbol_tl
+  }
+  {%
+    \AssignTemplateKeys
+    \exp_args:Nf
+    \__erw_parent:n
+      { \l__erw_symbol_tl }
+  }
 #+end_src
 
 *** example
+** xtempl-defer
+*** source
 :PROPERTIES:
-:header-args: :tangle ../tex/example-boilerplate.tex
+:header-args: :tangle ../sty/erw-xtempl-defer.sty
 :END:
 
 #+begin_src latex
-  \documentclass{article}
-  \usepackage{tcolorbox}
-  \usepackage{../sty/erw-boilerplate}
-  \tcbuselibrary{listings}
-  \newtcblisting{listing-tex}{
-    listing and text,
-    listing options={language=Tex, style=tcblatex}
+  \ProvidesExplPackage{erw-xtempl-defer}{2026/03/28}{1.0}
+  { Deferred binding inside xtemplate instances' parameters (internally, socket mechanism). }
+#+end_src
+
+#+begin_src latex
+  \usepackage{../tex/boilerplate.tex}
+#+end_src
+
+#+begin_src latex
+  \msg_new:nn{__erw_xtempl_defer}{generic}{#1}
+#+end_src
+
+#+begin_src latex
+  \prop_new:N \__erw_xtempl_defer_parameters_raw_prop
+  \prop_new:N \__erw_xtempl_defer_parameters_cooked_prop
+#+end_src
+
+#+begin_src latex
+  \keys_define:nn { __erw_xtempl_defer_instance }
+  {
+    object   .tl_set:N = \l__erw_xtempl_defer_object_tl,
+    template .tl_set:N = \l__erw_xtempl_defer_template_tl,
+    instance .tl_set:N = \l__erw_xtempl_defer_instance_tl,
+    socket_prefix.code:n = { \tl_set:Nx \l__erw_xtempl_defer_socket_prefix_tl { #1 } },
+    key .tl_set:N = \l__erw_xtempl_defer_key_tl,
+    binding .tl_set:N = \l__erw_xtempl_defer_binding_tl,
+    parameters .code:n =
+    {
+      \keyval_parse:nnn
+      {
+        \msg_error:nnn
+        { __erw_xtempl_instance }
+        { generic }
+        { No~value~for~#1 }
+      }
+      {
+        \__erw_inline:nn {nn}
+        {
+          \keys_set:nn
+          {__erw_xtempl_defer_instance}
+          { key = ##1, binding = ##2 }
+          
+          \prop_gput:NVV
+          \__erw_xtempl_defer_parameters_raw_prop
+          \__erw_xtempl_defer_key_tl
+          \__erw_xtempl_defer_binding_tl
+        }
+      }
+      {#1}
+    }
   }
 #+end_src
 
 #+begin_src latex
-  \begin{document}
-#+end_src
+  \cs_new_protected:Nn \erw_xtempl_defer_instance:n
+  {
+    \prop_clear:N\__erw_xtempl_defer_parameters_raw_prop
+    \prop_clear:N\__erw_xtempl_defer_parameters_cooked_prop
+    
+    \keys_set:nn { __erw_xtempl_defer_instance } { #1 }
 
-#+begin_src latex
-    \begin{listing-tex}
-      \ExplSyntaxOn
-      \__erw_inline:nn{n}{Hello~#1!}{world}\par
-      \ExplSyntaxOff
-    \end{listing-tex}
-#+end_src
-
-#+begin_src latex
-  \begin{listing-tex}
-    \ExplSyntaxOn
-    \exp_args:NNx
-    \cs_new_protected:Nn\__erw_test:nn
+    \keys_set:nn { __erw_xtempl_defer_instance }
     {
-      \exp_not:n
-      { \__erw_inline:nn{n}{ (##1) } }
-      \__erw_parameter_braced:nn{2}{2}
+      socket_prefix =
+      \l__erw_xtempl_defer_object_tl
+      / \l__erw_xtempl_defer_instance_tl
     }
-    \__erw_test:nn{foo}{bar}
-    \ExplSyntaxOff
-  \end{listing-tex}
+
+    \prop_map_inline:Nn
+    \__erw_xtempl_defer_parameters_raw_prop
+    {%
+      \exp_args:Ne
+      \socket_new:nn
+      { \l__erw_xtempl_defer_socket_prefix_tl / ##1 } { 0 }
+
+      \exp_args:Ne
+      \socket_new_plug:nnn
+      { \l__erw_xtempl_defer_socket_prefix_tl / ##1 }
+      { default }
+      { ##2 }
+
+      \exp_args:Ne
+      \AssignSocketPlug
+      { \l__erw_xtempl_defer_socket_prefix_tl / ##1 }
+      { default }
+
+      \exp_args:NNne \prop_gput:Nnn
+      \__erw_xtempl_defer_parameters_cooked_prop
+      { ##1 }
+      {
+        \exp_not:N
+        \UseSocket
+        { \l__erw_xtempl_defer_socket_prefix_tl / ##1 }
+      }
+    }
+
+    \exp_last_unbraced:Nf \DeclareInstance
+    {
+      {\exp_not:N\l__erw_object_tl}
+      {\exp_not:N\l__erw_instance_tl}
+      {\exp_not:N\l__erw_template_tl}
+      {
+        \prop_to_keyval:N
+        \__erw_xtempl_defer_parameters_cooked_prop
+      }
+    }
+  }
 #+end_src
 
-#+begin_src latex
-  \end{document}
-#+end_src
-
+*** example
 ** biblatex
 *** source
 **** section
