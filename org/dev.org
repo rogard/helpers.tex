@@ -835,7 +835,9 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \ProvidesExplPackage{erw-xtempl-label-content}{2026/04/11}{1.0}
+  \ProvidesExplPackage
+  {erw-xtempl-label-content}
+  {2026/04/11}{1.1}
   {An xtemplate for a label-content pair}
 #+end_src
 
@@ -856,7 +858,7 @@ Meta file to generate files.
   {
     % <See: pkg l3str-format>
     label : tokenlist = {.<2}, % \seq_format:Nn\l_tmpa_seq{<label>}
-    content : tokenlist = {.<},  % \tl_format:Nn\l_tmpb_tl{<content>}
+    content : function{1} = #1,
     % </>
     combine : function{2} = #1~#2 % {<label_str>}{<content_str>}
   }
@@ -869,7 +871,7 @@ Meta file to generate files.
   {2}
   {
     label = \l__erw_label_tl,
-    content = \l__erw_content_tl,
+    content = \__erw_content:n,
     combine = \__erw_combine:nn
   }
   {
@@ -878,11 +880,10 @@ Meta file to generate files.
     \str_set:Ne \l_tmpa_str
     { \exp_args:NNV \seq_format:Nn \l_tmpa_seq \l__erw_label_tl }
     %\str_show:N \l_tmpa_str
-    \tl_set:Nn \l_tmpb_tl { #2 }
-    \str_set:Ne \l_tmpb_str
-    { \exp_args:NNV \tl_format:Nn \l_tmpb_tl \l__erw_content_tl } % fix 2: NV variant
+    \exp_args:NNe
+    \tl_set:Nn \l_tmpb_tl { \__erw_content:n{#2} }
     %\str_show:N \l_tmpb_str
-    \exp_args:NVV \__erw_combine:nn \l_tmpa_str \l_tmpb_str
+    \exp_args:NVV \__erw_combine:nn \l_tmpa_str \l_tmpb_tl
     \group_end:
   }
 #+end_src
@@ -912,6 +913,10 @@ Meta file to generate files.
   {erw-label-content-bold}
   {erw-label-content}
   { combine = \textbf{#1~#2} }
+#+end_src
+
+#+begin_src latex
+  \usepackage{datetime2}
 #+end_src
 
 #+begin_src latex
@@ -945,6 +950,8 @@ Meta file to generate files.
     % {cftmarkencl}\@starttoc{encl}\@cfttocfinish}
     % \makeatother
 
+    \listofencl
+    
     \addcontentsline{encl}{encl}
     {%
       % \UseTemplate
@@ -957,7 +964,7 @@ Meta file to generate files.
       \UseInstance
       {erw-binary}
       {erw-label-content-bold}
-      {1}{Main title}
+      {1}{Main title -- \today}
     }
     \addcontentsline{encl}{encl}
     {%
@@ -965,7 +972,7 @@ Meta file to generate files.
       {erw-binary}                 % object
       {erw-label-content}          % template
       {}                           % settings
-      {1,1}{Subtitle}              % arguments
+      {1,1}{Subtitle -- \today}    % arguments
     }
   \end{listing-tex}
 #+end_src

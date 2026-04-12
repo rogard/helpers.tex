@@ -14,48 +14,49 @@
 {erw-label-content}
 { combine = \textbf{#1~#2} }
 
+\usepackage{datetime2}
+
 \usepackage{tocloft}
 \newlistof{encl}{encl}{Enclosed}
 % disable heading:
 \makeatletter
-% \@cfthaschapterfalse %Don't need
+% \@cfthaschapterfalse
 \def\listofencl{\@cfttocstart\@nameuse{cftmarkencl}\@starttoc{encl}\@cfttocfinish}
 \makeatother
 
 \begin{document}
 
 \begin{listing-tex}
-% \usepackage{../sty/erw-xtempl-label-content}
-% \DeclareInstance
-% {erw-binary}
-% {erw-label-content-bold}
-% {erw-label-content}
-% { combine = \textbf{#1~#2} }
-% 
-% \usepackage{tocloft}
-% \newlistof{encl}{encl}{Enclosed}
-% \makeatletter
-% \def\listofencl
-% {\@cfttocstart\@nameuse
-% {cftmarkencl}\@starttoc{encl}\@cfttocfinish}
-% \makeatother
+  % \usepackage{../sty/erw-xtempl-label-content}
+  % \DeclareInstance
+  % {erw-binary}
+  % {erw-label-content-bold}
+  % {erw-label-content}
+  % { combine = \textbf{#1~#2} }
+  % 
+  % \usepackage{tocloft}
+  % \newlistof{encl}{encl}{Enclosed}
+  % \makeatletter
+  % \def\listofencl
+  % {\@cfttocstart\@nameuse
+  % {cftmarkencl}\@starttoc{encl}\@cfttocfinish}
+  % \makeatother
 
-  \subsection*{Enclosed}
   \listofencl
   
   \addcontentsline{encl}{encl}
   {%
-%    \UseTemplate
-%    {erw-binary}                 % object
-%    {erw-label-content}          % template
-%    % FAIL!
-%    { combine = \textbf{#1~#2} } % settings
-%    {1}{Main title}              % arguments
-%    WORKAROUND:
-     \UseInstance
-     {erw-binary}
-     {erw-label-content-bold}
-     {1}{Main title}
+    % \UseTemplate
+    % {erw-binary}                 % object
+    % {erw-label-content}          % template
+    %    % FAIL!
+    % { combine = \textbf{#1~#2} } % settings
+    % {1}{Main title}              % arguments
+    % WORKAROUND:
+    \UseInstance
+    {erw-binary}
+    {erw-label-content-bold}
+    {1}{Main title -- \today}
   }
   \addcontentsline{encl}{encl}
   {%
@@ -63,7 +64,7 @@
     {erw-binary}                 % object
     {erw-label-content}          % template
     {}                           % settings
-    {1,1}{Subtitle}              % arguments
+    {1,1}{Subtitle -- \today}    % arguments
   }
 \end{listing-tex}
 
