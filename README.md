@@ -24,6 +24,10 @@ Counter commands allowing cross-referencing.
 
 Package-agnostic interface for detecting loaded languages.
 
+### [label-content](https://github.com/rogard/helpers.tex/blob/main/sty/erw-xtempl-label-content.sty)
+
+An `xtemplate` to format a label-content combo, such as inside `\addcontentsline`.
+
 ## Source
 [helpers.tex on GitHub](https://github.com/rogard/helpers.tex)
 
