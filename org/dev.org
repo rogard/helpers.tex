@@ -818,6 +818,152 @@ Meta file to generate files.
 #+end_src
 
 *** example
+** xtempl-label-content
+*** source
+:PROPERTIES:
+:header-args: :tangle ../sty/erw-xtempl-label-content.sty
+:END:
+
+#+begin_src latex
+  \ProvidesExplPackage{erw-xtempl-label-content}{2026/04/11}{1.0}
+  {An xtemplate for a label-content pair}
+#+end_src
+
+#+begin_src latex
+  \usepackage{xtemplate}
+#+end_src
+
+#+begin_src latex
+  \DeclareObjectType
+  {erw-binary}{2}
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateInterface
+  {erw-binary}
+  {erw-label-content}
+  {2}
+  {
+    % <See: pkg l3str-format>
+    label : tokenlist = {.<2}, % \seq_format:Nn\l_tmpa_seq{<label>}
+    content : tokenlist = {.<},  % \tl_format:Nn\l_tmpb_tl{<content>}
+    % </>
+    combine : function{2} = #1~#2 % {<label_str>}{<content_str>}
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateCode
+  {erw-binary}
+  {erw-label-content}
+  {2}
+  {
+    label = \l__erw_label_tl,
+    content = \l__erw_content_tl,
+    combine = \__erw_combine:nn
+  }
+  {
+    \group_begin:
+    \seq_set_from_clist:Nn \l_tmpa_seq { #1 }        % fix 1: seq not clist
+    \str_set:Ne \l_tmpa_str
+    { \exp_args:NNV \seq_format:Nn \l_tmpa_seq \l__erw_label_tl }
+    %\str_show:N \l_tmpa_str
+    \tl_set:Nn \l_tmpb_tl { #2 }
+    \str_set:Ne \l_tmpb_str
+    { \exp_args:NNV \tl_format:Nn \l_tmpb_tl \l__erw_content_tl } % fix 2: NV variant
+    %\str_show:N \l_tmpb_str
+    \exp_args:NVV \__erw_combine:nn \l_tmpa_str \l_tmpb_str
+    \group_end:
+  }
+#+end_src
+
+*** example
+:PROPERTIES:
+:header-args: :tangle "../tex/example-label-content.tex"
+:END:
+
+#+begin_src latex
+  \documentclass{article}  
+#+end_src
+
+#+begin_src latex
+  \usepackage{lipsum,tcolorbox,graphicx}
+  \tcbuselibrary{listings,raster,skins}
+  \newtcblisting{listing-tex}{
+    listing and text,
+    listing options={language=Tex, style=tcblatex}
+  }
+#+end_src
+
+#+begin_src latex
+  \usepackage{../sty/erw-xtempl-label-content}
+  \DeclareInstance
+  {erw-binary}
+  {erw-label-content-bold}
+  {erw-label-content}
+  { combine = \textbf{#1~#2} }
+#+end_src
+
+#+begin_src latex
+  \usepackage{tocloft}
+  \newlistof{encl}{encl}{Enclosed}
+  % disable heading:
+  \makeatletter
+  % \@cfthaschapterfalse
+  \def\listofencl{\@cfttocstart\@nameuse{cftmarkencl}\@starttoc{encl}\@cfttocfinish}
+  \makeatother
+#+end_src
+
+#+begin_src latex
+  \begin{document}
+#+end_src
+
+#+begin_src latex
+  \begin{listing-tex}
+    % \usepackage{../sty/erw-xtempl-label-content}
+    % \DeclareInstance
+    % {erw-binary}
+    % {erw-label-content-bold}
+    % {erw-label-content}
+    % { combine = \textbf{#1~#2} }
+    % 
+    % \usepackage{tocloft}
+    % \newlistof{encl}{encl}{Enclosed}
+    % \makeatletter
+    % \def\listofencl
+    % {\@cfttocstart\@nameuse
+    % {cftmarkencl}\@starttoc{encl}\@cfttocfinish}
+    % \makeatother
+
+    \addcontentsline{encl}{encl}
+    {%
+      % \UseTemplate
+      % {erw-binary}                 % object
+      % {erw-label-content}          % template
+      %    % FAIL!
+      % { combine = \textbf{#1~#2} } % settings
+      % {1}{Main title}              % arguments
+      % WORKAROUND:
+      \UseInstance
+      {erw-binary}
+      {erw-label-content-bold}
+      {1}{Main title}
+    }
+    \addcontentsline{encl}{encl}
+    {%
+      \UseTemplate
+      {erw-binary}                 % object
+      {erw-label-content}          % template
+      {}                           % settings
+      {1,1}{Subtitle}              % arguments
+    }
+  \end{listing-tex}
+#+end_src
+
+#+begin_src latex
+  \end{document}
+#+end_src
+
 ** xtempl-defer
 *** source
 :PROPERTIES:
@@ -935,6 +1081,14 @@ Meta file to generate files.
 #+end_src
 
 *** example
+:PROPERTIES:
+:header-args: :tangle ../tex/example-xtempl-defer.tex
+:END:
+
+#+begin_src latex
+  
+#+end_src
+
 ** biblatex
 *** source
 **** section

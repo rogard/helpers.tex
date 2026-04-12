@@ -1,0 +1,70 @@
+\documentclass{article}
+
+\usepackage{lipsum,tcolorbox,graphicx}
+\tcbuselibrary{listings,raster,skins}
+\newtcblisting{listing-tex}{
+  listing and text,
+  listing options={language=Tex, style=tcblatex}
+}
+
+\usepackage{../sty/erw-xtempl-label-content}
+\DeclareInstance
+{erw-binary}
+{erw-label-content-bold}
+{erw-label-content}
+{ combine = \textbf{#1~#2} }
+
+\usepackage{tocloft}
+\newlistof{encl}{encl}{Enclosed}
+% disable heading:
+\makeatletter
+% \@cfthaschapterfalse %Don't need
+\def\listofencl{\@cfttocstart\@nameuse{cftmarkencl}\@starttoc{encl}\@cfttocfinish}
+\makeatother
+
+\begin{document}
+
+\begin{listing-tex}
+% \usepackage{../sty/erw-xtempl-label-content}
+% \DeclareInstance
+% {erw-binary}
+% {erw-label-content-bold}
+% {erw-label-content}
+% { combine = \textbf{#1~#2} }
+% 
+% \usepackage{tocloft}
+% \newlistof{encl}{encl}{Enclosed}
+% \makeatletter
+% \def\listofencl
+% {\@cfttocstart\@nameuse
+% {cftmarkencl}\@starttoc{encl}\@cfttocfinish}
+% \makeatother
+
+  \subsection*{Enclosed}
+  \listofencl
+  
+  \addcontentsline{encl}{encl}
+  {%
+%    \UseTemplate
+%    {erw-binary}                 % object
+%    {erw-label-content}          % template
+%    % FAIL!
+%    { combine = \textbf{#1~#2} } % settings
+%    {1}{Main title}              % arguments
+%    WORKAROUND:
+     \UseInstance
+     {erw-binary}
+     {erw-label-content-bold}
+     {1}{Main title}
+  }
+  \addcontentsline{encl}{encl}
+  {%
+    \UseTemplate
+    {erw-binary}                 % object
+    {erw-label-content}          % template
+    {}                           % settings
+    {1,1}{Subtitle}              % arguments
+  }
+\end{listing-tex}
+
+\end{document}
