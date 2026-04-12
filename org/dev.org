@@ -740,6 +740,11 @@ Meta file to generate files.
 
 #+header: :noweb yes
 #+begin_src latex
+  <<tex-license>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
   \ProvidesExplPackage{erw-xtempl-math}{2026/03/28}{1.0}
   { A math xtemplate hierarchy }
 #+end_src
@@ -823,6 +828,11 @@ Meta file to generate files.
 :PROPERTIES:
 :header-args: :tangle ../sty/erw-xtempl-label-content.sty
 :END:
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-license>>
+#+end_src
 
 #+begin_src latex
   \ProvidesExplPackage{erw-xtempl-label-content}{2026/04/11}{1.0}
