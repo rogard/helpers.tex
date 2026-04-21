@@ -183,10 +183,73 @@ Meta file to generate files.
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new:Npn
-  \__erw_int_last:nn
+  \erw_int_last:nn
   #1 % <first>
   #2 % <count>
   { \int_eval:n{#1+#2-1} }
+#+end_src
+
+***** box
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  % -----------------------------------------------------------------
+  % box
+#+end_src
+
+#+begin_src latex
+  \cs_new_protected:Nn
+  \erw_content_width_set:N
+  {
+    \dim_set:NV \hsize #1
+    \dim_set_eq:NN \linewidth \hsize
+    \dim_zero:N \parindent
+  }
+#+end_src
+
+#+begin_src latex
+  \cs_new_protected:Nn \erw_strut_text:
+  {%
+    \tex_copy:D \strutbox
+  }
+#+end_src
+
+#+begin_src latex
+  \cs_new_protected:Nn \erw_strut_math:
+  {%
+    \tex_unhcopy:D \strutbox
+  }
+#+end_src
+
+#+begin_src latex
+  \cs_new_protected:Nn \erw_strut:
+  {%
+    \mode_if_math:TF
+    { \erw_strut_math: }
+    { \erw_strut_text: }
+  }
+#+end_src
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new_protected:Nn \erw_box_smash:N
+  {
+    \box_set_ht:Nn #1 { 0pt }
+    \box_set_dp:Nn #1 { 0pt }
+  }
+#+end_src
+
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new_protected:Nn \erw_parbox_top:NNN
+  {
+    \vbox_set_top:Nn #1
+    { 
+      \erw_content_width_set:N #2
+%      \raggedleft
+      \erw_strut: \tl_trim_spaces:N #3
+    }
+  }  
 #+end_src
 
 ***** function
@@ -202,7 +265,7 @@ Meta file to generate files.
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new:Npn
-  \__erw_parameter_braced:n
+  \erw_parameter_braced:n
   #1 % <index>
   { \exp_not:n{ {## #1} } }
 #+end_src
@@ -210,11 +273,11 @@ Meta file to generate files.
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new:Npn
-  \__erw_parameter_braced:nn
+  \erw_parameter_braced:nn
   #1 % <first>
   #2 % <last>
-  { \int_step_function:nnN {#1}{#2}\__erw_parameter_braced:n }
-  \cs_generate_variant:Nn\__erw_parameter_braced:nn{ne}
+  { \int_step_function:nnN {#1}{#2}\erw_parameter_braced:n }
+  \cs_generate_variant:Nn\erw_parameter_braced:nn{ne}
 #+end_src
 
 ****** inline
@@ -222,7 +285,7 @@ Meta file to generate files.
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Npn
-  \__erw_inline:nn
+  \erw_inline:nn
   #1 % <arg spec>
   #2 % <code>
   {
@@ -230,7 +293,7 @@ Meta file to generate files.
     \use:c{__erw_lambda:#1}
   }
   % Example:
-  % \__erw_inline:nn{n}{Hello~#1!}{world}
+  % \erw_inline:nn{n}{Hello~#1!}{world}
 #+end_src
 
 ****** scope-infix-type
@@ -238,7 +301,7 @@ Meta file to generate files.
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Npn
-  \__erw_scope_infix_type:nNN
+  \erw_scope_infix_type:nNN
   #1 % <input>
   #2 % <output>
   #3 % <regex>
@@ -253,17 +316,17 @@ Meta file to generate files.
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Npn
-  \__erw_scope_infix_type:NNN
+  \erw_scope_infix_type:NNN
   #1 % <input>
   #2 % <output>
   #3 % <regex>
   {
     \exp_args:Ne
-    \__erw_scope_infix_type:nNN
+    \erw_scope_infix_type:nNN
     { \cs_to_str:N #1 }
     #2#3
     % Example:
-    % \__erw_scope_infix_type:NN
+    % \erw_scope_infix_type:NN
     % \l__foo_str
     % \l_tmpa_seq
     % \exp_args:Ne\tl_show:n{
@@ -285,7 +348,7 @@ Meta file to generate files.
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Npn
-  \__erw_clist_sort_in_place:N
+  \erw_clist_sort_in_place:N
   #1 % <clist>
   {
     \clist_sort:Nn#1
@@ -300,7 +363,7 @@ Meta file to generate files.
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \prg_new_protected_conditional:Npnn
-  \__erw_clist_if_subset:NN #1#2 { TF }
+  \erw_clist_if_subset:NN #1#2 { TF }
   {
     \clist_map_inline:Nn #1
     {
@@ -355,7 +418,7 @@ Meta file to generate files.
 #+begin_src latex
     \begin{listing-tex}
       \ExplSyntaxOn
-      \__erw_inline:nn{n}{Hello~#1!}{world}\par
+      \erw_inline:nn{n}{Hello~#1!}{world}\par
       \ExplSyntaxOff
     \end{listing-tex}
 #+end_src
@@ -367,8 +430,8 @@ Meta file to generate files.
     \cs_new_protected:Nn\__erw_test:nn
     {
       \exp_not:n
-      { \__erw_inline:nn{n}{ (##1) } }
-      \__erw_parameter_braced:nn{2}{2}
+      { \erw_inline:nn{n}{ (##1) } }
+      \erw_parameter_braced:nn{2}{2}
     }
     \__erw_test:nn{foo}{bar}
     \ExplSyntaxOff
@@ -454,7 +517,7 @@ Meta file to generate files.
 #+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
-  \keys_define:nn{__erw_counter}
+  \keys_define:nn{erw-counter}
   {%
     new.code:n = { \int_gzero_new:c{ \__erw_counter_name:n{#1} } }
   }
@@ -595,7 +658,7 @@ Meta file to generate files.
 #+header: :noweb-ref tex-counter-doc-cmd
 #+begin_src latex
   \ProvideDocumentCommand{\CounterSetup}{m}
-  { \keys_set:nn{__erw_counter}{#1} }
+  { \keys_set:nn{erw-counter}{ #1 } }
 #+end_src
 
 #+header: :tangle no
@@ -1106,6 +1169,53 @@ Meta file to generate files.
   
 #+end_src
 
+** xtempl-marginnote
+
+#+begin_src latex
+  \DeclareObjectType{erw-unary}
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateInterface{erw-unary}{erw-marginnote}{1}
+  {
+    width : length = { 1.1in },
+    skip : length = { \marginparsep },
+  }
+#+end_src
+
+#+begin_src latex
+  % Source - https://tex.stackexchange.com/a/762059
+  % Posted by novvy, modified by community. See post 'Timeline' for change history
+  % Retrieved 2026-04-21, License - CC BY-SA 4.0
+  \DeclareTemplateCode{erw-unary}{erw-marginnote}{1}
+  {
+    width   = \l__erw_marginnote_width_dim,
+    skip    = \l__erw_marginnote_skip_dim
+  }
+  {%
+    \group_begin:
+    
+    \noindent % start new paragraph without indent
+    \tl_set:Nn\l_tmpa_tl{ #1 }
+    \vbox_set_top:Nn \l_tmpa_box
+    { 
+      \erw_content_width_set:N \l__erw_marginnote_width_dim
+      % \raggedleft
+      \erw_strut: \tl_trim_spaces:N \l_tmpa_tl
+    }
+    \erw_box_smash:N \l_tmpa_box
+    
+    \hbox_overlap_left:n %  
+    {%
+      \box_use_drop:N\l_tmpa_box
+      \skip_horizontal:N \l__erw_marginnote_skip_dim
+    }%
+    \ignorespaces
+
+    \group_end:
+  }
+#+end_src
+
 ** biblatex
 *** source
 **** section
@@ -1613,8 +1723,8 @@ Meta file to generate files.
 #+header: :noweb-ref tex-boilerplate-trash
 #+begin_src latex
     \cs_new_protected:Npn
-    \__erw_adapt_cmd_wrapper_to_N:N #1
-    % See \__erw_adapt_cmd_wrapper_to_N:nnnn for a description
+    \erw_adapt_cmd_wrapper_to_N:N #1
+    % See \erw_adapt_cmd_wrapper_to_N:nnnn for a description
     {
       \group_begin:
       
@@ -1644,11 +1754,11 @@ Meta file to generate files.
       % \int_show:N%\l__erw_sig_tail_int
       % \l_tmpa_int % pass
 
-      \__erw_adapt_cmd_wrapper_to_N:eeee
+      \erw_adapt_cmd_wrapper_to_N:eeee
       { \str_use:N\l__erw_base_str }
       { \str_use:N\l__erw_sig_str }
       { \str_use:N\l__erw_sig_tail_str }
-      { \__erw_parameter_braced:ne
+      { \erw_parameter_braced:ne
         { 2 }{ \exp_args:Ne
           \__erw_int_last:nn{ 2 }{ \l_tmpa_int } } }
 
@@ -1657,7 +1767,7 @@ Meta file to generate files.
     }
   % Example
   % \cs_new:Nn \__erw_foo:nnn { \use:c{#1:#2}{#3} }
-  % \__erw_adapt_cmd_wrapper_to_N:N \__erw_foo:nnn
+  % \erw_adapt_cmd_wrapper_to_N:N \__erw_foo:nnn
   % \__erw_foo:Nn \__erw_bar:n {world}  % Calls \__erw_bar:n{world}
 #+end_src
 
@@ -1666,7 +1776,7 @@ Meta file to generate files.
   % Defines a control sequence \<base>:N<sig_tail>
   % that wraps around \<base>:<sig> function.
   \cs_new_protected:Npn
-  \__erw_adapt_cmd_wrapper_to_N:nnnn
+  \erw_adapt_cmd_wrapper_to_N:nnnn
   #1 % <base>
   #2 % <sig>
   #3 % <sig tail>
@@ -1702,7 +1812,7 @@ Meta file to generate files.
       
     }
   }
-  \cs_generate_variant:Nn\__erw_adapt_cmd_wrapper_to_N:nnnn{eeee}
+  \cs_generate_variant:Nn\erw_adapt_cmd_wrapper_to_N:nnnn{eeee}
 #+end_src
 
 *** example
@@ -1733,7 +1843,7 @@ Meta file to generate files.
    \cs_new_protected:Nn
    \__erw_foo:nnn{ \use:c{#1:#2}{#3} }
    
-   \__erw_adapt_cmd_wrapper_to_N:N
+   \erw_adapt_cmd_wrapper_to_N:N
    \__erw_foo:nnn
    \ExplSyntaxOff
    
