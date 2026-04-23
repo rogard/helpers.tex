@@ -1174,6 +1174,11 @@ Meta file to generate files.
 :header-args: :tangle ../sty/erw-xtempl-marginnote.sty
 :END:
 
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-license>>
+#+end_src
+
 #+begin_src latex
   \ProvidesExplPackage
   {erw-xtempl-marginnote}
