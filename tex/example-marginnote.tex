@@ -1,0 +1,26 @@
+\documentclass{article}
+
+\usepackage{lipsum,tcolorbox,graphicx}
+%  \tcbuselibrary{listings,raster,skins}
+%  \newtcblisting{listing-tex}{
+%    listing and text,
+%    listing options={language=Tex, style=tcblatex}
+%  }
+
+\usepackage{../sty/erw-xtempl-marginnote}
+
+\usepackage[showframe]{geometry}
+
+\begin{document}
+
+%  \begin{listing-tex} % ill suited
+    \lipsum[1][1-2]\par % <- critical
+    \UseTemplate
+    {erw-unary}       % object
+    {marginnote}      % template
+    {}                % settings
+    {\lipsum[2][1]}   % arguments
+    \lipsum[3][1-2]
+%  \end{listing-tex}
+
+\end{document}

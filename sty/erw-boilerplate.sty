@@ -5,30 +5,86 @@
 % - See http://www.latex-project.org/lppl.txt
 % -----------------------------------------------------------------
 
-\ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
-{ Standalone expl3-like commands for use in implementations }
+\ProvidesExplPackage{erw-boilerplate}{2026/04/22}{1.2}
+{ Standalone expl3-like commands }
 
 % -----------------------------------------------------------------
 % integer
+
 \cs_new:Npn
-\__erw_int_last:nn
+\erw_int_last:nn
 #1 % <first>
 #2 % <count>
 { \int_eval:n{#1+#2-1} }
+
+% -----------------------------------------------------------------
+% box
+
+\cs_new_protected:Nn
+\erw_content_width_set:N
+{
+  \dim_set:NV \hsize #1
+  \dim_set_eq:NN \linewidth \hsize
+  \dim_zero:N \parindent
+  % Usage:
+  % \vbox_set_top:Nn \l_tmpa_box
+  % { % analogous to `\parbox`
+  %   \erw_content_width_set:N\l__erw_width_dim
+  %   \tl_use:N\l__erw_marginnote_switch_tl
+  %   \strut \tl_trim_spaces:n{ #1 }
+  % }
+}
+
+\cs_new_protected:Nn \erw_strut_text:
+{%
+  \tex_unhcopy:D \strutbox
+}
+
+\cs_new_protected:Nn \erw_strut_math:
+{%
+  \tex_copy:D \strutbox
+}
+
+\cs_new_protected:Nn \erw_strut:
+{%
+  \mode_if_math:TF
+  { \erw_strut_math: }
+  { \erw_strut_text: }
+}
+
+\cs_new_protected:Nn \erw_noindent:
+{%
+  \dim_zero:N \parindent
+  \mode_leave_vertical:
+  % Ensures that TEX is not in vertical (inter-paragraph) mode. In horizontal or math mode
+  % this command has no effect, in vertical mode it switches to horizontal mode, and inserts
+  % a box of width \parindent, followed by the \everypar token list.
+  % https://mirror.math.princeton.edu/pub/CTAN/macros/latex/required/l3kernel/interface3.pdf#section.4.7
+}
+
+\cs_new_protected:Nn \erw_box_smash:N
+{
+  \box_set_ht:Nn #1 { 0pt }
+  \box_set_dp:Nn #1 { 0pt }
+}
+
 % -----------------------------------------------------------------
 % function
+
 \cs_new:Npn
-\__erw_parameter_braced:n
+\erw_parameter_braced:n
 #1 % <index>
 { \exp_not:n{ {## #1} } }
+
 \cs_new:Npn
-\__erw_parameter_braced:nn
+\erw_parameter_braced:nn
 #1 % <first>
 #2 % <last>
-{ \int_step_function:nnN {#1}{#2}\__erw_parameter_braced:n }
-\cs_generate_variant:Nn\__erw_parameter_braced:nn{ne}
+{ \int_step_function:nnN {#1}{#2}\erw_parameter_braced:n }
+\cs_generate_variant:Nn\erw_parameter_braced:nn{ne}
+
 \cs_new_protected:Npn
-\__erw_inline:nn
+\erw_inline:nn
 #1 % <arg spec>
 #2 % <code>
 {
@@ -36,9 +92,10 @@
   \use:c{__erw_lambda:#1}
 }
 % Example:
-% \__erw_inline:nn{n}{Hello~#1!}{world}
+% \erw_inline:nn{n}{Hello~#1!}{world}
+
 \cs_new_protected:Npn
-\__erw_scope_infix_type:nNN
+\erw_scope_infix_type:nNN
 #1 % <input>
 #2 % <output>
 #3 % <regex>
@@ -48,18 +105,19 @@
   #3
   { #1 }
 }
+
 \cs_new_protected:Npn
-\__erw_scope_infix_type:NNN
+\erw_scope_infix_type:NNN
 #1 % <input>
 #2 % <output>
 #3 % <regex>
 {
   \exp_args:Ne
-  \__erw_scope_infix_type:nNN
+  \erw_scope_infix_type:nNN
   { \cs_to_str:N #1 }
   #2#3
   % Example:
-  % \__erw_scope_infix_type:NN
+  % \erw_scope_infix_type:NN
   % \l__foo_str
   % \l_tmpa_seq
   % \exp_args:Ne\tl_show:n{
@@ -68,10 +126,12 @@
   % Type: \seq_item:Nn\l_tmpa_seq{ 4 } % str
   % }
 }
+
 % -----------------------------------------------------------------
 % clist
+
 \cs_new_protected:Npn
-\__erw_clist_sort_in_place:N
+\erw_clist_sort_in_place:N
 #1 % <clist>
 {
   \clist_sort:Nn#1
@@ -81,8 +141,9 @@
     { \sort_return_swapped: }
   }
 }
+
 \prg_new_protected_conditional:Npnn
-\__erw_clist_if_subset:NN #1#2 { TF }
+\erw_clist_if_subset:NN #1#2 { TF }
 {
   \clist_map_inline:Nn #1
   {

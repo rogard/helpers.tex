@@ -38,7 +38,7 @@
 \cs_new:Npn \__erw_counter_name:n
 #1 % string - <name>
 {g__erw_counter_#1_int}
-\keys_define:nn{__erw_counter}
+\keys_define:nn{erw-counter}
 {%
   new.code:n = { \int_gzero_new:c{ \__erw_counter_name:n{#1} } }
 }
@@ -119,7 +119,7 @@
 
 % --- reference ---
 \ProvideDocumentCommand{\CounterSetup}{m}
-{ \keys_set:nn{__erw_counter}{#1} }
+{ \keys_set:nn{erw-counter}{ #1 } }
 \ProvideDocumentCommand{\CounterIncrement}{m}{\erw_counter_increment:n{#1}}
 \ProvideDocumentCommand{\CounterUse}{m}{\erw_counter_use:n{#1}}
 \ProvideDocumentCommand{\CounterRemember}{mm}

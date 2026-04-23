@@ -165,11 +165,21 @@ Meta file to generate files.
 ** boilerplate
 *** source
 **** section
-***** info
+:PROPERTIES:
+:header-args: :tangle ../sty/erw-boilerplate.sty
+:END:
 
-#+name: org-boilerplate-summary
+***** header
+
+#+header: :noweb yes
 #+begin_src latex
-  Standalone expl3-like commands for use in implementations
+  <<tex-license>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  \ProvidesExplPackage{erw-boilerplate}{2026/04/22}{1.2}
+  { Standalone expl3-like commands }
 #+end_src
 
 ***** int
@@ -197,6 +207,7 @@ Meta file to generate files.
   % box
 #+end_src
 
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Nn
   \erw_content_width_set:N
@@ -204,29 +215,51 @@ Meta file to generate files.
     \dim_set:NV \hsize #1
     \dim_set_eq:NN \linewidth \hsize
     \dim_zero:N \parindent
+    % Usage:
+    % \vbox_set_top:Nn \l_tmpa_box
+    % { % analogous to `\parbox`
+    %   \erw_content_width_set:N\l__erw_width_dim
+    %   \tl_use:N\l__erw_marginnote_switch_tl
+    %   \strut \tl_trim_spaces:n{ #1 }
+    % }
   }
 #+end_src
 
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Nn \erw_strut_text:
-  {%
-    \tex_copy:D \strutbox
-  }
-#+end_src
-
-#+begin_src latex
-  \cs_new_protected:Nn \erw_strut_math:
   {%
     \tex_unhcopy:D \strutbox
   }
 #+end_src
 
+#+header: :noweb-ref tex-boilerplate
+#+begin_src latex
+  \cs_new_protected:Nn \erw_strut_math:
+  {%
+    \tex_copy:D \strutbox
+  }
+#+end_src
+
+#+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new_protected:Nn \erw_strut:
   {%
     \mode_if_math:TF
     { \erw_strut_math: }
     { \erw_strut_text: }
+  }
+#+end_src
+
+#+begin_src latex
+  \cs_new_protected:Nn \erw_noindent:
+  {%
+    \dim_zero:N \parindent
+    \mode_leave_vertical:
+    % Ensures that TEX is not in vertical (inter-paragraph) mode. In horizontal or math mode
+    % this command has no effect, in vertical mode it switches to horizontal mode, and inserts
+    % a box of width \parindent, followed by the \everypar token list.
+    % https://mirror.math.princeton.edu/pub/CTAN/macros/latex/required/l3kernel/interface3.pdf#section.4.7
   }
 #+end_src
 
@@ -237,19 +270,6 @@ Meta file to generate files.
     \box_set_ht:Nn #1 { 0pt }
     \box_set_dp:Nn #1 { 0pt }
   }
-#+end_src
-
-#+header: :noweb-ref tex-boilerplate
-#+begin_src latex
-  \cs_new_protected:Nn \erw_parbox_top:NNN
-  {
-    \vbox_set_top:Nn #1
-    { 
-      \erw_content_width_set:N #2
-%      \raggedleft
-      \erw_strut: \tl_trim_spaces:N #3
-    }
-  }  
 #+end_src
 
 ***** function
@@ -372,27 +392,6 @@ Meta file to generate files.
     }
     \prg_return_true:
   }
-#+end_src
-
-**** tangle
-:PROPERTIES:
-:header-args: :tangle ../sty/erw-boilerplate.sty
-:END:
-
-#+header: :noweb yes
-#+begin_src latex
-  <<tex-license>>
-#+end_src
-
-#+header: :noweb yes
-#+begin_src latex
-  \ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
-  { <<org-boilerplate-summary>> }
-#+end_src
-
-#+header: :noweb yes
-#+begin_src latex
-  <<tex-boilerplate>>
 #+end_src
 
 *** example
@@ -1170,50 +1169,138 @@ Meta file to generate files.
 #+end_src
 
 ** xtempl-marginnote
+*** source
+:PROPERTIES:
+:header-args: :tangle ../sty/erw-xtempl-marginnote.sty
+:END:
 
 #+begin_src latex
-  \DeclareObjectType{erw-unary}
+  \ProvidesExplPackage
+  {erw-xtempl-marginnote}
+  {2026/04/21}{1.0}
+  { A LaTeX3 marginnote }
 #+end_src
 
 #+begin_src latex
-  \DeclareTemplateInterface{erw-unary}{erw-marginnote}{1}
-  {
-    width : length = { 1.1in },
+  \usepackage{xtemplate}
+#+end_src
+
+#+begin_src latex
+  \usepackage{../sty/erw-boilerplate}
+#+end_src
+
+#+begin_src latex
+  \DeclareObjectType{erw-unary}{1}
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateInterface
+  {erw-unary}{marginnote}{1}
+  {%
+    pre : tokenlist = {
+      % \noindent
+      \dim_zero:N \parindent
+      \mode_leave_vertical:
+    },
+    width : length = { \marginparwidth },
     skip : length = { \marginparsep },
+    switch : tokenlist = { \raggedleft },
+    align : tokenlist = { left },
+    post : tokenlist = {%
+      \ignorespaces
+    },
   }
 #+end_src
 
 #+begin_src latex
-  % Source - https://tex.stackexchange.com/a/762059
-  % Posted by novvy, modified by community. See post 'Timeline' for change history
-  % Retrieved 2026-04-21, License - CC BY-SA 4.0
-  \DeclareTemplateCode{erw-unary}{erw-marginnote}{1}
-  {
+  % Source - https://tex.stackexchange.com/a/762056
+  % Posted by Erwann, modified by community.
+  % Retrieved 2026-04-22, License - CC BY-SA 4.0
+  \DeclareTemplateCode
+  {erw-unary}{marginnote}{1}
+  {%
+    pre = \l__erw_marginnote_pre_tl,
     width   = \l__erw_marginnote_width_dim,
-    skip    = \l__erw_marginnote_skip_dim
+    skip    = \l__erw_marginnote_skip_dim,
+    switch  = \l__erw_marginnote_switch_tl,
+    align = \l__erw_marginnote_align_str,
+    post = \l__erw_marginnote_post_tl,
   }
   {%
     \group_begin:
     
-    \noindent % start new paragraph without indent
-    \tl_set:Nn\l_tmpa_tl{ #1 }
-    \vbox_set_top:Nn \l_tmpa_box
-    { 
-      \erw_content_width_set:N \l__erw_marginnote_width_dim
-      % \raggedleft
-      \erw_strut: \tl_trim_spaces:N \l_tmpa_tl
-    }
-    \erw_box_smash:N \l_tmpa_box
-    
-    \hbox_overlap_left:n %  
-    {%
-      \box_use_drop:N\l_tmpa_box
-      \skip_horizontal:N \l__erw_marginnote_skip_dim
-    }%
-    \ignorespaces
+    \AssignTemplateKeys
 
+    % \parbox
+    \vbox_set_top:Nn \l_tmpa_box
+    {
+      \dim_set:NV \hsize \l__erw_marginnote_width_dim
+      \dim_set_eq:NN \linewidth \hsize
+      \dim_zero:N \parindent
+      \tl_use:N\l__erw_marginnote_switch_tl
+      \strut \tl_trim_spaces:n{ #1 }
+    }
+    % \smash
+    \box_set_dp:Nn \l_tmpa_box { 0pt }
+
+    \tl_use:N\l__erw_marginnote_pre_tl
+
+    \hbox_overlap_left:n
+    {
+      \box_use_drop:N \l_tmpa_box
+      \skip_horizontal:N \l__erw_marginnote_skip_dim
+    }
+    
+    \tl_use:N\l__erw_marginnote_post_tl
+    
     \group_end:
   }
+#+end_src
+
+*** example
+:PROPERTIES:
+:header-args: :tangle ../tex/example-marginnote.tex
+:END:
+
+#+begin_src latex
+  \documentclass{article}  
+#+end_src
+
+#+begin_src latex
+  \usepackage{lipsum,tcolorbox,graphicx}
+%  \tcbuselibrary{listings,raster,skins}
+%  \newtcblisting{listing-tex}{
+%    listing and text,
+%    listing options={language=Tex, style=tcblatex}
+%  }
+#+end_src
+
+#+begin_src latex
+  \usepackage{../sty/erw-xtempl-marginnote}
+#+end_src
+
+#+begin_src latex
+  \usepackage[showframe]{geometry}
+#+end_src
+
+#+begin_src latex
+  \begin{document}
+#+end_src
+
+#+begin_src latex
+%  \begin{listing-tex} % ill suited
+    \lipsum[1][1-2]\par % <- critical
+    \UseTemplate
+    {erw-unary}       % object
+    {marginnote}      % template
+    {}                % settings
+    {\lipsum[2][1]}   % arguments
+    \lipsum[3][1-2]
+%  \end{listing-tex}
+#+end_src
+
+#+begin_src latex
+  \end{document}
 #+end_src
 
 ** biblatex

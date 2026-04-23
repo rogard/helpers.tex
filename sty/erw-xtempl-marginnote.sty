@@ -1,0 +1,70 @@
+\ProvidesExplPackage
+{erw-xtempl-marginnote}
+{2026/04/21}{1.0}
+{ A LaTeX3 marginnote }
+
+\usepackage{xtemplate}
+
+\usepackage{../sty/erw-boilerplate}
+
+\DeclareObjectType{erw-unary}{1}
+
+\DeclareTemplateInterface
+{erw-unary}{marginnote}{1}
+{%
+  pre : tokenlist = {
+    % \noindent
+    \dim_zero:N \parindent
+    \mode_leave_vertical:
+  },
+  width : length = { \marginparwidth },
+  skip : length = { \marginparsep },
+  switch : tokenlist = { \raggedleft },
+  align : tokenlist = { left },
+  post : tokenlist = {%
+    \ignorespaces
+  },
+}
+
+% Source - https://tex.stackexchange.com/a/762056
+% Posted by Erwann, modified by community.
+% Retrieved 2026-04-22, License - CC BY-SA 4.0
+\DeclareTemplateCode
+{erw-unary}{marginnote}{1}
+{%
+  pre = \l__erw_marginnote_pre_tl,
+  width   = \l__erw_marginnote_width_dim,
+  skip    = \l__erw_marginnote_skip_dim,
+  switch  = \l__erw_marginnote_switch_tl,
+  align = \l__erw_marginnote_align_str,
+  post = \l__erw_marginnote_post_tl,
+}
+{%
+  \group_begin:
+  
+  \AssignTemplateKeys
+
+  % \parbox
+  \vbox_set_top:Nn \l_tmpa_box
+  {
+    \dim_set:NV \hsize \l__erw_marginnote_width_dim
+    \dim_set_eq:NN \linewidth \hsize
+    \dim_zero:N \parindent
+    \tl_use:N\l__erw_marginnote_switch_tl
+    \strut \tl_trim_spaces:n{ #1 }
+  }
+  % \smash
+  \box_set_dp:Nn \l_tmpa_box { 0pt }
+
+  \tl_use:N\l__erw_marginnote_pre_tl
+
+  \hbox_overlap_left:n
+  {
+    \box_use_drop:N \l_tmpa_box
+    \skip_horizontal:N \l__erw_marginnote_skip_dim
+  }
+  
+  \tl_use:N\l__erw_marginnote_post_tl
+  
+  \group_end:
+}
