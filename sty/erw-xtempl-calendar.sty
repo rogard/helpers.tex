@@ -1,0 +1,270 @@
+% -----------------------------------------------------------------
+% Copyright (C) 2025-2026 by Erwann Rogard
+% - Source repository: https://github.com/rogard/helpers.tex
+% - Released under the LaTeX Project Public License v1.3c or later
+% - See http://www.latex-project.org/lppl.txt
+% -----------------------------------------------------------------
+
+\ProvidesExplPackage
+{erw-xtempl-calendar}
+{2026/04/21}{1.0}
+{%
+  A LaTeX3 calendar package to map iso dates to quarter, month, week,
+  in long or short format. This avois manual mistakes.
+}
+
+\usepackage{xtemplate}
+
+\usepackage{../sty/erw-boilerplate}
+
+\DeclareObjectType
+{erw-unary}{ 1 }
+
+\msg_new:nnn
+{ __erw_xtempl_calendar }
+{ generic }
+{ #1 }
+
+\DeclareTemplateInterface
+{erw-unary}
+{calendar}
+{ 1 }
+{
+  argument : function{ 2 }, % <day><month>
+  ordinal : function{ 1 } = { #1 }, % receives 1-4
+  combine : function{ 2 } % <ordinal_tl>~<year_int>
+}
+
+\DeclareTemplateCode
+{erw-unary}
+{calendar}
+{ 1 }
+{
+  argument = \__erw_xtempl_cal_argument:nn,
+  ordinal = \__erw_xtempl_cal_ordinal:n,
+  combine = \__erw_xtempl_cal_combine:nn
+}
+{%
+  \group_begin:
+  
+  \AssignTemplateKeys
+
+  \tl_clear_new:N\l__erw_iso_tl
+  \tl_set:Nn\l__erw_iso_tl{ #1 }
+
+  \prop_clear_new:N\l__erw_iso_prop
+  
+  \erw_cal_iso_as_keyval:NN
+  \l__erw_iso_tl
+  \l__erw_iso_prop
+
+  \tl_clear_new:N\l__erw_month_tl
+  \prop_get:NnN
+  \l__erw_iso_prop
+  { day }
+  \l__erw_day_tl
+
+  \tl_clear_new:N\l__erw_month_tl
+  \prop_get:NnN
+  \l__erw_iso_prop
+  { month }
+  \l__erw_month_tl
+
+  \tl_clear_new:N\l__erw_argument_tl
+  \exp_args:NNe
+  \tl_set:Nn
+  \l__erw_argument_tl
+  {%
+    \exp_last_unbraced:Ne
+    \__erw_xtempl_cal_argument:nn
+    {%
+      { \erw_int_from_tl:N \l__erw_day_tl }
+      { \erw_int_from_tl:N \l__erw_month_tl }
+    }
+  }
+  
+  \tl_clear_new:N
+  \l__erw_ordinal_tl
+
+  \exp_args:NNe
+  \tl_set:Nn
+  \l__erw_ordinal_tl
+  {%
+    \exp_last_unbraced:NV
+    \__erw_xtempl_cal_ordinal:n
+    \l__erw_argument_tl }
+
+  \tl_clear_new:N\l__erw_year_tl
+
+  \prop_get:NnN
+  \l__erw_iso_prop
+  { year }
+  \l__erw_year_tl
+  
+  \int_zero_new:N
+  \l__erw_year_int
+
+  \exp_args:NNe
+  \int_set:Nn
+  \l__erw_year_int
+  {%
+    \erw_int_from_tl:N
+    \l__erw_year_tl%
+  }
+
+  \tl_clear_new:N
+  \l__erw_combine_tl
+
+  \exp_args:NNe
+  \tl_set:Nn
+  \l__erw_combine_tl
+  {%
+    \exp_args:NVV
+    \__erw_xtempl_cal_combine:nn
+    \l__erw_ordinal_tl
+    \l__erw_year_int
+  }
+
+  \tl_use:N\l__erw_combine_tl
+
+  \group_end:
+
+}
+
+\DeclareRestrictedTemplate
+{erw-unary}
+{calendar}
+{calendar-month}
+{
+  argument = { { #2 } } % month->month
+}
+
+\DeclareInstance{erw-unary}
+{calendar-month-english-long}
+{calendar-month}
+{
+  ordinal = {
+    \int_case:nnTF{ #1 }
+    {%            % BUG
+      { 1 }{ January }
+      { 2 }{ February }
+      { 3 }{ March }
+      { 4 }{ April }
+      { 5 }{ May }
+      { 6 }{ June }
+      { 7 }{ July }
+      { 8 }{ August }
+      { 9 }{ September }
+      { 10 }{ October }
+      { 11 }{ November }
+      { 12 }{ December }
+    }
+    {}
+    {%
+      \msg_warning:nnn
+      { __erw_xtempl_calendar }
+      { generic }
+      { #1~outside~1-12 }
+    }
+  },
+  combine = { #1~#2 }
+}
+
+\DeclareRestrictedTemplate
+{erw-unary}
+{calendar}
+{calendar-quarter}
+{
+  argument = { { #2 } } % month->quarter
+}
+
+\DeclareInstance{erw-unary}
+{calendar-quarter-english-short}
+{calendar-quarter}
+{
+  combine = { T#1~#2 }
+}
+
+\DeclareInstance{erw-unary}
+{calendar-quarter-english-long}
+{calendar-quarter}
+{
+  ordinal = {
+    \int_case:nnTF{ #1 }
+    {%            % BUG
+      { 1 }{ first }
+      { 2 }{ second }
+      { 3 }{ third }
+      { 4 }{ fourth }
+    }
+    {}
+    {%
+      \msg_warning:nnn
+      { __erw_xtempl_calendar }
+      { generic }
+      { #1~outside~1-4 }
+    }
+  },
+  combine = { #1~quarter~#2 }
+}
+
+\DeclareInstance{erw-unary}
+{calendar-month-french-long}
+{calendar-month}
+{
+  ordinal = {
+    \int_case:nnTF{ #1 }
+    {%            % BUG
+      { 1 }{ janvier }
+      { 2 }{ février }
+      { 3 }{ mars }
+      { 4 }{ avril }
+      { 5 }{ mai }
+      { 6 }{ juin }
+      { 7 }{ juillet }
+      { 8 }{ août }
+      { 9 }{ septembre }
+      { 10 }{ octobre }
+      { 11 }{ novembre }
+      { 12 }{ decembre }
+    }
+    {}
+    {%
+      \msg_warning:nnn
+      { __erw_xtempl_calendar }
+      { generic }
+      { #1~outside~1-12 }
+    }
+  },
+  combine = { #1~#2 }
+}
+
+\DeclareInstance{erw-unary}
+{calendar-quarter-french-short}
+{calendar-quarter}
+{
+  combine = { T#1~#2 }
+}
+
+\DeclareInstance{erw-unary}
+{calendar-quarter-french-long}
+{calendar-quarter}
+{
+  ordinal = {
+    \int_case:nnTF{ #1 }
+    {%            % BUG
+      { 1 }{ 1er }%\textsuperscript{er} }
+      { 2 }{ 2e }%\textsuperscript{d} }
+      { 3 }{ 3e }%\textsuperscript{e} }
+      { 4 }{ 4e }%\textsuperscript{e} }
+    }
+    {}
+    {%
+      \msg_warning:nnn
+      { __erw_xtempl_calendar }
+      { generic }
+      { #1~outside~1-4 }
+    }
+  },
+  combine = { #1~trimestre~#2 }
+}

@@ -1,0 +1,30 @@
+\documentclass{article}
+
+\usepackage{lipsum,tcolorbox,graphicx}
+%  \tcbuselibrary{listings,raster,skins}
+%  \newtcblisting{listing-tex}{
+%    listing and text,
+%    listing options={language=Tex, style=tcblatex}
+%  }
+
+\usepackage{../sty/erw-xtempl-calendar}
+
+\usepackage[showframe]{geometry}
+
+\begin{document}
+
+% \begin{listing-tex} % ill suited
+Le chiffre d'affaire de la société en
+\UseInstance
+{erw-unary}
+{calendar-quarter-french-short}
+{2026-04-26} \dots
+% \end{listing-tex}
+
+Le chiffre d'affaire de la société au
+\UseInstance
+{erw-unary}
+{calendar-quarter-french-long}
+{2026-04-26} \dots
+
+\end{document}

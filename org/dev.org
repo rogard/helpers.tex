@@ -1042,7 +1042,7 @@ Meta file to generate files.
   }
   {
     \group_begin:
-    \seq_set_from_clist:Nn \l_tmpa_seq { #1 }        % fix 1: seq not clist
+    \seq_set_from_clist:Nn \l_tmpa_seq { #1 } % fix 1: seq not clist
     \str_set:Ne \l_tmpa_str
     { \exp_args:NNV \seq_format:Nn \l_tmpa_seq \l__erw_label_tl }
     %\str_show:N \l_tmpa_str
@@ -1405,7 +1405,7 @@ Meta file to generate files.
     {erw-unary}       % object
     {marginnote}      % template
     {}                % settings
-    {\lipsum[2][1]}   % arguments
+    { \lipsum[2][1] }   % arguments
     \lipsum[3][1-2]
 %  \end{listing-tex}
 #+end_src
@@ -1414,10 +1414,10 @@ Meta file to generate files.
   \end{document}
 #+end_src
 
-** xtempl-cal-quarter
+** xtempl-calendar
 *** source
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-xtempl-cal-quarter.sty
+:header-args: :tangle ../sty/erw-xtempl-calendar.sty
 :END:
 
 #+header: :noweb yes
@@ -1427,9 +1427,12 @@ Meta file to generate files.
 
 #+begin_src latex
   \ProvidesExplPackage
-  {erw-xtempl-marginnote}
+  {erw-xtempl-calendar}
   {2026/04/21}{1.0}
-  { A LaTeX3 marginnote }
+  {%
+    A LaTeX3 calendar package to map iso dates to quarter, month, week,
+    in long or short format. This avois manual mistakes.
+  }
 #+end_src
 
 #+begin_src latex
@@ -1447,7 +1450,7 @@ Meta file to generate files.
 
 #+begin_src latex
   \msg_new:nnn
-  { __erw_xtempl_cal_quarter }
+  { __erw_xtempl_calendar }
   { generic }
   { #1 }
 #+end_src
@@ -1455,9 +1458,10 @@ Meta file to generate files.
 #+begin_src latex
   \DeclareTemplateInterface
   {erw-unary}
-  {cal-quarter}
+  {calendar}
   { 1 }
   {
+    argument : function{ 2 }, % <day><month>
     ordinal : function{ 1 } = { #1 }, % receives 1-4
     combine : function{ 2 } % <ordinal_tl>~<year_int>
   }
@@ -1466,9 +1470,10 @@ Meta file to generate files.
 #+begin_src latex
   \DeclareTemplateCode
   {erw-unary}
-  {cal-quarter}
+  {calendar}
   { 1 }
   {
+    argument = \__erw_xtempl_cal_argument:nn,
     ordinal = \__erw_xtempl_cal_ordinal:n,
     combine = \__erw_xtempl_cal_combine:nn
   }
@@ -1486,23 +1491,31 @@ Meta file to generate files.
     \l__erw_iso_tl
     \l__erw_iso_prop
 
-    \tl_clear_new:N\l_erw_month_tl
+    \tl_clear_new:N\l__erw_month_tl
+    \prop_get:NnN
+    \l__erw_iso_prop
+    { day }
+    \l__erw_day_tl
+
+    \tl_clear_new:N\l__erw_month_tl
     \prop_get:NnN
     \l__erw_iso_prop
     { month }
     \l__erw_month_tl
-    
-    \int_zero_new:N
-    \l__erw_quarter_int
-    
-    \exp_args:NNe
-    \int_set:Nn
-    \l__erw_quarter_int
-    {% quarter
-      \erw_cal_quarter:N
-      \l__erw_month_tl
-    }
 
+    \tl_clear_new:N\l__erw_argument_tl
+    \exp_args:NNe
+    \tl_set:Nn
+    \l__erw_argument_tl
+    {%
+      \exp_last_unbraced:Ne
+      \__erw_xtempl_cal_argument:nn
+      {%
+        { \erw_int_from_tl:N \l__erw_day_tl }
+        { \erw_int_from_tl:N \l__erw_month_tl }
+      }
+    }
+    
     \tl_clear_new:N
     \l__erw_ordinal_tl
 
@@ -1510,9 +1523,9 @@ Meta file to generate files.
     \tl_set:Nn
     \l__erw_ordinal_tl
     {%
-      \exp_args:NV
+      \exp_last_unbraced:NV
       \__erw_xtempl_cal_ordinal:n
-      \l__erw_quarter_int }
+      \l__erw_argument_tl }
 
     \tl_clear_new:N\l__erw_year_tl
 
@@ -1527,7 +1540,10 @@ Meta file to generate files.
     \exp_args:NNe
     \int_set:Nn
     \l__erw_year_int
-    { \erw_int_from_tl:N\l__erw_year_tl }
+    {%
+      \erw_int_from_tl:N
+      \l__erw_year_tl%
+    }
 
     \tl_clear_new:N
     \l__erw_combine_tl
@@ -1550,18 +1566,62 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \DeclareInstance{erw-unary}
-  {cal-quarter-english-short}
-  {cal-quarter}
+  \DeclareRestrictedTemplate
+  {erw-unary}
+  {calendar}
+  {calendar-month}
   {
-    combine = { Q#1~#2 }
+    argument = { { #2 } } % month->month
   }
 #+end_src
 
 #+begin_src latex
   \DeclareInstance{erw-unary}
-  {cal-quarter-french-short}
-  {cal-quarter}
+  {calendar-month-english-long}
+  {calendar-month}
+  {
+    ordinal = {
+      \int_case:nnTF{ #1 }
+      {%            % BUG
+        { 1 }{ January }
+        { 2 }{ February }
+        { 3 }{ March }
+        { 4 }{ April }
+        { 5 }{ May }
+        { 6 }{ June }
+        { 7 }{ July }
+        { 8 }{ August }
+        { 9 }{ September }
+        { 10 }{ October }
+        { 11 }{ November }
+        { 12 }{ December }
+      }
+      {}
+      {%
+        \msg_warning:nnn
+        { __erw_xtempl_calendar }
+        { generic }
+        { #1~outside~1-12 }
+      }
+    },
+    combine = { #1~#2 }
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareRestrictedTemplate
+  {erw-unary}
+  {calendar}
+  {calendar-quarter}
+  {
+    argument = { { #2 } } % month->quarter
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareInstance{erw-unary}
+  {calendar-quarter-english-short}
+  {calendar-quarter}
   {
     combine = { T#1~#2 }
   }
@@ -1569,8 +1629,75 @@ Meta file to generate files.
 
 #+begin_src latex
   \DeclareInstance{erw-unary}
-  {cal-quarter-french-long}
-  {cal-quarter}
+  {calendar-quarter-english-long}
+  {calendar-quarter}
+  {
+    ordinal = {
+      \int_case:nnTF{ #1 }
+      {%            % BUG
+        { 1 }{ first }
+        { 2 }{ second }
+        { 3 }{ third }
+        { 4 }{ fourth }
+      }
+      {}
+      {%
+        \msg_warning:nnn
+        { __erw_xtempl_calendar }
+        { generic }
+        { #1~outside~1-4 }
+      }
+    },
+    combine = { #1~quarter~#2 }
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareInstance{erw-unary}
+  {calendar-month-french-long}
+  {calendar-month}
+  {
+    ordinal = {
+      \int_case:nnTF{ #1 }
+      {%            % BUG
+        { 1 }{ janvier }
+        { 2 }{ février }
+        { 3 }{ mars }
+        { 4 }{ avril }
+        { 5 }{ mai }
+        { 6 }{ juin }
+        { 7 }{ juillet }
+        { 8 }{ août }
+        { 9 }{ septembre }
+        { 10 }{ octobre }
+        { 11 }{ novembre }
+        { 12 }{ decembre }
+      }
+      {}
+      {%
+        \msg_warning:nnn
+        { __erw_xtempl_calendar }
+        { generic }
+        { #1~outside~1-12 }
+      }
+    },
+    combine = { #1~#2 }
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareInstance{erw-unary}
+  {calendar-quarter-french-short}
+  {calendar-quarter}
+  {
+    combine = { T#1~#2 }
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareInstance{erw-unary}
+  {calendar-quarter-french-long}
+  {calendar-quarter}
   {
     ordinal = {
       \int_case:nnTF{ #1 }
@@ -1583,7 +1710,7 @@ Meta file to generate files.
       {}
       {%
         \msg_warning:nnn
-        { __erw_xtempl_cal_quarter }
+        { __erw_xtempl_calendar }
         { generic }
         { #1~outside~1-4 }
       }
@@ -1592,10 +1719,9 @@ Meta file to generate files.
   }
 #+end_src
 
-
 *** example
 :PROPERTIES:
-:header-args: :tangle ../tex/example-cal-quarter.tex
+:header-args: :tangle ../tex/example-calendar.tex
 :END:
 
 #+begin_src latex
@@ -1612,7 +1738,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-xtempl-cal-quarter}
+  \usepackage{../sty/erw-xtempl-calendar}
 #+end_src
 
 #+begin_src latex
@@ -1628,7 +1754,7 @@ Meta file to generate files.
   Le chiffre d'affaire de la société en
   \UseInstance
   {erw-unary}
-  {cal-quarter-french-short}
+  {calendar-quarter-french-short}
   {2026-04-26} \dots
   % \end{listing-tex}
 #+end_src
@@ -1637,7 +1763,7 @@ Meta file to generate files.
   Le chiffre d'affaire de la société au
   \UseInstance
   {erw-unary}
-  {cal-quarter-french-long}
+  {calendar-quarter-french-long}
   {2026-04-26} \dots
 #+end_src
 
