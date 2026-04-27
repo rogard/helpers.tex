@@ -28,6 +28,10 @@ Package-agnostic interface for detecting loaded languages.
 
 An `xtemplate` to format a label-content combo, such as inside `\addcontentsline`.
 
+### [calendar](https://github.com/rogard/helpers.tex/blob/main/sty/erw-xtempl-calendar.sty)
+
+An `xtemplate` to  map iso dates to quarter, month, week, in long or short format.
+
 ## Source
 [helpers.tex on GitHub](https://github.com/rogard/helpers.tex)
 
