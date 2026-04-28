@@ -30,8 +30,8 @@
 {calendar}
 { 1 }
 {
-  argument : function{ 2 }, % <day><month>
-  ordinal : function{ 1 } = { #1 }, % receives 1-4
+  number : function{ 2 }, % <day><month>
+  ordinal : function{ 1 }, % <argument>
   combine : function{ 2 } % <ordinal_tl>~<year_int>
 }
 
@@ -40,7 +40,7 @@
 {calendar}
 { 1 }
 {
-  argument = \__erw_xtempl_cal_argument:nn,
+  number = \__erw_xtempl_cal_number:nn,
   ordinal = \__erw_xtempl_cal_ordinal:n,
   combine = \__erw_xtempl_cal_combine:nn
 }
@@ -70,16 +70,16 @@
   { month }
   \l__erw_month_tl
 
-  \tl_clear_new:N\l__erw_argument_tl
+  \tl_clear_new:N\l__erw_number_tl
   \exp_args:NNe
   \tl_set:Nn
-  \l__erw_argument_tl
+  \l__erw_number_tl
   {%
     \exp_last_unbraced:Ne
-    \__erw_xtempl_cal_argument:nn
+    \__erw_xtempl_cal_number:nn
     {%
-      { \erw_int_from_tl:N \l__erw_day_tl }
-      { \erw_int_from_tl:N \l__erw_month_tl }
+      { \exp_args:NV \erw_int_from_tl:n \l__erw_day_tl }
+      { \exp_args:NV \erw_int_from_tl:n \l__erw_month_tl }
     }
   }
   
@@ -92,7 +92,7 @@
   {%
     \exp_last_unbraced:NV
     \__erw_xtempl_cal_ordinal:n
-    \l__erw_argument_tl }
+    \l__erw_number_tl }
 
   \tl_clear_new:N\l__erw_year_tl
 
@@ -108,7 +108,8 @@
   \int_set:Nn
   \l__erw_year_int
   {%
-    \erw_int_from_tl:N
+    \exp_args:NV
+    \erw_int_from_tl:n
     \l__erw_year_tl%
   }
 
@@ -136,7 +137,7 @@
 {calendar}
 {calendar-month}
 {
-  argument = { { #2 } } % month->month
+  number = { #2 } % month->month
 }
 
 \DeclareInstance{erw-unary}
@@ -175,7 +176,7 @@
 {calendar}
 {calendar-quarter}
 {
-  argument = { { #2 } } % month->quarter
+  number = { \erw_cal_quarter:n{ #2 } } % month->quarter
 }
 
 \DeclareInstance{erw-unary}
@@ -199,7 +200,7 @@
     }
     {}
     {%
-      \msg_warning:nnn
+      \msg_error:nnn
       { __erw_xtempl_calendar }
       { generic }
       { #1~outside~1-4 }

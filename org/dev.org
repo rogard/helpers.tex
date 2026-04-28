@@ -202,7 +202,7 @@ Meta file to generate files.
 #+header: :noweb-ref tex-boilerplate
 #+begin_src latex
   \cs_new:Npn
-  \erw_int_from_tl:N
+  \erw_int_from_tl:n
   #1 % <tl>
   {%
     \int_eval:n{ #1 + 0 }
@@ -211,7 +211,6 @@ Meta file to generate files.
     % \erw_int_from_tl:N\l_tmpa_tl
   }
 #+end_src
-
 
 #+begin_src latex
   \prg_new_conditional:Npnn \erw_int_in_range:nnn #1#2#3 { TF }
@@ -363,13 +362,13 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \cs_new:Npn\erw_cal_quarter:N
+  \cs_new:Npn\erw_cal_quarter:n
   #1 % <tl>
   {%
     \exp_args:Ne
     \__erw_cal_quarter:n
     {%
-      \erw_int_from_tl:N#1
+      \erw_int_from_tl:n{ #1 }
     }
   }
 #+end_src
@@ -1461,8 +1460,8 @@ Meta file to generate files.
   {calendar}
   { 1 }
   {
-    argument : function{ 2 }, % <day><month>
-    ordinal : function{ 1 } = { #1 }, % receives 1-4
+    number : function{ 2 }, % <day><month>
+    ordinal : function{ 1 }, % <argument>
     combine : function{ 2 } % <ordinal_tl>~<year_int>
   }
 #+end_src
@@ -1473,7 +1472,7 @@ Meta file to generate files.
   {calendar}
   { 1 }
   {
-    argument = \__erw_xtempl_cal_argument:nn,
+    number = \__erw_xtempl_cal_number:nn,
     ordinal = \__erw_xtempl_cal_ordinal:n,
     combine = \__erw_xtempl_cal_combine:nn
   }
@@ -1503,16 +1502,16 @@ Meta file to generate files.
     { month }
     \l__erw_month_tl
 
-    \tl_clear_new:N\l__erw_argument_tl
+    \tl_clear_new:N\l__erw_number_tl
     \exp_args:NNe
     \tl_set:Nn
-    \l__erw_argument_tl
+    \l__erw_number_tl
     {%
       \exp_last_unbraced:Ne
-      \__erw_xtempl_cal_argument:nn
+      \__erw_xtempl_cal_number:nn
       {%
-        { \erw_int_from_tl:N \l__erw_day_tl }
-        { \erw_int_from_tl:N \l__erw_month_tl }
+        { \exp_args:NV \erw_int_from_tl:n \l__erw_day_tl }
+        { \exp_args:NV \erw_int_from_tl:n \l__erw_month_tl }
       }
     }
     
@@ -1525,7 +1524,7 @@ Meta file to generate files.
     {%
       \exp_last_unbraced:NV
       \__erw_xtempl_cal_ordinal:n
-      \l__erw_argument_tl }
+      \l__erw_number_tl }
 
     \tl_clear_new:N\l__erw_year_tl
 
@@ -1541,7 +1540,8 @@ Meta file to generate files.
     \int_set:Nn
     \l__erw_year_int
     {%
-      \erw_int_from_tl:N
+      \exp_args:NV
+      \erw_int_from_tl:n
       \l__erw_year_tl%
     }
 
@@ -1571,7 +1571,7 @@ Meta file to generate files.
   {calendar}
   {calendar-month}
   {
-    argument = { { #2 } } % month->month
+    number = { #2 } % month->month
   }
 #+end_src
 
@@ -1614,7 +1614,7 @@ Meta file to generate files.
   {calendar}
   {calendar-quarter}
   {
-    argument = { { #2 } } % month->quarter
+    number = { \erw_cal_quarter:n{ #2 } } % month->quarter
   }
 #+end_src
 
@@ -1642,7 +1642,7 @@ Meta file to generate files.
       }
       {}
       {%
-        \msg_warning:nnn
+        \msg_error:nnn
         { __erw_xtempl_calendar }
         { generic }
         { #1~outside~1-4 }
