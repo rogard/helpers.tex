@@ -24,13 +24,17 @@ Counter commands allowing cross-referencing.
 
 Package-agnostic interface for detecting loaded languages.
 
-### [label-content](https://github.com/rogard/helpers.tex/blob/main/sty/erw-xtempl-label-content.sty)
+### [label-content](https://github.com/rogard/helpers.tex/blob/main/sty/erw-label-content.sty)
 
 An `xtemplate` to format a label-content combo, such as inside `\addcontentsline`.
 
-### [calendar](https://github.com/rogard/helpers.tex/blob/main/sty/erw-xtempl-calendar.sty)
+### [calendar](https://github.com/rogard/helpers.tex/blob/main/sty/erw-calendar.sty)
 
 An `xtemplate` to  map iso dates to quarter, month, week, in long or short format.
+
+### [punctuation](https://github.com/rogard/helpers.tex/blob/main/sty/erw-punctuation.sty)
+
+Think `\incidental{<clause>}`
 
 ## Source
 [helpers.tex on GitHub](https://github.com/rogard/helpers.tex)
