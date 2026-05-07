@@ -20,6 +20,11 @@
       % Expected: a space just before `:`
     }
   }
-  { Not~as~expected }
+  { ERROR! }
+  
+  \selectlanguage{french}
+  \ExplSyntaxOn    
+  The~active~language~is:~\textbf{\erw_lang_active:}
+  \ExplSyntaxOff
 \end{listing-tex}
 \end{document}
