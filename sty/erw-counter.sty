@@ -40,7 +40,9 @@
 {g__erw_counter_#1_int}
 \keys_define:nn{erw-counter}
 {%
-  new.code:n = { \int_gzero_new:c{ \__erw_counter_name:n{#1} } }
+  new.code:n = {%
+    \int_gzero_new:c{ \__erw_counter_name:n{#1} }
+  }
 }
 \cs_new_protected:Npn \erw_counter_increment:n
 #1 % <string: name>

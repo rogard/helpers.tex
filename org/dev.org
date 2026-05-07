@@ -831,97 +831,6 @@ Meta file to generate files.
   \end{document}
 #+end_src
 
-** xtempl-math
-*** source
-:PROPERTIES:
-:header-args: :tangle ../sty/erw-xtempl-math.sty
-:END:
-
-#+header: :noweb yes
-#+begin_src latex
-  <<tex-license>>
-#+end_src
-
-#+header: :noweb yes
-#+begin_src latex
-  \ProvidesExplPackage{erw-xtempl-math}{2026/03/28}{1.0}
-  { A math xtemplate hierarchy }
-#+end_src
-
-#+begin_src latex
-  \DeclareObjectType{math-unary}{ 1 }
-#+end_src
-
-#+begin_src latex
-  \DeclareTemplateInterface{math-unary}{root}{ 1 }
-  {%
-    format : function{ 1 }
-  }
-#+end_src
-
-#+begin_src latex
-  \DeclareTemplateCode{math-unary}{root}{ 1 }
-  {
-    format = \__erw_format:n
-  }
-  {%
-    \AssignTemplateKeys
-    \__erw_format:n{ #1 }
-  }
-#+end_src
-
-#+begin_src latex
-  \DeclareTemplateInterface{math-unary}{descendant}{ 1 }
-  {%
-    parent : instance{math-unary},
-    format : function{ 1 }
-  }
-#+end_src
-
-#+begin_src latex
-  \DeclareTemplateCode{math-unary}{descendant}{ 1 }
-  {
-    parent = \__erw_parent:n,
-    format = \__erw_format:n
-  }
-  {%
-    \AssignTemplateKeys
-    \exp_args:Nf
-    \__erw_parent:n
-    { \__erw_format:n{ #1 } }
-  }
-#+end_src
-
-#+begin_src latex
-  \DeclareObjectType{math-nullary}{ 0 }
-#+end_src
-
-#+begin_src latex
-  \DeclareTemplateInterface
-  {math-nullary}
-  {symbol}
-  {0}
-  {
-    parent : instance{math-unary},
-    symbol : tokenlist
-  }
-#+end_src
-
-#+begin_src latex
-  \DeclareTemplateCode{math-nullary}{symbol}{ 0 }
-  {
-    parent = \__erw_parent:n,
-    symbol = \l__erw_symbol_tl
-  }
-  {%
-    \AssignTemplateKeys
-    \exp_args:Nf
-    \__erw_parent:n
-      { \l__erw_symbol_tl }
-  }
-#+end_src
-
-*** example
 ** label-content
 *** source
 :PROPERTIES:
@@ -1668,6 +1577,11 @@ Meta file to generate files.
 :PROPERTIES:
 :header-args: :tangle ../tex/example-punctuation.tex
 :END:
+
+#+begin_src latex
+  % arara: pdflatex: { options: "-output-directory=../pdf" }
+  % arara: clean: { extensions: [ aux, log, listing ] }
+#+end_src
 
 #+begin_src latex
   \documentclass{article}

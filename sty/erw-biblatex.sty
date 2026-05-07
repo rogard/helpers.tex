@@ -9,31 +9,45 @@
 { In text citation template exposing a keyval interface }
 
 % -----------------------------------------------------------------
+
 % Usage:
+
 % ```
 % \DeclareInstance{erw-biblatex}{<instance>}{standard}
 %   { cite = { <code> } }
 % ```
 % where `<code>` is in terms of `#1`, `#2`, and `#3`,
 % representing prenote, postnote, and key.
+
 % ```
 % \BiblatexCite[<instance>]
 % { key = <key>, prenote = <prenote>, postnote = <postnote> }
 % ```
+
 % Limitation:
 % - Does not handle multicite
+
 % Also see:
 % - https://mirrors.ibiblio.org/CTAN/macros/latex/contrib/biblatex/doc/biblatex.pdf#subsection.3.9
+
 % Versioning:
 % 2025-12-21 1.1 Guard using \ProvidesPackage
+
 % -----------------------------------------------------------------
 
-% --- expl3
+\DeclareCiteCommand{ \__erw_citeauthorfull }
+{}
+{ \printnames[given-family][1-1]{author} }
+{}
+{}
+
 \makeatletter
 % should this be a const?
 \tl_const:Nx \c__erw_biblatex_bbxfile_tl { \blx@bbxfile }
 \makeatother
+
 \msg_new:nnn{ __erw_biblatex }{ generic }{ #1 }
+
 \prg_new_conditional:Npnn \__erw_biblatex_numeric: { TF }
 {
   \bool_lazy_or:nnTF
@@ -42,6 +56,7 @@
   { \prg_return_true: }
   { \prg_return_false: }
 }
+
 \prop_new:N\g__erw_biblatex_prop
 \keys_define:nn{__erw_biblatex}
 {
@@ -53,24 +68,20 @@
   postnote.default:n = {\c_empty_tl},
 }
 
-% --- biblatex
-\DeclareCiteCommand{ \__erw_citeauthorfull }
-{}
-{ \printnames[given-family][1-1]{author} }
-{}
-{}
+\keys_set:nn{__erw_biblatex}{ key, prenote, postnote }
 
-% --- template
 \DeclareObjectType{erw-biblatex}{1}
 \DeclareTemplateInterface{erw-biblatex}
 { standard }{1}
 {
   cite : function{3},
 }
+
 \cs_new:Nn
 \__erw_biblatex_helper:nnnN
 {#4{#1}{#2}{#3}}
 \cs_generate_variant:Nn\__erw_biblatex_helper:nnnN{eee,ffe}
+
 \DeclareTemplateCode{erw-biblatex}
 { standard }
 {1}
@@ -107,21 +118,21 @@
   
 }
 
-% --- instance
 \DeclareInstance{erw-biblatex}{default}{standard}
 {
   cite = { \cite[#1][#2]{#3} }
 }
+
 \DeclareInstance{erw-biblatex}{author-num}{standard}
 {
   cite = { \__erw_citeauthorfull{#3}\cite[#1][#2]{#3} }
 }
+
 \DeclareInstance{erw-biblatex}{title-num}{standard}
 {
   cite = { \citetitle{#3}\cite[#1][#2]{#3} }
 }
 
-% --- document command
 \ProvideDocumentCommand{\BiblatexCite}{O{default}m}
 {%
   \tl_if_regex_match:nnTF { #1 }{ -num$ }
