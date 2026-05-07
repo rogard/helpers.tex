@@ -1,0 +1,58 @@
+% -----------------------------------------------------------------
+% Copyright (C) 2025-2026 by Erwann Rogard
+% - Source repository: https://github.com/rogard/helpers.tex
+% - Released under the LaTeX Project Public License v1.3c or later
+% - See http://www.latex-project.org/lppl.txt
+% -----------------------------------------------------------------
+
+\ProvidesExplPackage
+{erw-punctuation}
+{2026/05/05}{1.0}
+{ Language dependence punctuation }
+
+\usepackage{xtemplate}
+
+\usepackage{../sty/erw-boilerplate}
+\usepackage{../sty/erw-lang}
+
+% https://www.proof-reading-service.com/blogs/academic-publishing/helpful-tips-and-advice-on-using-parenthetical-clauses-effectively
+
+\ExplSyntaxOn
+
+\DeclareObjectType{erw-binary}{ 2 }
+
+\DeclareTemplateInterface
+{erw-binary}{ incidental }{ 2 }
+{
+  mark : tokenlist = { \textemdash }, % this is an em dash
+  style : function{ 3 } = { #1#2\tl_if_novalue:nTF{ #3 }{ #1 }{ #3 } }
+}
+
+\DeclareTemplateCode
+{erw-binary}{ incidental }{ 2 }
+{
+  mark = \l__erw_incidental_mark_tl,
+  style = \__erw_incidental_convention:nnn
+}
+{
+  \exp_args:NV
+  \__erw_incidental_convention:nnn
+  \l__erw_incidental_mark_tl{ #1 }{ #2 }    
+}
+
+\ProvideDocumentCommand
+{\Incidental}
+% {\ParentheticalClause}
+{om}
+{%
+  \UseTemplate{ erw-binary }
+  { incidental }
+  { }
+  { #2 }
+  { #1 }
+  % Usage:
+  % The signal\Incidental{after strict controls}remains robust.
+  % We measured glucose\Incidental[.]{and we adjusted for age}
+}
+
+\ExplSyntaxOff

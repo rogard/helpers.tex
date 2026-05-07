@@ -300,6 +300,15 @@ Meta file to generate files.
   }
 #+end_src
 
+
+#+begin_src latex
+  \mode_if_horizontal:T
+  {
+    \skip_set_eq:NN \l__scontents_save_skip \tex_lastskip:D
+    \int_set_eq:NN \l__scontents_save_sf_int \tex_spacefactor:D
+  }
+#+end_src
+
 ***** calendar
 
 #+header: :noweb-ref tex-boilerplate
@@ -544,12 +553,17 @@ Meta file to generate files.
 
 ** counter
 *** source
-**** section
-***** info
+**** header
 
-#+name: org-counter-summary
+#+header: :noweb yes
 #+begin_src latex
-  Counter commands allowing cross-referencing
+  <<tex-license>>
+#+end_src
+
+#+header: :noweb yes
+#+begin_src latex
+  \ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
+  { Counter commands allowing cross-referencing }
 #+end_src
 
 #+header: :noweb-ref tex-counter-info
@@ -583,30 +597,13 @@ Meta file to generate files.
   % -----------------------------------------------------------------
 #+end_src
 
-***** guard
+**** expl3
 
-#+header: :noweb-ref tex-counter-guard
-#+begin_src latex
-  % TODO remove
-  %  \tl_if_exist:NTF \g__erw_counter_flag_tl
-  %  {%
-  %    \msg_warning:nnn { __erw_counter }{ generic }{ already-loaded }
-  %    \file_input_stop:
-  %  }
-  %  {%
-  %    \tl_gset:Nn \g__erw_counter_flag_tl{}
-  %  }
-#+end_src
-
-***** expl3
-
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \msg_new:nnn{__erw_counter}{generic}{#1}
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new:Npn \__erw_counter_name:n
@@ -614,7 +611,6 @@ Meta file to generate files.
   {g__erw_counter_#1_int}
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \keys_define:nn{erw-counter}
@@ -625,7 +621,6 @@ Meta file to generate files.
   }
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new_protected:Npn \erw_counter_increment:n
@@ -635,7 +630,6 @@ Meta file to generate files.
   }
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new:Npn \erw_counter_use:n
@@ -645,20 +639,17 @@ Meta file to generate files.
   }
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \iow_new:N \g__erw_counter_aux_iow
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \str_const:Ne\c__erw_counter_aux_str
   { \c_sys_jobname_str .erw.counter.aux }
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \AtBeginDocument
@@ -674,7 +665,6 @@ Meta file to generate files.
   }
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \AtEndDocument
@@ -683,7 +673,6 @@ Meta file to generate files.
   }
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new_protected:Npn \erw_counter_remember:nnn
@@ -701,7 +690,6 @@ Meta file to generate files.
   \cs_generate_variant:Nn \erw_counter_remember:nnn{e}
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new_protected:Npn \erw_counter_remember:nn
@@ -714,7 +702,6 @@ Meta file to generate files.
   }
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new:Npn\__erw_counter_label:nn
@@ -723,7 +710,6 @@ Meta file to generate files.
   {g__erw_counter_label_#1_#2_tl}
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new_protected:Npn \__erw_counter_set:nnn
@@ -737,7 +723,6 @@ Meta file to generate files.
   \cs_generate_variant:Nn\__erw_counter_set:nnn{e}
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-expl3
 #+begin_src latex
   \cs_new:Npn \erw_counter_retrieve:nn
@@ -754,23 +739,20 @@ Meta file to generate files.
   }
 #+end_src
 
-***** doc-cmd
+**** doc-cmd
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-doc-cmd
 #+begin_src latex
   \ProvideDocumentCommand{\CounterSetup}{m}
   { \keys_set:nn{erw-counter}{ #1 } }
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-doc-cmd
  #+begin_src latex
   \ProvideDocumentCommand{\CounterIncrement}{m}{\erw_counter_increment:n{#1}}
   \ProvideDocumentCommand{\CounterUse}{m}{\erw_counter_use:n{#1}}
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-doc-cmd
 #+begin_src latex
   \ProvideDocumentCommand{\CounterRemember}{mm}
@@ -781,60 +763,12 @@ Meta file to generate files.
   }
 #+end_src
 
-#+header: :tangle no
 #+header: :noweb-ref tex-counter-doc-cmd
 #+begin_src latex
   \ProvideDocumentCommand{\CounterRetrieve}{mm}
   {
     \erw_counter_retrieve:nn { #1 }{ #2 }
   }
-#+end_src
-
-**** tangle
-:PROPERTIES:
-:header-args: :tangle "../sty/erw-counter.sty"
-:END:
-
-#+header: :noweb yes
-#+begin_src latex
-  <<tex-license>>
-#+end_src
-
-#+header: :noweb yes
-#+begin_src latex
-  \ProvidesExplPackage{erw-boilerplate}{2025/12/21}{1.0}
-  { <<org-counter-summary>> }
-#+end_src
-
-#+header: :noweb yes
-#+begin_src latex  
-  <<tex-counter-info>>
-#+end_src
-
-#+begin_src latex
-  \ExplSyntaxOn
-#+end_src
-
-#+header: :noweb yes
-#+begin_src latex
-  % --- guard ---------
-  <<tex-counter-guard>>
-#+end_src
-
-#+header: :noweb yes
-#+begin_src latex
-    % --- reference ---
-    <<tex-counter-expl3>>
-#+end_src
-
-#+header: :noweb yes
-#+begin_src latex
-    % --- reference ---
-    <<tex-counter-doc-cmd>>
-#+end_src
-
-#+begin_src latex
-  \ExplSyntaxOff
 #+end_src
 
 *** example
@@ -988,10 +922,10 @@ Meta file to generate files.
 #+end_src
 
 *** example
-** xtempl-label-content
+** label-content
 *** source
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-xtempl-label-content.sty
+:header-args: :tangle ../sty/erw-label-content.sty
 :END:
 
 #+header: :noweb yes
@@ -1001,7 +935,7 @@ Meta file to generate files.
 
 #+begin_src latex
   \ProvidesExplPackage
-  {erw-xtempl-label-content}
+  {erw-label-content}
   {2026/04/11}{1.1}
   {An xtemplate for a label-content pair}
 #+end_src
@@ -1072,7 +1006,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-xtempl-label-content}
+  \usepackage{../sty/erw-label-content}
   \DeclareInstance
   {erw-binary}
   {erw-label-content-bold}
@@ -1100,7 +1034,7 @@ Meta file to generate files.
 
 #+begin_src latex
   \begin{listing-tex}
-    % \usepackage{../sty/erw-xtempl-label-content}
+    % \usepackage{../sty/erw-label-content}
     % \DeclareInstance
     % {erw-binary}
     % {erw-label-content-bold}
@@ -1146,137 +1080,10 @@ Meta file to generate files.
   \end{document}
 #+end_src
 
-** xtempl-defer
+** marginnote
 *** source
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-xtempl-defer.sty
-:END:
-
-#+begin_src latex
-  \ProvidesExplPackage{erw-xtempl-defer}{2026/03/28}{1.0}
-  { Deferred binding inside xtemplate instances' parameters (internally, socket mechanism). }
-#+end_src
-
-#+begin_src latex
-  \usepackage{../tex/boilerplate.tex}
-#+end_src
-
-#+begin_src latex
-  \msg_new:nn
-  { __erw_xtempl_defer }
-  { generic }{ #1 }
-#+end_src
-
-#+begin_src latex
-  \prop_new:N \__erw_xtempl_defer_parameters_raw_prop
-  \prop_new:N \__erw_xtempl_defer_parameters_cooked_prop
-#+end_src
-
-#+begin_src latex
-  \keys_define:nn { __erw_xtempl_defer_instance }
-  {
-    object   .tl_set:N = \l__erw_xtempl_defer_object_tl,
-    template .tl_set:N = \l__erw_xtempl_defer_template_tl,
-    instance .tl_set:N = \l__erw_xtempl_defer_instance_tl,
-    socket_prefix.code:n = { \tl_set:Nx \l__erw_xtempl_defer_socket_prefix_tl { #1 } },
-    key .tl_set:N = \l__erw_xtempl_defer_key_tl,
-    binding .tl_set:N = \l__erw_xtempl_defer_binding_tl,
-    parameters .code:n =
-    {
-      \keyval_parse:nnn
-      {
-        \msg_error:nnn
-        { __erw_xtempl_instance }
-        { generic }
-        { No~value~for~#1 }
-      }
-      {
-        \__erw_inline:nn {nn}
-        {
-          \keys_set:nn
-          {__erw_xtempl_defer_instance}
-          { key = ##1, binding = ##2 }
-          
-          \prop_gput:NVV
-          \__erw_xtempl_defer_parameters_raw_prop
-          \__erw_xtempl_defer_key_tl
-          \__erw_xtempl_defer_binding_tl
-        }
-      }
-      {#1}
-    }
-  }
-#+end_src
-
-#+begin_src latex
-  \cs_new_protected:Nn \erw_xtempl_defer_instance:n
-  {
-    \prop_clear:N\__erw_xtempl_defer_parameters_raw_prop
-    \prop_clear:N\__erw_xtempl_defer_parameters_cooked_prop
-    
-    \keys_set:nn { __erw_xtempl_defer_instance } { #1 }
-
-    \keys_set:nn { __erw_xtempl_defer_instance }
-    {
-      socket_prefix =
-      \l__erw_xtempl_defer_object_tl
-      / \l__erw_xtempl_defer_instance_tl
-    }
-
-    \prop_map_inline:Nn
-    \__erw_xtempl_defer_parameters_raw_prop
-    {%
-      \exp_args:Ne
-      \socket_new:nn
-      { \l__erw_xtempl_defer_socket_prefix_tl / ##1 } { 0 }
-
-      \exp_args:Ne
-      \socket_new_plug:nnn
-      { \l__erw_xtempl_defer_socket_prefix_tl / ##1 }
-      { default }
-      { ##2 }
-
-      \exp_args:Ne
-      \AssignSocketPlug
-      { \l__erw_xtempl_defer_socket_prefix_tl / ##1 }
-      { default }
-
-      \exp_args:NNne \prop_gput:Nnn
-      \__erw_xtempl_defer_parameters_cooked_prop
-      { ##1 }
-      {
-        \exp_not:N
-        \UseSocket
-        { \l__erw_xtempl_defer_socket_prefix_tl / ##1 }
-      }
-    }
-
-    \exp_last_unbraced:Nf \DeclareInstance
-    {
-      {\exp_not:N\l__erw_object_tl}
-      {\exp_not:N\l__erw_instance_tl}
-      {\exp_not:N\l__erw_template_tl}
-      {
-        \prop_to_keyval:N
-        \__erw_xtempl_defer_parameters_cooked_prop
-      }
-    }
-  }
-#+end_src
-
-*** example
-:PROPERTIES:
-:header-args: :tangle ../tex/example-xtempl-defer.tex
-:END:
-
-#+begin_src latex
-  
-#+end_src
-
-** xtempl-marginnote
-*** source
-:PROPERTIES:
-:header-args: :tangle ../sty/erw-xtempl-marginnote.sty
+:header-args: :tangle ../sty/erw-marginnote.sty
 :END:
 
 #+header: :noweb yes
@@ -1286,7 +1093,7 @@ Meta file to generate files.
 
 #+begin_src latex
   \ProvidesExplPackage
-  {erw-xtempl-marginnote}
+  {erw-marginnote}
   {2026/04/21}{1.0}
   { A LaTeX3 marginnote }
 #+end_src
@@ -1386,7 +1193,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-xtempl-marginnote}
+  \usepackage{../sty/erw-marginnote}
 #+end_src
 
 #+begin_src latex
@@ -1413,10 +1220,10 @@ Meta file to generate files.
   \end{document}
 #+end_src
 
-** xtempl-calendar
+** calendar
 *** source
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-xtempl-calendar.sty
+:header-args: :tangle ../sty/erw-calendar.sty
 :END:
 
 #+header: :noweb yes
@@ -1426,7 +1233,7 @@ Meta file to generate files.
 
 #+begin_src latex
   \ProvidesExplPackage
-  {erw-xtempl-calendar}
+  {erw-calendar}
   {2026/04/21}{1.0}
   {%
     A LaTeX3 calendar package to map iso dates to quarter, month, week,
@@ -1738,7 +1545,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-xtempl-calendar}
+  \usepackage{../sty/erw-calendar}
 #+end_src
 
 #+begin_src latex
@@ -1768,6 +1575,125 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
+  \end{document}
+#+end_src
+
+** punctuation
+*** source 
+:PROPERTIES:
+:header-args: :tangle ../sty/erw-punctuation.sty
+:END:
+
+**** header
+
+#+header: :noweb yes
+#+begin_src latex
+  <<tex-license>>
+#+end_src
+
+#+begin_src latex
+  \ProvidesExplPackage
+  {erw-punctuation}
+  {2026/05/05}{1.0}
+  { Language dependence punctuation }
+#+end_src
+
+#+begin_src latex
+  \usepackage{xtemplate}
+#+end_src
+
+#+begin_src latex
+  \usepackage{../sty/erw-boilerplate}
+  \usepackage{../sty/erw-lang}
+#+end_src
+
+**** incidental
+
+#+begin_src latex
+ % https://www.proof-reading-service.com/blogs/academic-publishing/helpful-tips-and-advice-on-using-parenthetical-clauses-effectively
+#+end_src
+
+#+begin_src latex
+  \ExplSyntaxOn
+#+end_src
+
+#+begin_src latex
+  \DeclareObjectType{erw-binary}{ 2 }
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateInterface
+  {erw-binary}{ incidental }{ 2 }
+  {
+    mark : tokenlist = { \textemdash }, % this is an em dash
+    style : function{ 3 } = { #1#2\tl_if_novalue:nTF{ #3 }{ #1 }{ #3 } }
+  }
+#+end_src
+
+#+begin_src latex
+  \DeclareTemplateCode
+  {erw-binary}{ incidental }{ 2 }
+  {
+    mark = \l__erw_incidental_mark_tl,
+    style = \__erw_incidental_convention:nnn
+  }
+  {
+    \exp_args:NV
+    \__erw_incidental_convention:nnn
+    \l__erw_incidental_mark_tl{ #1 }{ #2 }    
+  }
+#+end_src
+
+#+begin_src latex
+  \ProvideDocumentCommand
+  {\Incidental}
+  % {\ParentheticalClause}
+  {om}
+  {%
+    \UseTemplate{ erw-binary }
+    { incidental }
+    { }
+    { #2 }
+    { #1 }
+    % Usage:
+    % The signal\Incidental{after strict controls}remains robust.
+    % We measured glucose\Incidental[.]{and we adjusted for age}
+  }
+#+end_src
+
+#+begin_src latex
+  \ExplSyntaxOff
+#+end_src
+*** example
+:PROPERTIES:
+:header-args: :tangle ../tex/example-punctuation.tex
+:END:
+
+#+begin_src latex
+  \documentclass{article}
+  \usepackage[english,french]{babel} % lualatex
+  %\usepackage[french,english]{babel}
+#+end_src
+
+#+begin_src latex
+  \usepackage{../sty/erw-punctuation}
+#+end_src
+
+#+begin_src latex
+  \usepackage{tcolorbox}
+  \tcbuselibrary{listings}
+  \newtcblisting{listing-tex}
+  { listing options = { language = Tex, style = tcblatex } }
+#+end_src
+
+#+begin_src latex
+  \begin{document}
+  \begin{listing-tex}    
+    \selectlanguage{english}
+
+    The signal\Incidental{after strict controls}remains robust.
+    We measured glucose\Incidental[.]{and we adjusted for age}
+  \end{listing-tex}
   \end{document}
 #+end_src
 
@@ -2066,27 +1992,33 @@ Meta file to generate files.
 
 ** lang
 *** source
-**** info
+:PROPERTIES:
+:header-args: :tangle ../sty/erw-lang.sty
+:END:
 
-#+name: org-lang-summary
-#+begin_src org
-  Package-agnostic interface for detecting loaded languages
+**** header
+
+#+header: :noweb yes
+#+begin_src latex
+  \ProvidesExplPackage
+  {erw-lang}{2026/05/05}{1.1}
+  { Package-agnostic interface for detecting loaded languages }
 #+end_src
 
 #+header: :noweb-ref tex-lang-info
 #+begin_src latex
   % Usage:
   % ```
-  % \__erw_lang_loaded:nTF{<language>{<code1>}{<code2}
+  % \erw_lang_loaded:nTF{<language>{<code1>}{<code2}
   % \IfLangLoaded{<language>{<code1>}{<code2>}
   % ```
 #+end_src
 
-**** socket
+**** loaded
 
 #+header: :noweb-ref tex-lang
 #+begin_src latex
-  \socket_new:nn {erw-lang} {1}  % language name
+  \socket_new:nn {erw-lang-loaded} {1}  % language name
 #+end_src
 
 #+header: :noweb-ref tex-lang
@@ -2096,13 +2028,13 @@ Meta file to generate files.
 
 #+header: :noweb-ref tex-lang
 #+begin_src latex
-  \socket_new_plug:nnn {erw-lang} {babel} 
+  \socket_new_plug:nnn {erw-lang-loaded} {babel} 
   { \cs_if_exist:cTF {bbl@loaded@#1} }
 #+end_src
 
 #+header: :noweb-ref tex-lang
 #+begin_src latex
-  \socket_new_plug:nnn {erw-lang} {polyglossia}
+  \socket_new_plug:nnn {erw-lang-loaded} {polyglossia}
   { \clist_if_in:NnTF \xpg@loaded {#1} }
 #+end_src
 
@@ -2125,7 +2057,7 @@ Meta file to generate files.
 #+begin_src latex
   \seq_map_inline:Nn \g__erw_lang_plugs_seq {
     \IfPackageLoadedTF{#1} {
-      \socket_assign_plug:nn {erw-lang} {#1}
+      \socket_assign_plug:nn {erw-lang-loaded} {#1}
       \seq_map_break:  % Stop after first match
     }{}
   }
@@ -2134,9 +2066,9 @@ Meta file to generate files.
 #+header: :noweb-ref tex-lang
 #+begin_src latex
   \prg_new_conditional:Npnn
-  \__erw_lang_loaded:n #1 { TF }
+  \erw_lang_loaded:n #1 { TF }
   {
-    \socket_use:nn {erw-lang} {#1}
+    \socket_use:nn {erw-lang-loaded} {#1}
     { \prg_return_true: }
     { \prg_return_false: }
   }
@@ -2146,34 +2078,41 @@ Meta file to generate files.
 #+begin_src latex
   \NewDocumentCommand{\IfLangLoaded}{m m m}
   {
-    \__erw_lang_loaded:nTF {#1} {#2} {#3}
+    \erw_lang_loaded:nTF {#1} {#2} {#3}
   }
 #+end_src
 
-*** tangle
-:PROPERTIES:
-:header-args: :tangle ../sty/erw-lang.sty
-:END:
+**** active
 
-#+header: :noweb yes
 #+begin_src latex
-  <<tex-license>>
+  \socket_new:nn{ erw-lang-active }{ 0 }
 #+end_src
 
-#+header: :noweb yes
 #+begin_src latex
-  <<tex-lang-info>>
+  \socket_new_plug:nnn {erw-lang-active} {babel} 
+  { \languagename }
 #+end_src
 
-#+header: :noweb yes
 #+begin_src latex
-  \ProvidesExplPackage{erw-lang}{2026/02/03}{1.0}
-  { <<org-biblatex-summary>> }
+  \socket_new_plug:nnn {erw-lang-active} {polyglossia}
+  { \languagename }
 #+end_src
 
-#+header: :noweb yes
 #+begin_src latex
-  <<tex-lang>>
+  \seq_map_inline:Nn \g__erw_lang_plugs_seq {
+    \IfPackageLoadedTF{ #1 } {
+      \socket_assign_plug:nn {erw-lang-active} {#1}
+      \seq_map_break:  % Stop after first match
+    }{}
+  }
+#+end_src
+
+#+begin_src latex
+  \cs_new:Nn
+  \erw_lang_active:
+  {%
+    \socket_use:nn{erw-lang-active}{}
+  }
 #+end_src
 
 *** example
@@ -2210,7 +2149,12 @@ Meta file to generate files.
         % Expected: a space just before `:`
       }
     }
-    { Not~as~expected }
+    { ERROR! }
+    
+    \selectlanguage{french}
+    \ExplSyntaxOn    
+    The~active~language~is:~\textbf{\erw_lang_active:}
+    \ExplSyntaxOff
   \end{listing-tex}
   \end{document}
 #+end_src

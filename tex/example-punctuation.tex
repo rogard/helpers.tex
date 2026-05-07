@@ -1,0 +1,19 @@
+\documentclass{article}
+\usepackage[english,french]{babel} % lualatex
+%\usepackage[french,english]{babel}
+
+\usepackage{../sty/erw-punctuation}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\newtcblisting{listing-tex}
+{ listing options = { language = Tex, style = tcblatex } }
+
+\begin{document}
+\begin{listing-tex}    
+  \selectlanguage{english}
+
+  The signal\Incidental{after strict controls}remains robust.
+  We measured glucose\Incidental[.]{and we adjusted for age}
+\end{listing-tex}
+\end{document}
