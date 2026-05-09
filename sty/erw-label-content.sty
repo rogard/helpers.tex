@@ -41,10 +41,10 @@
   \seq_set_from_clist:Nn \l_tmpa_seq { #1 } % fix 1: seq not clist
   \str_set:Ne \l_tmpa_str
   { \exp_args:NNV \seq_format:Nn \l_tmpa_seq \l__erw_label_tl }
-  %\str_show:N \l_tmpa_str
+  % \str_show:N \l_tmpa_str
   \exp_args:NNe
   \tl_set:Nn \l_tmpb_tl { \__erw_content:n{#2} }
-  %\str_show:N \l_tmpb_str
+  % \str_show:N \l_tmpb_str
   \exp_args:NVV \__erw_combine:nn \l_tmpa_str \l_tmpb_tl
   \group_end:
 }
