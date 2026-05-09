@@ -1,9 +1,6 @@
-% arara: pdflatex: { options: "-output-directory=../pdf" }
-% arara: clean: { extensions: [ aux, log, listing ] }
-
 \documentclass{article}
-\usepackage[english,french]{babel} % lualatex
-%\usepackage[french,english]{babel}
+\usepackage[english]{babel}
+\usepackage{csquotes}
 
 \usepackage{../sty/erw-punctuation}
 
@@ -12,11 +9,12 @@
 \newtcblisting{listing-tex}
 { listing options = { language = Tex, style = tcblatex } }
 
+% source: https://www.proof-reading-service.com/blogs/academic-publishing/helpful-tips-and-advice-on-using-parenthetical-clauses-effectively
+
 \begin{document}
 \begin{listing-tex}    
-  \selectlanguage{english}
-
-  The signal\Incidental{after strict controls}remains robust.
-  We measured glucose\Incidental[.]{and we adjusted for age}
+  The signal\Incidental[paren]{after strict controls}remains robust.\par
+  We measured glucose\Incidental[em-dash]*{and we adjusted for age}.\par
+  Emphasise clarity\Incidental*{avoid burying essential methods in \enquote{parentheses.}}
 \end{listing-tex}
 \end{document}

@@ -7,52 +7,175 @@
 
 \ProvidesExplPackage
 {erw-punctuation}
-{2026/05/05}{1.0}
-{ Language dependence punctuation }
+{2026/05/08}{1.1}
+{ Punctuation as concepts }
+
+% Usage:
+% `<sentence begin>\Incidental[<style>]{<incidental>}<sentence end>.`
+% `<sentence whole>\Incidental[<style>]*{<incidental>}.`
+% where `<style>` matches `^(em-dash|paren)$`
 
 \usepackage{xtemplate}
 
 \usepackage{../sty/erw-boilerplate}
 \usepackage{../sty/erw-lang}
 
-% https://www.proof-reading-service.com/blogs/academic-publishing/helpful-tips-and-advice-on-using-parenthetical-clauses-effectively
-
 \ExplSyntaxOn
 
-\DeclareObjectType{erw-binary}{ 2 }
+% ── Message ────────────────────────────────────────────────────────
+\msg_new:nnn{ erw-incidental }{ generic }{ #1 }
 
-\DeclareTemplateInterface
-{erw-binary}{ incidental }{ 2 }
-{
-  mark : tokenlist = { \textemdash }, % this is an em dash
-  style : function{ 3 } = { #1#2\tl_if_novalue:nTF{ #3 }{ #1 }{ #3 } }
+% ── Const ──────────────────────────────────────────────────────────
+
+\str_const:Nn
+\c__erw_incidental_style_str
+{ em-dash }
+
+\tl_const:Nn
+\c__erw_incidental_space_tl
+{ \thinspace }
+
+% ── Keys ───────────────────────────────────────────────────────────
+
+\exp_last_unbraced:Ne
+\DeclareKeys { [ erw-punctuation ]
+  {%
+    incidental / style.tl_gset:N = { \exp_not:N\g__erw_incidental_style_str },
+    incidental / style.default:n = { \str_use:N\c__erw_incidental_style_str },
+    incidental / style.initial:n = { \str_use:N\c__erw_incidental_style_str },
+    incidental / space.tl_gset:N = { \exp_not:N\g__erw_incidental_space_tl },
+    incidental / space.default:n = { \str_use:N\c__erw_incidental_space_tl },
+    incidental / space.initial:n = { \str_use:N\c__erw_incidental_space_tl }
+  }
 }
 
-\DeclareTemplateCode
-{erw-binary}{ incidental }{ 2 }
+% ── Object type ─────────────────────────────────────────────────────
+\DeclareObjectType { erw-binary } { 2 }
+
+% ── Template: open ──────────────────────────────────────────────────
+\DeclareTemplateInterface { erw-binary } { incidental-open } { 2 }
 {
-  mark = \l__erw_incidental_mark_tl,
-  style = \__erw_incidental_convention:nnn
+  inner-space : tokenlist = { \g__erw_incidental_space_tl },
+  middle-symbol : tokenlist,
+  outer-space : tokenlist = { \g__erw_incidental_space_tl },
+  allow-standalone : boolean
+}
+\DeclareTemplateCode { erw-binary } { incidental-open } { 2 }
+{
+  inner-space  = \l__erw_inner_space_tl,
+  middle-symbol = \l__erw_middle_symbol_tl,
+  outer-space = \l__erw_outer_space_tl,
+  allow-standalone = \l__erw_allow_standalone_bool
 }
 {
+  \group_begin:
+  \AssignTemplateKeys
+
+  \exp_last_unbraced:Ne
+  \bool_lazy_or:nnTF
+  {
+    \l__erw_allow_standalone_bool
+    { \bool_not_p:n{ #1 } }
+  }
+  {
+    \tl_use:N \l__erw_outer_space_tl
+    \tl_use:N \l__erw_middle_symbol_tl
+    \tl_use:N \l__erw_inner_space_tl
+    #2
+  }
+  {%
+    \msg_error:nnn
+    { erw-incidental }
+    { generic }
+    { standalone-disallowed }
+  }
+  \group_end:
+}
+
+% ── Template: open-close ────────────────────────────────────────────
+\DeclareObjectType{ erw-unary} { 1 }  
+\DeclareTemplateInterface { erw-unary } { incidental-open-close } { 1 }
+{
+  open-instance : instance { erw-binary },
+  inner-space : tokenlist = { \g__erw_incidental_space_tl },
+  middle-symbol : tokenlist,
+  outer-space : tokenlist = { \g__erw_incidental_space_tl }
+}
+\DeclareTemplateCode { erw-unary } { incidental-open-close } { 1 }
+{
+  open-instance  = \__erw_open_instance:nn,
+  inner-space = \l__erw_inner_space_tl,
+  middle-symbol  = \l__erw_middle_symbol_tl,
+  outer-space = \l__erw_outer_space_tl
+}
+{
+  \AssignTemplateKeys
   \exp_args:NV
-  \__erw_incidental_convention:nnn
-  \l__erw_incidental_mark_tl{ #1 }{ #2 }    
+  \__erw_open_instance:nn
+  \c_false_bool
+  { #1 }
+  \tl_use:N \l__erw_inner_space_tl
+  \tl_use:N \l__erw_middle_symbol_tl
+  \tl_use:N \l__erw_outer_space_tl
 }
 
-\ProvideDocumentCommand
-{\Incidental}
-% {\ParentheticalClause}
-{om}
-{%
-  \UseTemplate{ erw-binary }
-  { incidental }
-  { }
-  { #2 }
-  { #1 }
-  % Usage:
-  % The signal\Incidental{after strict controls}remains robust.
-  % We measured glucose\Incidental[.]{and we adjusted for age}
+% ── Instances ───────────────────────────────────────────────────────
+
+\DeclareInstance { erw-binary } { em-dash-open } { incidental-open }
+{
+  middle-symbol = { \textemdash },
+  inner-space = { \g__erw_incidental_space_tl },
+  outer-space = { \g__erw_incidental_space_tl },
+  allow-standalone = { true }
 }
+
+\DeclareInstance { erw-binary } { paren-open } { incidental-open } 
+{
+  middle-symbol = { ( },
+  inner-space = { \c_empty_tl },
+  outer-space = { \g__erw_incidental_space_tl },
+  allow-standalone = { false }
+}
+
+\DeclareInstance { erw-unary } { em-dash-open-close } { incidental-open-close }
+{
+  open-instance = { em-dash-open },
+  middle-symbol = { \textemdash },
+  inner-space = { \g__erw_incidental_space_tl },
+  outer-space = { \g__erw_incidental_space_tl }
+}
+
+\DeclareInstance { erw-unary } { paren-open-close } { incidental-open-close }
+{
+  open-instance = { paren-open },
+  middle-symbol  = { ) } ,
+  inner-space = { \c_empty_tl },
+  outer-space = { \g__erw_incidental_space_tl }
+}
+
+% ── Command ─────────────────────────────────────────────────────────
+\cs_new_protected:Nn
+\__erw_incidental_define:n
+{
+  \ProvideDocumentCommand { \Incidental } {
+    O{ #1 } % style
+    s       % open
+    m       % text
+  }
+  {
+    \bool_if:nTF { ##2 }
+    {%
+      \exp_args:NnnV
+      \UseInstance { erw-binary } { ##1-open } \c_true_bool { ##3 }%
+    }
+    { \UseInstance { erw-unary } { ##1-open-close }{ ##3 } }
+  }
+}
+
+\exp_args:Ne
+\__erw_incidental_define:n
+{ \str_use:N\g__erw_incidental_style_str }
 
 \ExplSyntaxOff
+
+\ProcessKeyOptions [ erw-punctuation ]

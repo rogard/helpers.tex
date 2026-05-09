@@ -7,12 +7,12 @@ Meta file to generate files.
 
 #+name: tex-license
 #+begin_src latex
-% -----------------------------------------------------------------
-% Copyright (C) 2025-2026 by Erwann Rogard
-% - Source repository: https://github.com/rogard/helpers.tex
-% - Released under the LaTeX Project Public License v1.3c or later
-% - See http://www.latex-project.org/lppl.txt
-% -----------------------------------------------------------------
+  % -----------------------------------------------------------------
+  % Copyright (C) 2025-2026 by Erwann Rogard
+  % - Source repository: https://github.com/rogard/helpers.tex
+  % - Released under the LaTeX Project Public License v1.3c or later
+  % - See http://www.latex-project.org/lppl.txt
+  % -----------------------------------------------------------------
 #+end_src
 
 ** boilerplate
@@ -99,9 +99,9 @@ Meta file to generate files.
     % Usage:
     % \vbox_set_top:Nn \l_tmpa_box
     % { % analogous to `\parbox`
-    %   \erw_content_width_set:N\l__erw_width_dim
-    %   \tl_use:N\l__erw_marginnote_switch_tl
-    %   \strut \tl_trim_spaces:n{ #1 }
+    % \erw_content_width_set:N\l__erw_width_dim
+    % \tl_use:N\l__erw_marginnote_switch_tl
+    % \strut \tl_trim_spaces:n{ #1 }
     % }
   }
 #+end_src
@@ -378,11 +378,11 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-    \begin{listing-tex}
-      \ExplSyntaxOn
-      \erw_inline:nn{n}{Hello~#1!}{world}\par
-      \ExplSyntaxOff
-    \end{listing-tex}
+  \begin{listing-tex}
+    \ExplSyntaxOn
+    \erw_inline:nn{n}{Hello~#1!}{world}\par
+    \ExplSyntaxOff
+  \end{listing-tex}
 #+end_src
 
 #+begin_src latex
@@ -601,7 +601,7 @@ Meta file to generate files.
 #+end_src
 
 #+header: :noweb-ref tex-counter-doc-cmd
- #+begin_src latex
+#+begin_src latex
   \ProvideDocumentCommand{\CounterIncrement}{m}{\erw_counter_increment:n{#1}}
   \ProvideDocumentCommand{\CounterUse}{m}{\erw_counter_use:n{#1}}
 #+end_src
@@ -740,10 +740,10 @@ Meta file to generate files.
     \seq_set_from_clist:Nn \l_tmpa_seq { #1 } % fix 1: seq not clist
     \str_set:Ne \l_tmpa_str
     { \exp_args:NNV \seq_format:Nn \l_tmpa_seq \l__erw_label_tl }
-    %\str_show:N \l_tmpa_str
+    % \str_show:N \l_tmpa_str
     \exp_args:NNe
     \tl_set:Nn \l_tmpb_tl { \__erw_content:n{#2} }
-    %\str_show:N \l_tmpb_str
+    % \str_show:N \l_tmpb_str
     \exp_args:NVV \__erw_combine:nn \l_tmpa_str \l_tmpb_tl
     \group_end:
   }
@@ -947,11 +947,11 @@ Meta file to generate files.
 
 #+begin_src latex
   \usepackage{lipsum,tcolorbox,graphicx}
-%  \tcbuselibrary{listings,raster,skins}
-%  \newtcblisting{listing-tex}{
-%    listing and text,
-%    listing options={language=Tex, style=tcblatex}
-%  }
+  % \tcbuselibrary{listings,raster,skins}
+  % \newtcblisting{listing-tex}{
+  % listing and text,
+  % listing options={language=Tex, style=tcblatex}
+  % }
 #+end_src
 
 #+begin_src latex
@@ -967,15 +967,15 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-%  \begin{listing-tex} % ill suited
-    \lipsum[1][1-2]\par % <- critical
-    \UseTemplate
-    {erw-unary}       % object
-    {marginnote}      % template
-    {}                % settings
-    { \lipsum[2][1] }   % arguments
-    \lipsum[3][1-2]
-%  \end{listing-tex}
+  % \begin{listing-tex} % ill suited
+  \lipsum[1][1-2]\par % <- critical
+  \UseTemplate
+  {erw-unary}       % object
+  {marginnote}      % template
+  {}                % settings
+  { \lipsum[2][1] }   % arguments
+  \lipsum[3][1-2]
+  % \end{listing-tex}
 #+end_src
 
 #+begin_src latex
@@ -1299,11 +1299,11 @@ Meta file to generate files.
 
 #+begin_src latex
   \usepackage{lipsum,tcolorbox,graphicx}
-%  \tcbuselibrary{listings,raster,skins}
-%  \newtcblisting{listing-tex}{
-%    listing and text,
-%    listing options={language=Tex, style=tcblatex}
-%  }
+  % \tcbuselibrary{listings,raster,skins}
+  % \newtcblisting{listing-tex}{
+  % listing and text,
+  % listing options={language=Tex, style=tcblatex}
+  % }
 #+end_src
 
 #+begin_src latex
@@ -1356,8 +1356,15 @@ Meta file to generate files.
 #+begin_src latex
   \ProvidesExplPackage
   {erw-punctuation}
-  {2026/05/05}{1.0}
-  { Language dependence punctuation }
+  {2026/05/08}{1.1}
+  { Punctuation as concepts }
+#+end_src
+
+#+begin_src latex
+  % Usage:
+  % `<sentence begin>\Incidental[<style>]{<incidental>}<sentence end>.`
+  % `<sentence whole>\Incidental[<style>]*{<incidental>}.`
+  % where `<style>` matches `^(em-dash|paren)$`
 #+end_src
 
 #+begin_src latex
@@ -1372,74 +1379,206 @@ Meta file to generate files.
 **** incidental
 
 #+begin_src latex
- % https://www.proof-reading-service.com/blogs/academic-publishing/helpful-tips-and-advice-on-using-parenthetical-clauses-effectively
-#+end_src
-
-#+begin_src latex
   \ExplSyntaxOn
 #+end_src
 
 #+begin_src latex
-  \DeclareObjectType{erw-binary}{ 2 }
+  % ── Message ────────────────────────────────────────────────────────
+  \msg_new:nnn{ erw-incidental }{ generic }{ #1 }
 #+end_src
 
 #+begin_src latex
-  \DeclareTemplateInterface
-  {erw-binary}{ incidental }{ 2 }
-  {
-    mark : tokenlist = { \textemdash }, % this is an em dash
-    style : function{ 3 } = { #1#2\tl_if_novalue:nTF{ #3 }{ #1 }{ #3 } }
+  % ── Const ──────────────────────────────────────────────────────────
+#+end_src
+    
+#+begin_src latex
+  \str_const:Nn
+  \c__erw_incidental_style_str
+  { em-dash }
+#+end_src
+
+#+begin_src latex
+  \tl_const:Nn
+  \c__erw_incidental_space_tl
+  { \thinspace }
+#+end_src
+
+#+begin_src latex
+  % ── Keys ───────────────────────────────────────────────────────────
+#+end_src
+
+#+begin_src latex
+  \exp_last_unbraced:Ne
+  \DeclareKeys { [ erw-punctuation ]
+    {%
+      incidental / style.tl_gset:N = { \exp_not:N\g__erw_incidental_style_str },
+      incidental / style.default:n = { \str_use:N\c__erw_incidental_style_str },
+      incidental / style.initial:n = { \str_use:N\c__erw_incidental_style_str },
+      incidental / space.tl_gset:N = { \exp_not:N\g__erw_incidental_space_tl },
+      incidental / space.default:n = { \str_use:N\c__erw_incidental_space_tl },
+      incidental / space.initial:n = { \str_use:N\c__erw_incidental_space_tl }
+    }
   }
 #+end_src
 
 #+begin_src latex
-  \DeclareTemplateCode
-  {erw-binary}{ incidental }{ 2 }
+  % ── Object type ─────────────────────────────────────────────────────
+  \DeclareObjectType { erw-binary } { 2 }
+#+end_src
+
+#+begin_src latex
+  % ── Template: open ──────────────────────────────────────────────────
+  \DeclareTemplateInterface { erw-binary } { incidental-open } { 2 }
   {
-    mark = \l__erw_incidental_mark_tl,
-    style = \__erw_incidental_convention:nnn
+    inner-space : tokenlist = { \g__erw_incidental_space_tl },
+    middle-symbol : tokenlist,
+    outer-space : tokenlist = { \g__erw_incidental_space_tl },
+    allow-standalone : boolean
+  }
+  \DeclareTemplateCode { erw-binary } { incidental-open } { 2 }
+  {
+    inner-space  = \l__erw_inner_space_tl,
+    middle-symbol = \l__erw_middle_symbol_tl,
+    outer-space = \l__erw_outer_space_tl,
+    allow-standalone = \l__erw_allow_standalone_bool
   }
   {
+    \group_begin:
+    \AssignTemplateKeys
+
+    \exp_last_unbraced:Ne
+    \bool_lazy_or:nnTF
+    {
+      \l__erw_allow_standalone_bool
+      { \bool_not_p:n{ #1 } }
+    }
+    {
+      \tl_use:N \l__erw_outer_space_tl
+      \tl_use:N \l__erw_middle_symbol_tl
+      \tl_use:N \l__erw_inner_space_tl
+      #2
+    }
+    {%
+      \msg_error:nnn
+      { erw-incidental }
+      { generic }
+      { standalone-disallowed }
+    }
+    \group_end:
+  }
+#+end_src
+
+#+begin_src latex
+  % ── Template: open-close ────────────────────────────────────────────
+  \DeclareObjectType{ erw-unary} { 1 }  
+  \DeclareTemplateInterface { erw-unary } { incidental-open-close } { 1 }
+  {
+    open-instance : instance { erw-binary },
+    inner-space : tokenlist = { \g__erw_incidental_space_tl },
+    middle-symbol : tokenlist,
+    outer-space : tokenlist = { \g__erw_incidental_space_tl }
+  }
+  \DeclareTemplateCode { erw-unary } { incidental-open-close } { 1 }
+  {
+    open-instance  = \__erw_open_instance:nn,
+    inner-space = \l__erw_inner_space_tl,
+    middle-symbol  = \l__erw_middle_symbol_tl,
+    outer-space = \l__erw_outer_space_tl
+  }
+  {
+    \AssignTemplateKeys
     \exp_args:NV
-    \__erw_incidental_convention:nnn
-    \l__erw_incidental_mark_tl{ #1 }{ #2 }    
+    \__erw_open_instance:nn
+    \c_false_bool
+    { #1 }
+    \tl_use:N \l__erw_inner_space_tl
+    \tl_use:N \l__erw_middle_symbol_tl
+    \tl_use:N \l__erw_outer_space_tl
   }
 #+end_src
 
 #+begin_src latex
-  \ProvideDocumentCommand
-  {\Incidental}
-  % {\ParentheticalClause}
-  {om}
-  {%
-    \UseTemplate{ erw-binary }
-    { incidental }
-    { }
-    { #2 }
-    { #1 }
-    % Usage:
-    % The signal\Incidental{after strict controls}remains robust.
-    % We measured glucose\Incidental[.]{and we adjusted for age}
+  % ── Instances ───────────────────────────────────────────────────────
+
+  \DeclareInstance { erw-binary } { em-dash-open } { incidental-open }
+  {
+    middle-symbol = { \textemdash },
+    inner-space = { \g__erw_incidental_space_tl },
+    outer-space = { \g__erw_incidental_space_tl },
+    allow-standalone = { true }
   }
+
+  \DeclareInstance { erw-binary } { paren-open } { incidental-open } 
+  {
+    middle-symbol = { ( },
+    inner-space = { \c_empty_tl },
+    outer-space = { \g__erw_incidental_space_tl },
+    allow-standalone = { false }
+  }
+
+  \DeclareInstance { erw-unary } { em-dash-open-close } { incidental-open-close }
+  {
+    open-instance = { em-dash-open },
+    middle-symbol = { \textemdash },
+    inner-space = { \g__erw_incidental_space_tl },
+    outer-space = { \g__erw_incidental_space_tl }
+  }
+
+  \DeclareInstance { erw-unary } { paren-open-close } { incidental-open-close }
+  {
+    open-instance = { paren-open },
+    middle-symbol  = { ) } ,
+    inner-space = { \c_empty_tl },
+    outer-space = { \g__erw_incidental_space_tl }
+  }
+#+end_src
+
+#+begin_src latex
+  % ── Command ─────────────────────────────────────────────────────────
+  \cs_new_protected:Nn
+  \__erw_incidental_define:n
+  {
+    \ProvideDocumentCommand { \Incidental } {
+      O{ #1 } % style
+      s       % open
+      m       % text
+    }
+    {
+      \bool_if:nTF { ##2 }
+      {%
+        \exp_args:NnnV
+        \UseInstance { erw-binary } { ##1-open } \c_true_bool { ##3 }%
+      }
+      { \UseInstance { erw-unary } { ##1-open-close }{ ##3 } }
+    }
+  }
+#+end_src
+
+#+begin_src latex
+  \exp_args:Ne
+  \__erw_incidental_define:n
+  { \str_use:N\g__erw_incidental_style_str }
 #+end_src
 
 #+begin_src latex
   \ExplSyntaxOff
 #+end_src
+
+**** options
+
+#+begin_src latex
+  \ProcessKeyOptions [ erw-punctuation ]
+#+end_src
+
 *** example
 :PROPERTIES:
 :header-args: :tangle ../tex/example-punctuation.tex
 :END:
 
 #+begin_src latex
-  % arara: pdflatex: { options: "-output-directory=../pdf" }
-  % arara: clean: { extensions: [ aux, log, listing ] }
-#+end_src
-
-#+begin_src latex
   \documentclass{article}
-  \usepackage[english,french]{babel} % lualatex
-  %\usepackage[french,english]{babel}
+  \usepackage[english]{babel}
+  \usepackage{csquotes}
 #+end_src
 
 #+begin_src latex
@@ -1454,12 +1593,15 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
+  % source: https://www.proof-reading-service.com/blogs/academic-publishing/helpful-tips-and-advice-on-using-parenthetical-clauses-effectively
+#+end_src
+
+#+begin_src latex
   \begin{document}
   \begin{listing-tex}    
-    \selectlanguage{english}
-
-    The signal\Incidental{after strict controls}remains robust.
-    We measured glucose\Incidental[.]{and we adjusted for age}
+    The signal\Incidental[paren]{after strict controls}remains robust.\par
+    We measured glucose\Incidental[em-dash]*{and we adjusted for age}.\par
+    Emphasise clarity\Incidental*{avoid burying essential methods in \enquote{parentheses.}}
   \end{listing-tex}
   \end{document}
 #+end_src
@@ -1496,7 +1638,7 @@ Meta file to generate files.
 #+begin_src latex
   % ```
   % \DeclareInstance{erw-biblatex}{<instance>}{standard}
-  %   { cite = { <code> } }
+  % { cite = { <code> } }
   % ```
   % where `<code>` is in terms of `#1`, `#2`, and `#3`,
   % representing prenote, postnote, and key.
@@ -1734,8 +1876,8 @@ Meta file to generate files.
     
 #+begin_src latex
   \begin{listing-tex}
-    %\usepackage[style=numeric-comp]{biblatex}
-    %\addbibresource{../bib/sample-1.bib}
+    % \usepackage[style=numeric-comp]{biblatex}
+    % \addbibresource{../bib/sample-1.bib}
     % \input{../sty/erw-biblatex.sty}
     \section{Fancy quotes}
 
@@ -1892,7 +2034,7 @@ Meta file to generate files.
   \usepackage{polyglossia} % lualatex
   \setdefaultlanguage{english}
   \setotherlanguages{french}
-  %\usepackage[french,english]{babel}
+  % \usepackage[french,english]{babel}
 #+end_src
 
 #+begin_src latex
@@ -1928,55 +2070,183 @@ Meta file to generate files.
 
 ** trash
 *** source
+**** split
+
+#+begin_src latex
+  \tl_new:N \g__erw_punctuation_body_tl
+  \tl_new:N \g__erw_punctuation_trailing_tl
+#+end_src
+
+#+begin_src latex
+  \cs_new_protected:Npn \erw_punctuation_split:n #1
+  {
+    \tl_gset:Nn \g__erw_punctuation_body_tl
+    { \tl_range:nnn {#1} {1} {-2} }
+
+    \tl_gset:Nn \g__erw_punctuation_trailing_tl
+    { \tl_item:nn {#1} {-1} }
+  }
+#+end_src
+
+#+begin_src latex
+  \cs_new:Nn
+  \erw_punctuation_body:
+  { \tl_use:N\g__erw_punctuation_body_tl }
+#+end_src
+
+#+begin_src latex
+  \cs_new:Nn
+  \erw_punctuation_trailing:
+  { \tl_use:N\g__erw_punctuation_trailing_tl }
+#+end_src
+
+**** incidental
+
+#+begin_src latex
+  % https://www.proof-reading-service.com/blogs/academic-publishing/helpful-tips-and-advice-on-using-parenthetical-clauses-effectively
+#+end_src
+
+#+begin_src latex
+  \ExplSyntaxOn
+#+end_src
+
+#+begin_src latex
+  % Model:
+  % \Incidental[(][)]{foo}->(foo)
+  % \Incidental[,][,]{foo}->,foo,
+  % \Incidental[,]*{foo}->,foo
+#+end_src
+
+#+begin_src latex
+  \tl_const:Nn
+  \c__erw_incidental_mark_tl
+  { \textemdash\thinspace }
+#+end_src
+
+#+begin_src latex
+  \tl_const:Nn
+  \c__erw_incidental_space_tl
+  { \thinspace }
+#+end_src
+
+#+begin_src latex
+  \tl_const:Nn
+  \c__erw_incidental_fallback_tl
+  { \c_empty_tl }
+#+end_src
+
+#+begin_src latex
+  \exp_last_unbraced:Ne
+  \keys_define:nn
+  {
+    { erw-punctuation }
+    {
+      incidental / space.tl_gset:N = { \exp_not:N\g__erw_incidental_space_tl },
+      incidental / space.default:n = { \tl_use:N\c__erw_incidental_space_tl },
+      incidental / space.initial:n = { \tl_use:N\c__erw_incidental_space_tl },
+      incidental / mark.tl_gset:N = { \exp_not:N\g__erw_incidental_mark_tl },
+      incidental / mark.default:n = { \tl_use:N\c__erw_incidental_mark_tl },
+      incidental / mark.initial:n = { \tl_use:N\c__erw_incidental_mark_tl },
+      incidental / fallback.tl_gset:N = { \exp_not:N\g__erw_incidental_fallback_tl },
+      incidental / fallback.default:n = { \tl_use:N\c__erw_incidental_fallback_tl },
+      incidental / fallback.initial:n = { \tl_use:N\c__erw_incidental_fallback_tl }
+    }
+  }
+#+end_src
+
+#+begin_src latex
+  \cs_new:Nn
+  \__erw_incidental_close:nnn
+  {%
+    \bool_if:nTF{ #3 }
+    { #2 }
+    { #1\tl_use:N\g__erw_incidental_space_tl }
+  }
+#+end_src
+
+#+begin_src latex
+  \cs_new:Nn
+  \__erw_incidental:nnnnn
+  {%
+    \tl_use:N\g__erw_incidental_space_tl
+    #1\tl_trim_spaces:n{ #5 }
+    \__erw_incidental_close:nnn
+    { #2 }{ #3 }{ #4 }
+  }
+#+end_src
+
+#+begin_src latex
+  \ProvideDocumentCommand
+  { \Incidental }
+  {
+    >{ \SplitArgument{1}{} }
+    O{ \g__erw_incidental_mark_tl \g__erw_incidental_mark_tl }
+    O{ \g__erw_incidental_fallback_tl }
+    s % close
+    m
+  }
+  {%
+    \__erw_incidental:nnnnn
+    #1 { #2 }{ #3 }{ #4 }
+    % Usage:
+    % The signal\Incidental[()]{after strict controls}remains robust.
+    % We measured glucose\Incidental*{and we adjusted for age}.
+  }
+#+end_src
+
+#+begin_src latex
+  \ExplSyntaxOff
+#+end_src
+
 **** adapt_cmd_wrapper_to_N
 
 - trashing it because I don't remember its purpose.
 
 #+header: :noweb-ref tex-boilerplate-trash
 #+begin_src latex
-    \cs_new_protected:Npn
-    \erw_adapt_cmd_wrapper_to_N:N #1
-    % See \erw_adapt_cmd_wrapper_to_N:nnnn for a description
-    {
-      \group_begin:
-      
-      \exp_args:NNe
-      \tl_set:Nn \l_tmpa_tl
-      { \cs_split_function:N #1 }
-      
-      \exp_args:NNe
-      \str_set:Nn \l__erw_base_str
-      { \exp_last_unbraced:Ne
-        \use_i:nnn {\l_tmpa_tl}  }
+  \cs_new_protected:Npn
+  \erw_adapt_cmd_wrapper_to_N:N #1
+  % See \erw_adapt_cmd_wrapper_to_N:nnnn for a description
+  {
+    \group_begin:
+    
+    \exp_args:NNe
+    \tl_set:Nn \l_tmpa_tl
+    { \cs_split_function:N #1 }
+    
+    \exp_args:NNe
+    \str_set:Nn \l__erw_base_str
+    { \exp_last_unbraced:Ne
+      \use_i:nnn {\l_tmpa_tl}  }
 
-      \exp_args:NNe
-      \str_set:Nn \l__erw_sig_str
-      { \exp_last_unbraced:Ne
-        \use_ii:nnn{\l_tmpa_tl} }
+    \exp_args:NNe
+    \str_set:Nn \l__erw_sig_str
+    { \exp_last_unbraced:Ne
+      \use_ii:nnn{\l_tmpa_tl} }
 
-      \exp_args:NNe
-      \str_set:Nn \l__erw_sig_tail_str
-      { \exp_args:Ne
-        \tl_range:nnn {\l__erw_sig_str} {3} {-1} }
+    \exp_args:NNe
+    \str_set:Nn \l__erw_sig_tail_str
+    { \exp_args:Ne
+      \tl_range:nnn {\l__erw_sig_str} {3} {-1} }
 
-      \exp_args:NNe
-      \int_set:Nn \l_tmpa_int% \l__erw_sig_tail_int
-      { \str_count:N \l__erw_sig_tail_str }
+    \exp_args:NNe
+    \int_set:Nn \l_tmpa_int% \l__erw_sig_tail_int
+    { \str_count:N \l__erw_sig_tail_str }
 
-      % \int_show:N%\l__erw_sig_tail_int
-      % \l_tmpa_int % pass
+    % \int_show:N%\l__erw_sig_tail_int
+    % \l_tmpa_int % pass
 
-      \erw_adapt_cmd_wrapper_to_N:eeee
-      { \str_use:N\l__erw_base_str }
-      { \str_use:N\l__erw_sig_str }
-      { \str_use:N\l__erw_sig_tail_str }
-      { \erw_parameter_braced:ne
-        { 2 }{ \exp_args:Ne
-          \__erw_int_last:nn{ 2 }{ \l_tmpa_int } } }
+    \erw_adapt_cmd_wrapper_to_N:eeee
+    { \str_use:N\l__erw_base_str }
+    { \str_use:N\l__erw_sig_str }
+    { \str_use:N\l__erw_sig_tail_str }
+    { \erw_parameter_braced:ne
+      { 2 }{ \exp_args:Ne
+        \__erw_int_last:nn{ 2 }{ \l_tmpa_int } } }
 
-      \group_end:
-      
-    }
+    \group_end:
+    
+  }
   % Example
   % \cs_new:Nn \__erw_foo:nnn { \use:c{#1:#2}{#3} }
   % \erw_adapt_cmd_wrapper_to_N:N \__erw_foo:nnn
@@ -2045,27 +2315,27 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
- \begin{filecontents}[overwrite]{\snippetpath.tex}
-   \documentclass{article}
-   \usepackage{../sty/erw-boilerplate}
-   
-   \ExplSyntaxOn
-   \cs_new:Nn\__erw_bar:n{ Hello~#1! }
-   
-   \cs_new_protected:Nn
-   \__erw_foo:nnn{ \use:c{#1:#2}{#3} }
-   
-   \erw_adapt_cmd_wrapper_to_N:N
-   \__erw_foo:nnn
-   \ExplSyntaxOff
-   
-   \begin{document}
-   \ExplSyntaxOn
-   \__erw_foo:Nn
-   \__erw_bar:n{ world }
-   \ExplSyntaxOff
-   \end{document}
- \end{filecontents}
+  \begin{filecontents}[overwrite]{\snippetpath.tex}
+    \documentclass{article}
+    \usepackage{../sty/erw-boilerplate}
+    
+    \ExplSyntaxOn
+    \cs_new:Nn\__erw_bar:n{ Hello~#1! }
+    
+    \cs_new_protected:Nn
+    \__erw_foo:nnn{ \use:c{#1:#2}{#3} }
+    
+    \erw_adapt_cmd_wrapper_to_N:N
+    \__erw_foo:nnn
+    \ExplSyntaxOff
+    
+    \begin{document}
+    \ExplSyntaxOn
+    \__erw_foo:Nn
+    \__erw_bar:n{ world }
+    \ExplSyntaxOff
+  \end{document}
+  \end{filecontents}
 #+end_src
 
 #+begin_src latex
@@ -2117,10 +2387,10 @@ Meta file to generate files.
 #+begin_src shell
   # don't indent
   url='https://'\
-  'raw.githubusercontent.com/plk/biblatex/'\
-  '8e5b0605f017b64af04463447e10f02c933dee89/'\
-  'bibtex/bib/biblatex/'\
-  'biblatex-examples.bib'
+     'raw.githubusercontent.com/plk/biblatex/'\
+     '8e5b0605f017b64af04463447e10f02c933dee89/'\
+     'bibtex/bib/biblatex/'\
+     'biblatex-examples.bib'
   keys_ar=('aristotle:anima')
   #    keys_ar=('aristotle:anima' 'kant:krv')
   pattern=$(IFS="|"; echo "${keys_ar[*]}")
