@@ -1,3 +1,4 @@
+
 #+title: helpers.tex --- dev.org
 
 Meta file to generate files.
@@ -856,7 +857,7 @@ Meta file to generate files.
 #+begin_src latex
   \ProvidesExplPackage
   {erw-marginnote}
-  {2026/04/21}{1.0}
+  {2026/05/13}{1.1}
   { A LaTeX3 marginnote }
 #+end_src
 
@@ -936,6 +937,25 @@ Meta file to generate files.
   }
 #+end_src
 
+#+begin_src latex
+  \ProvideDocumentCommand{\Marginnote}{ O{} m }{
+    \UseTemplate
+    {erw-unary}       % object
+    {marginnote}      % template
+    { #1 }            % settings
+    { #2 }            % arguments
+  }
+#+end_src
+
+#+header: :tangle no
+#+begin_src org
+  TODO:
+  - [✔️] `\Marginnote{Foo}\lipsum[1][1]`
+  - [❌] `\Marginnote{Foo} \lipsum[1][1]`
+  - [❌] ```\Marginnote{Foo}
+          \lipsum[1][1]```
+#+end_src
+
 *** example
 :PROPERTIES:
 :header-args: :tangle ../tex/example-marginnote.tex
@@ -969,11 +989,12 @@ Meta file to generate files.
 #+begin_src latex
   % \begin{listing-tex} % ill suited
   \lipsum[1][1-2]\par % <- critical
-  \UseTemplate
-  {erw-unary}       % object
-  {marginnote}      % template
-  {}                % settings
-  { \lipsum[2][1] }   % arguments
+%  \UseTemplate
+%  {erw-unary}       % object
+%  {marginnote}      % template
+%  {}                % settings
+%  { \lipsum[2][1] }   % arguments
+  \Marginnote{ \lipsum[2][1] }
   \lipsum[3][1-2]
   % \end{listing-tex}
 #+end_src
@@ -1383,6 +1404,11 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
+  % ── Concept ────────────────────────────────────────────────────────
+  % Remove the incidental and the sentence must still be fully grammatical and complete.
+#+end_src
+
+#+begin_src latex
   % ── Message ────────────────────────────────────────────────────────
   \msg_new:nnn{ erw-incidental }{ generic }{ #1 }
 #+end_src
@@ -1601,7 +1627,7 @@ Meta file to generate files.
   \begin{listing-tex}    
     The signal\Incidental[paren]{after strict controls}remains robust.\par
     We measured glucose\Incidental[em-dash]*{and we adjusted for age}.\par
-    Emphasise clarity\Incidental*{avoid burying essential methods in \enquote{parentheses.}}
+     Emphasize clarity\Incidental*{avoid burying essential methods in \enquote{parentheses.}}
   \end{listing-tex}
   \end{document}
 #+end_src

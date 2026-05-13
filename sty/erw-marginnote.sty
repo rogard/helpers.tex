@@ -7,7 +7,7 @@
 
 \ProvidesExplPackage
 {erw-marginnote}
-{2026/04/21}{1.0}
+{2026/05/13}{1.1}
 { A LaTeX3 marginnote }
 
 \usepackage{xtemplate}
@@ -74,4 +74,12 @@
   \tl_use:N\l__erw_marginnote_post_tl
   
   \group_end:
+}
+
+\ProvideDocumentCommand{\Marginnote}{ O{} m }{
+  \UseTemplate
+  {erw-unary}       % object
+  {marginnote}      % template
+  { #1 }            % settings
+  { #2 }            % arguments
 }
