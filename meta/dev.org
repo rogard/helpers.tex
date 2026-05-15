@@ -366,7 +366,7 @@ Meta file to generate files.
 #+begin_src latex
   \documentclass{article}
   \usepackage{tcolorbox}
-  \usepackage{../sty/erw-boilerplate}
+  \usepackage{erw-boilerplate}
   \tcbuselibrary{listings}
   \newtcblisting{listing-tex}{
     listing and text,
@@ -644,7 +644,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-counter}
+  \usepackage{erw-counter}
 #+end_src
 
 #+begin_src latex
@@ -658,7 +658,7 @@ Meta file to generate files.
 #+begin_src latex
   \begin{listing-tex}
     % \ExplSyntaxOn
-    % \file_input:n{../sty/erw-counter.sty}
+    % \file_input:n{erw-counter.sty}
     % \ExplSyntaxOff
     % \CounterSetup{ new = foo }
 
@@ -769,7 +769,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-label-content}
+  \usepackage{erw-label-content}
   \DeclareInstance
   {erw-binary}
   {erw-label-content-bold}
@@ -797,7 +797,7 @@ Meta file to generate files.
 
 #+begin_src latex
   \begin{listing-tex}
-    % \usepackage{../sty/erw-label-content}
+    % \usepackage{erw-label-content}
     % \DeclareInstance
     % {erw-binary}
     % {erw-label-content-bold}
@@ -866,7 +866,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-boilerplate}
+  \usepackage{erw-boilerplate}
 #+end_src
 
 #+begin_src latex
@@ -975,7 +975,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-marginnote}
+  \usepackage{erw-marginnote}
 #+end_src
 
 #+begin_src latex
@@ -1029,7 +1029,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-boilerplate}
+  \usepackage{erw-boilerplate}
 #+end_src
 
 #+begin_src latex
@@ -1328,7 +1328,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-calendar}
+  \usepackage{erw-calendar}
 #+end_src
 
 #+begin_src latex
@@ -1393,8 +1393,8 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-boilerplate}
-  \usepackage{../sty/erw-lang}
+  \usepackage{erw-boilerplate}
+  \usepackage{erw-lang}
 #+end_src
 
 **** incidental
@@ -1608,7 +1608,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-punctuation}
+  \usepackage{erw-punctuation}
 #+end_src
 
 #+begin_src latex
@@ -1893,7 +1893,7 @@ Meta file to generate files.
 #+end_src
     
 #+begin_src latex
-  \usepackage{../sty/erw-biblatex}
+  \usepackage{erw-biblatex}
 #+end_src
     
 #+begin_src latex
@@ -1904,7 +1904,7 @@ Meta file to generate files.
   \begin{listing-tex}
     % \usepackage[style=numeric-comp]{biblatex}
     % \addbibresource{../bib/sample-1.bib}
-    % \input{../sty/erw-biblatex.sty}
+    % \input{erw-biblatex.sty}
     \section{Fancy quotes}
 
     \noindent\lipsum[1][1]\\
@@ -2064,7 +2064,7 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{../sty/erw-lang}
+  \usepackage{erw-lang}
 #+end_src
 
 #+begin_src latex
@@ -2343,7 +2343,7 @@ Meta file to generate files.
 #+begin_src latex
   \begin{filecontents}[overwrite]{\snippetpath.tex}
     \documentclass{article}
-    \usepackage{../sty/erw-boilerplate}
+    \usepackage{erw-boilerplate}
     
     \ExplSyntaxOn
     \cs_new:Nn\__erw_bar:n{ Hello~#1! }
