@@ -1,10 +1,14 @@
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+% arara: lualatex
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+
 \documentclass{article}
 \usepackage{polyglossia} % lualatex
 \setdefaultlanguage{english}
 \setotherlanguages{french}
 % \usepackage[french,english]{babel}
 
-\usepackage{../sty/erw-lang}
+\usepackage{erw-lang}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}

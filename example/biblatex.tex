@@ -1,4 +1,16 @@
-\begin{filecontents*}[overwrite]{\jobname.bib}
+% arara: clean: { extensions: [ aux, bib, blg, toc, lof, lot, out, bbl, bcf, listing, run.xml ] }
+% arara: pdflatex
+% arara: biber
+% arara: pdflatex
+% arara: clean: { extensions: [ aux, bib, blg, toc, lof, lot, out, bbl, bcf, listing, run.xml ] }
+
+%    url='https://'\
+%     'raw.githubusercontent.com/plk/biblatex/'\
+%     '8e5b0605f017b64af04463447e10f02c933dee89/'\
+%     'bibtex/bib/biblatex/'\
+%     'biblatex-examples.bib'
+
+\begin{filecontents*}{\jobname.bib}
 @book{aristotle:anima,
   author       = {Aristotle},
   title        = {De Anima},
@@ -13,24 +25,25 @@
                   \texttt{editor}},
 }
 \end{filecontents*}
+
 \documentclass{article}
 % \usepackage[style=authoryear]{biblatex}
 \usepackage[style=numeric-comp]{biblatex}
-\addbibresource{../bib/sample-1.bib}
+\addbibresource{\jobname.bib}
 
 \usepackage{ lipsum, xtemplate, tcolorbox }
 \tcbuselibrary{listings}
 \newtcblisting{listing-tex}
 { listing options = { language = Tex, style = tcblatex } }
 
-\usepackage{../sty/erw-biblatex}
+\usepackage{erw-biblatex}
 
 \begin{document}
 
 \begin{listing-tex}
   % \usepackage[style=numeric-comp]{biblatex}
   % \addbibresource{../bib/sample-1.bib}
-  % \input{../sty/erw-biblatex.sty}
+  % \input{erw-biblatex.sty}
   \section{Fancy quotes}
 
   \noindent\lipsum[1][1]\\

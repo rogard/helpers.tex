@@ -1,3 +1,8 @@
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+% arara: pdflatex
+% arara: pdflatex
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+
 \documentclass{article}
 
 \usepackage{lipsum,tcolorbox,graphicx}
@@ -7,14 +12,12 @@
   listing options={language=Tex, style=tcblatex}
 }
 
-\usepackage{../sty/erw-label-content}
+\usepackage{erw-label-content}
 \DeclareInstance
 {erw-binary}
 {erw-label-content-bold}
 {erw-label-content}
 { combine = \textbf{#1~#2} }
-
-\usepackage{datetime2}
 
 \usepackage{tocloft}
 \newlistof{encl}{encl}{Enclosed}
@@ -27,20 +30,6 @@
 \begin{document}
 
 \begin{listing-tex}
-  % \usepackage{../sty/erw-label-content}
-  % \DeclareInstance
-  % {erw-binary}
-  % {erw-label-content-bold}
-  % {erw-label-content}
-  % { combine = \textbf{#1~#2} }
-  % 
-  % \usepackage{tocloft}
-  % \newlistof{encl}{encl}{Enclosed}
-  % \makeatletter
-  % \def\listofencl
-  % {\@cfttocstart\@nameuse
-  % {cftmarkencl}\@starttoc{encl}\@cfttocfinish}
-  % \makeatother
 
   \listofencl
   
@@ -56,7 +45,7 @@
     \UseInstance
     {erw-binary}
     {erw-label-content-bold}
-    {1}{Main title -- \today}
+    {1}{Main title}
   }
   \addcontentsline{encl}{encl}
   {%
@@ -64,7 +53,7 @@
     {erw-binary}                 % object
     {erw-label-content}          % template
     {}                           % settings
-    {1,1}{Subtitle -- \today}    % arguments
+    {1,1}{Subtitle}    % arguments
   }
 \end{listing-tex}
 

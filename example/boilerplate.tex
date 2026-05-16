@@ -1,6 +1,10 @@
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+% arara: pdflatex
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+
 \documentclass{article}
 \usepackage{tcolorbox}
-\usepackage{../sty/erw-boilerplate}
+\usepackage{erw-boilerplate}
 \tcbuselibrary{listings}
 \newtcblisting{listing-tex}{
   listing and text,
@@ -24,7 +28,7 @@
     { \erw_inline:nn{n}{ (##1) } }
     \erw_parameter_braced:nn{2}{2}
   }
-  \__erw_test:nn{foo}{bar}
+  \__erw_test:nn{foo}{bar} % expect `(bar)`
   \ExplSyntaxOff
 \end{listing-tex}
 

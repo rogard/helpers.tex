@@ -1,8 +1,12 @@
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+% arara: pdflatex
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+
 \documentclass{article}
 \usepackage[english]{babel}
 \usepackage{csquotes}
 
-\usepackage{../sty/erw-punctuation}
+\usepackage{erw-punctuation}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
@@ -15,6 +19,6 @@
 \begin{listing-tex}    
   The signal\Incidental[paren]{after strict controls}remains robust.\par
   We measured glucose\Incidental[em-dash]*{and we adjusted for age}.\par
-  Emphasise clarity\Incidental*{avoid burying essential methods in \enquote{parentheses.}}
+   Emphasize clarity\Incidental*{avoid burying essential methods in \enquote{parentheses.}}
 \end{listing-tex}
 \end{document}

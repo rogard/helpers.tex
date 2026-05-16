@@ -1,3 +1,8 @@
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, erw.counter.aux, listing ] }
+% arara: pdflatex
+% arara: pdflatex
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, erw.counter.aux, listing ] }
+
 \documentclass{article}
 
 \usepackage{lipsum,tcolorbox,graphicx}
@@ -7,7 +12,7 @@
   listing options={language=Tex, style=tcblatex}
 }
 
-\usepackage{../sty/erw-counter}
+\usepackage{erw-counter}
 
 \CounterSetup{ new = foo }
 
@@ -15,7 +20,7 @@
 
 \begin{listing-tex}
   % \ExplSyntaxOn
-  % \file_input:n{../sty/erw-counter.sty}
+  % \file_input:n{erw-counter.sty}
   % \ExplSyntaxOff
   % \CounterSetup{ new = foo }
 

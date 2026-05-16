@@ -1,5 +1,5 @@
-
 #+title: helpers.tex --- dev.org
+#+author: Erwann Rogard
 
 Meta file to generate files.
 
@@ -20,7 +20,7 @@ Meta file to generate files.
 *** source
 **** section
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-boilerplate.sty
+:header-args: :tangle ../src/erw-boilerplate.sty
 :END:
 
 ***** header
@@ -360,8 +360,14 @@ Meta file to generate files.
 
 *** example
 :PROPERTIES:
-:header-args: :tangle ../tex/example-boilerplate.tex
+:header-args: :tangle ../example/boilerplate.tex
 :END:
+
+#+begin_src latex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+  % arara: pdflatex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+#+end_src
 
 #+begin_src latex
   \documentclass{article}
@@ -396,7 +402,7 @@ Meta file to generate files.
       { \erw_inline:nn{n}{ (##1) } }
       \erw_parameter_braced:nn{2}{2}
     }
-    \__erw_test:nn{foo}{bar}
+    \__erw_test:nn{foo}{bar} % expect `(bar)`
     \ExplSyntaxOff
   \end{listing-tex}
 #+end_src
@@ -627,8 +633,15 @@ Meta file to generate files.
 
 *** example
 :PROPERTIES:
-:header-args: :tangle "../tex/example-counter.tex"
+:header-args: :tangle "../example/counter.tex"
 :END:
+
+#+begin_src latex
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, erw.counter.aux, listing ] }
+% arara: pdflatex
+% arara: pdflatex
+% arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, erw.counter.aux, listing ] }
+#+end_src
 
 #+begin_src latex
   \documentclass{article}  
@@ -688,7 +701,7 @@ Meta file to generate files.
 ** label-content
 *** source
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-label-content.sty
+:header-args: :tangle ../src/erw-label-content.sty
 :END:
 
 #+header: :noweb yes
@@ -752,8 +765,15 @@ Meta file to generate files.
 
 *** example
 :PROPERTIES:
-:header-args: :tangle "../tex/example-label-content.tex"
+:header-args: :tangle "../example/label-content.tex"
 :END:
+
+#+begin_src latex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+  % arara: pdflatex
+  % arara: pdflatex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+#+end_src
 
 #+begin_src latex
   \documentclass{article}  
@@ -778,10 +798,6 @@ Meta file to generate files.
 #+end_src
 
 #+begin_src latex
-  \usepackage{datetime2}
-#+end_src
-
-#+begin_src latex
   \usepackage{tocloft}
   \newlistof{encl}{encl}{Enclosed}
   % disable heading:
@@ -797,20 +813,6 @@ Meta file to generate files.
 
 #+begin_src latex
   \begin{listing-tex}
-    % \usepackage{erw-label-content}
-    % \DeclareInstance
-    % {erw-binary}
-    % {erw-label-content-bold}
-    % {erw-label-content}
-    % { combine = \textbf{#1~#2} }
-    % 
-    % \usepackage{tocloft}
-    % \newlistof{encl}{encl}{Enclosed}
-    % \makeatletter
-    % \def\listofencl
-    % {\@cfttocstart\@nameuse
-    % {cftmarkencl}\@starttoc{encl}\@cfttocfinish}
-    % \makeatother
 
     \listofencl
     
@@ -826,7 +828,7 @@ Meta file to generate files.
       \UseInstance
       {erw-binary}
       {erw-label-content-bold}
-      {1}{Main title -- \today}
+      {1}{Main title}
     }
     \addcontentsline{encl}{encl}
     {%
@@ -834,7 +836,7 @@ Meta file to generate files.
       {erw-binary}                 % object
       {erw-label-content}          % template
       {}                           % settings
-      {1,1}{Subtitle -- \today}    % arguments
+      {1,1}{Subtitle}    % arguments
     }
   \end{listing-tex}
 #+end_src
@@ -846,7 +848,7 @@ Meta file to generate files.
 ** marginnote
 *** source
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-marginnote.sty
+:header-args: :tangle ../src/erw-marginnote.sty
 :END:
 
 #+header: :noweb yes
@@ -958,8 +960,14 @@ Meta file to generate files.
 
 *** example
 :PROPERTIES:
-:header-args: :tangle ../tex/example-marginnote.tex
+:header-args: :tangle ../example/marginnote.tex
 :END:
+
+#+begin_src latex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+  % arara: pdflatex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+#+end_src
 
 #+begin_src latex
   \documentclass{article}  
@@ -1006,7 +1014,7 @@ Meta file to generate files.
 ** calendar
 *** source
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-calendar.sty
+:header-args: :tangle ../src/erw-calendar.sty
 :END:
 
 #+header: :noweb yes
@@ -1311,8 +1319,14 @@ Meta file to generate files.
 
 *** example
 :PROPERTIES:
-:header-args: :tangle ../tex/example-calendar.tex
+:header-args: :tangle ../example/calendar.tex
 :END:
+
+#+begin_src latex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+  % arara: pdflatex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+#+end_src
 
 #+begin_src latex
   \documentclass{article}  
@@ -1364,7 +1378,7 @@ Meta file to generate files.
 ** punctuation
 *** source 
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-punctuation.sty
+:header-args: :tangle ../src/erw-punctuation.sty
 :END:
 
 **** header
@@ -1598,8 +1612,14 @@ Meta file to generate files.
 
 *** example
 :PROPERTIES:
-:header-args: :tangle ../tex/example-punctuation.tex
+:header-args: :tangle ../example/punctuation.tex
 :END:
+
+#+begin_src latex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+  % arara: pdflatex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+#+end_src
 
 #+begin_src latex
   \documentclass{article}
@@ -1635,7 +1655,7 @@ Meta file to generate files.
 ** biblatex
 *** source
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-biblatex.sty
+:header-args: :tangle ../src/erw-biblatex.sty
 :END:
 **** header
 
@@ -1875,14 +1895,48 @@ Meta file to generate files.
 
 *** example
 :PROPERTIES:
-:header-args: :tangle ../tex/example-biblatex.tex
+:header-args: :tangle ../example/biblatex.tex
 :END:
+
+#+begin_src latex
+  % arara: clean: { extensions: [ aux, bib, blg, toc, lof, lot, out, bbl, bcf, listing, run.xml ] }
+  % arara: pdflatex
+  % arara: biber
+  % arara: pdflatex
+  % arara: clean: { extensions: [ aux, bib, blg, toc, lof, lot, out, bbl, bcf, listing, run.xml ] }
+#+end_src
+
+#+begin_src latex
+%    url='https://'\
+%     'raw.githubusercontent.com/plk/biblatex/'\
+%     '8e5b0605f017b64af04463447e10f02c933dee89/'\
+%     'bibtex/bib/biblatex/'\
+%     'biblatex-examples.bib'
+#+end_src
+
+#+begin_src latex
+  \begin{filecontents*}{\jobname.bib}
+  @book{aristotle:anima,
+    author       = {Aristotle},
+    title        = {De Anima},
+    date         = 1907,
+    editor       = {Hicks, Robert Drew},
+    publisher    = cup,
+    location     = {Cambridge},
+    keywords     = {primary},
+    langid       = {english},
+    langidopts   = {variant=british},
+    annotation   = {A \texttt{book} entry with an \texttt{author} and an
+                    \texttt{editor}},
+  }
+  \end{filecontents*}
+#+end_src
 
 #+begin_src latex
   \documentclass{article}
   % \usepackage[style=authoryear]{biblatex}
   \usepackage[style=numeric-comp]{biblatex}
-  \addbibresource{../bib/sample-1.bib}
+  \addbibresource{\jobname.bib}
 #+end_src
     
 #+begin_src latex
@@ -1928,7 +1982,7 @@ Meta file to generate files.
 ** lang
 *** source
 :PROPERTIES:
-:header-args: :tangle ../sty/erw-lang.sty
+:header-args: :tangle ../src/erw-lang.sty
 :END:
 
 **** header
@@ -2052,8 +2106,14 @@ Meta file to generate files.
 
 *** example
 :PROPERTIES:
-:header-args: :tangle ../tex/example-lang.tex
+:header-args: :tangle ../example/lang.tex
 :END:
+
+#+begin_src latex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+  % arara: lualatex
+  % arara: clean: { extensions: [ aux, toc, lof, lot, out, bbl, bcf, listing ] }
+#+end_src
 
 #+begin_src latex
   \documentclass{article}
@@ -2124,104 +2184,6 @@ Meta file to generate files.
   \cs_new:Nn
   \erw_punctuation_trailing:
   { \tl_use:N\g__erw_punctuation_trailing_tl }
-#+end_src
-
-**** incidental
-
-#+begin_src latex
-  % https://www.proof-reading-service.com/blogs/academic-publishing/helpful-tips-and-advice-on-using-parenthetical-clauses-effectively
-#+end_src
-
-#+begin_src latex
-  \ExplSyntaxOn
-#+end_src
-
-#+begin_src latex
-  % Model:
-  % \Incidental[(][)]{foo}->(foo)
-  % \Incidental[,][,]{foo}->,foo,
-  % \Incidental[,]*{foo}->,foo
-#+end_src
-
-#+begin_src latex
-  \tl_const:Nn
-  \c__erw_incidental_mark_tl
-  { \textemdash\thinspace }
-#+end_src
-
-#+begin_src latex
-  \tl_const:Nn
-  \c__erw_incidental_space_tl
-  { \thinspace }
-#+end_src
-
-#+begin_src latex
-  \tl_const:Nn
-  \c__erw_incidental_fallback_tl
-  { \c_empty_tl }
-#+end_src
-
-#+begin_src latex
-  \exp_last_unbraced:Ne
-  \keys_define:nn
-  {
-    { erw-punctuation }
-    {
-      incidental / space.tl_gset:N = { \exp_not:N\g__erw_incidental_space_tl },
-      incidental / space.default:n = { \tl_use:N\c__erw_incidental_space_tl },
-      incidental / space.initial:n = { \tl_use:N\c__erw_incidental_space_tl },
-      incidental / mark.tl_gset:N = { \exp_not:N\g__erw_incidental_mark_tl },
-      incidental / mark.default:n = { \tl_use:N\c__erw_incidental_mark_tl },
-      incidental / mark.initial:n = { \tl_use:N\c__erw_incidental_mark_tl },
-      incidental / fallback.tl_gset:N = { \exp_not:N\g__erw_incidental_fallback_tl },
-      incidental / fallback.default:n = { \tl_use:N\c__erw_incidental_fallback_tl },
-      incidental / fallback.initial:n = { \tl_use:N\c__erw_incidental_fallback_tl }
-    }
-  }
-#+end_src
-
-#+begin_src latex
-  \cs_new:Nn
-  \__erw_incidental_close:nnn
-  {%
-    \bool_if:nTF{ #3 }
-    { #2 }
-    { #1\tl_use:N\g__erw_incidental_space_tl }
-  }
-#+end_src
-
-#+begin_src latex
-  \cs_new:Nn
-  \__erw_incidental:nnnnn
-  {%
-    \tl_use:N\g__erw_incidental_space_tl
-    #1\tl_trim_spaces:n{ #5 }
-    \__erw_incidental_close:nnn
-    { #2 }{ #3 }{ #4 }
-  }
-#+end_src
-
-#+begin_src latex
-  \ProvideDocumentCommand
-  { \Incidental }
-  {
-    >{ \SplitArgument{1}{} }
-    O{ \g__erw_incidental_mark_tl \g__erw_incidental_mark_tl }
-    O{ \g__erw_incidental_fallback_tl }
-    s % close
-    m
-  }
-  {%
-    \__erw_incidental:nnnnn
-    #1 { #2 }{ #3 }{ #4 }
-    % Usage:
-    % The signal\Incidental[()]{after strict controls}remains robust.
-    % We measured glucose\Incidental*{and we adjusted for age}.
-  }
-#+end_src
-
-#+begin_src latex
-  \ExplSyntaxOff
 #+end_src
 
 **** adapt_cmd_wrapper_to_N
@@ -2331,7 +2293,7 @@ Meta file to generate files.
   % cd pdf
   % export TEXMFOUTPUT=$(realpath ../tex)
   % module='adapt-cmd-wrapper-to-N'
-  % source_file="../tex/example-${module}.tex"
+  % source_file="../example/${module}.tex"
   % pdflatex -shell-escape "\\def\\texdir{$TEXMFOUTPUT}\input " "$source_file"
 #+end_src
 
@@ -2394,21 +2356,50 @@ Meta file to generate files.
 #+end_src
 
 * shell
-** compile
+** example
 :PROPERTIES:
 :ID:       e9680a4a-1f36-40b5-8d74-d846ce80b618
 :END:
 
-#+name: shell-example
+#+header: :session shell-run-example
+#+header: :var path="../example/maginnote.tex"
+#+header: :results verbatim replace
+#+begin_src shell
+    stem=$(dirname "${path%.*}")
+    file=$(basename "$path")
+    cd "${stem}" || exit 1
+    TEXINPUTS="../src//:$TEXINPUTS" arara "$file"
+#+end_src
+
+#+RESULTS:
+#+begin_example
+__ _ _ __ __ _ _ __ __ _
+ / _` | '__/ _` | '__/ _` |
+| (_| | | | (_| | | | (_| |
+ \__,_|_|  \__,_|_|  \__,_|
+
+  ERROR
+
+I could not find the provided file "maginnote.tex" [ .tex | .dtx
+| .ltx | .drv | .ins ]. Please make sure the file exists and it
+has a valid extension.
+
+Total: 0.69 seconds
+#+end_example
+
+** trash
+*** example
+
+#+name: shell-example-1
 #+begin_src shell
   # https://tex.stackexchange.com/a/756108/112708
   export TEXMFOUTPUT=$(realpath $(pwd)/../tex)
   module_name="foo"
   [[ $(basename $(pwd)) == "${module_name}" ]] || { cd pdf; }
-  pdflatex "\\def\\texdir{$TEXMFOUTPUT}\input"  ../tex/example-"${module_name}".tex
+  pdflatex "\\def\\texdir{$TEXMFOUTPUT}\input"  ../example/"${module_name}".tex
 #+end_src
 
-** import
+*** import
 
 #+begin_src shell
   # don't indent
